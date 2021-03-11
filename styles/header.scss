@@ -1,0 +1,54 @@
+@import './config';
+
+.header {
+  display: flex;
+  justify-content: center;
+  margin: $gutter auto;
+  max-width: $max-width;
+  text-align: center;
+
+  &-title {
+    font-size: 2.5rem;
+    margin-bottom: $gutter;
+    text-align: center;
+
+    @media (min-width: $max-width / 2) {
+      font-size: 3rem;
+    }
+  }
+
+  &__title {
+    font-size: 3rem;
+    margin: $gutter*2 auto;
+    text-align: center;
+  }
+
+  &__subtitle,
+  a {
+    font-size: 1rem;
+    margin: 0 auto;
+    text-align: center;
+  }
+}
+
+.login {
+  display: flex;
+  justify-content: right;
+  padding-right: $gutter;
+  position: absolute;
+  right: 0;
+}
+
+.admin {
+  margin: $gutter auto;
+  max-width: 1000px;
+
+  &-loggedIn {
+    display: flex;
+  }
+
+  &-user {
+    font-weight: bold;
+    padding-left: 10px;
+  }
+}
