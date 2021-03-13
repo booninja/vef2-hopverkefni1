@@ -3,11 +3,6 @@ import dotenv from 'dotenv';
 
 const app = express();
 
-const viewsPath = new URL('./views', import.meta.url).pathname;
-
-app.set('./views', viewsPath);
-app.set('view engine', 'ejs');
-app.use(express.static('public'));
 app.use(express.static('src'));
 app.use('/', r);
 
