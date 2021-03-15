@@ -34,11 +34,11 @@ CREATE TABLE IF NOT EXISTS seasons(
 
 CREATE TABLE IF NOT EXISTS episodes(
   id serial PRIMARY KEY,
-  seasonsID serial REFERENCES seasons (id),
   name varchar(64) not null,
   number integer CHECK (number > 0), 
   airDate date,
-  description text not null
+  description text,
+  seasonsID serial REFERENCES seasons (id)
 );
 
 CREATE TABLE IF NOT EXISTS users(
