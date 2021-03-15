@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS serie(
+CREATE TABLE IF NOT EXISTS series(
   id serial PRIMARY KEY,
   name varchar(64) not null,
   airDate date,
@@ -12,33 +12,33 @@ CREATE TABLE IF NOT EXISTS serie(
 );
 
 CREATE TABLE IF NOT EXISTS categories(
-  category varchar(64) UNIQUE not null,
-  id serial PRIMARY KEY
+  id serial PRIMARY KEY,
+  name varchar(64) UNIQUE not null
 );
 
 CREATE TABLE IF NOT EXISTS showToCategories(
   id serial PRIMARY KEY,
-  serieID serial REFERENCES serie (id),
-  categoryID serial REFERENCES categories (id)
+  seriesID integer REFERENCES series (id),
+  categoryID integer REFERENCES categories (id)
 );
 
 CREATE TABLE IF NOT EXISTS seasons(
   id serial PRIMARY KEY,
-  serieID serial REFERENCES serie (id),
   name varchar(64) not NULL,
   number integer CHECK (number > 0),
   airDate date,
-  description text not null,
-  poster varchar(128) not null
+  description text,
+  poster varchar(128) not null,
+  seriesID integer REFERENCES series (id)
 );
 
 CREATE TABLE IF NOT EXISTS episodes(
   id serial PRIMARY KEY,
-  name varchar(64) not null,
+  name varchar(255) not null,
   number integer CHECK (number > 0), 
   airDate date,
   description text,
-  seasonsID serial REFERENCES seasons (id)
+  seasonsID integer REFERENCES seasons (id)
 );
 
 CREATE TABLE IF NOT EXISTS users(
@@ -50,8 +50,9 @@ CREATE TABLE IF NOT EXISTS users(
 );
 
 CREATE TABLE IF NOT EXISTS EpisodeToUser(
-  episodeID serial REFERENCES Episodes(id),
-  userID serial REFERENCES Users(id),
+  id serial primary key,
+  episodeID integer REFERENCES Episodes(id),
+  userID integer REFERENCES Users(id),
   status varchar(128),
   grade integer NOT NULL CHECK (grade >= 0 and grade <= 5)
 );
