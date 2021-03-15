@@ -73,7 +73,7 @@ async function main() {
 
   // bæta færslum við töflu
   try {
-    await query('\\COPY episodes FROM \'C:\\Users\\Jack\\Documents\\Tölvunarfræði\\Vor 2021\\Vefforritun 2\\vef2-verkefni\\vef2-2021-h1\\data\\episodes.csv\' DELIMITER \',\' CSV HEADER');
+    await query("COPY t (name varchar(64), number integer, airDate date, overview text, season text, serie text, serieId serial) from 'C:\Users\Jack\Documents\Tölvunarfræði\Vor 2021\Vefforritun 2\vef2-verkefni\vef2-2021-h1\data\episodes.csv'");
     // const insert = await readFileAsync('./sql/fake.sql');
     // await query(insert.toString('utf8'));
     // for (let i = 0; i < 500; i++) {
