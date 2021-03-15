@@ -1,19 +1,19 @@
 CREATE TABLE IF NOT EXISTS series(
   id serial PRIMARY KEY,
-  name varchar(64) not null,
+  name varchar(255) not null,
   airDate date,
   inProduction boolean,
-  tagline varchar(64),
-  poster varchar(128) not null, 
+  tagline varchar(255),
+  poster varchar(255) not null, 
   description text not null,
-  language varchar(64) not NULL,
-  network varchar(64) not null,
-  website varchar(64)
+  language varchar(255) not NULL,
+  network varchar(255) not null,
+  website varchar(255)
 );
 
 CREATE TABLE IF NOT EXISTS categories(
   id serial PRIMARY KEY,
-  name varchar(64) UNIQUE not null
+  name varchar(255) UNIQUE not null
 );
 
 CREATE TABLE IF NOT EXISTS showToCategories(
@@ -24,11 +24,11 @@ CREATE TABLE IF NOT EXISTS showToCategories(
 
 CREATE TABLE IF NOT EXISTS seasons(
   id serial PRIMARY KEY,
-  name varchar(64) not NULL,
+  name varchar(255) not NULL,
   number integer CHECK (number > 0),
   airDate date,
   description text,
-  poster varchar(128) not null,
+  poster varchar(255) not null,
   seriesID integer REFERENCES series (id)
 );
 
@@ -43,9 +43,9 @@ CREATE TABLE IF NOT EXISTS episodes(
 
 CREATE TABLE IF NOT EXISTS users(
   id serial primary key,
-  email varchar(64) not null,
-  username varchar(64) NOT NULL unique,
-  password varchar(64) NOT NULL,
+  email varchar(255) not null,
+  username varchar(255) NOT NULL unique,
+  password varchar(255) NOT NULL,
   admin boolean DEFAULT FALSE
 );
 
@@ -53,6 +53,6 @@ CREATE TABLE IF NOT EXISTS EpisodeToUser(
   id serial primary key,
   episodeID integer REFERENCES Episodes(id),
   userID integer REFERENCES Users(id),
-  status varchar(128),
+  status varchar(255),
   grade integer NOT NULL CHECK (grade >= 0 and grade <= 5)
 );

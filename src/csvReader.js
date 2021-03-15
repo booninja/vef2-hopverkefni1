@@ -19,7 +19,7 @@ async function insertSeries(data) {
   const q = "INSERT INTO series (name,airDate,inProduction,tagline,poster,description,language,network,website) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)";
 
   if (data.airDate === '') data.airDate = null;
-  if (data.poser === '') data.poster = 'hallo';
+  if (data.poster === null) data.poster = 'hallo';
   try {
     await query(q, 
       [
@@ -27,7 +27,7 @@ async function insertSeries(data) {
         data.airDate,
         data.inProduction,
         data.tagline,
-        data.poster,
+        data.image,
         data.description,
         data.language,
         data.network,
