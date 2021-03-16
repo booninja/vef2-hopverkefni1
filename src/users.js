@@ -6,7 +6,7 @@ Föll tengd notendaumsjón fara hingað t.d. login, register, o.s.frv.
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import express from 'express';
-import { query } from './setup.js';
+import { findByUsername, findById, createUser, getAllUsers, findByEmail, comparePasswords } from './userQueries.js';
 
 dotenv.config();
 
@@ -18,59 +18,34 @@ const {
 export const router = express.Router();
 //router.use(express.json());
 
-const users = []; // tomt array til ad byrja med, thurfum ad bera saman vid gagnagrunn
+const users = await getAllUsers();
 
-// er notendanafn til?
-function checkUsername(username) {
-    const checkUsername = users.find(user => user.name = req.body.name);
-    if (checkUsername) {
-        return false;
+
+router.get('/', async (req, res) => {
+    if (await !findByUsername("Teitur")) {
+        await createUser({name: "Teitur", email: "teg6@hi.is", password: "cringe"});
     }
-    return true;
-}
-
-// er netfang til?
-function checkEmail(email) {
-    const checkEmail = users.find(user => user.email = req.body.email);
-    if (checkEmail) {
-        return false;
-    }
-    return true;
-}
-
-// athugar ef rett lykilorð var slegið inn
-async function comparePasswords(password, user) {
-    const checkPassword = await bcrypt.compare(password, user.password);
-    if (checkPassword) {
-        return user;
-    }
-    return false;
-}
-
-// bua til notanda i gagnagrunn
-//async function createUser(user) {
-//    //const newUser = await query('INSERT INTO Users (name, email, password) VALUES ($1, $2, $3)');
-//}
-
-router.get('/', (req, res) => {
-  res.json(users);
+    console.log(await findByUsername("Viktor"));
+    console.log(await findByUsername("Oskar"));
+    res.json(users);
 });
 
 router.post('/register', async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
   const newUser = { name: req.body.name, email: req.body.email, password: hashedPassword };
   
-  if (!checkUsername(newUser.name)) {
+  if (await findByUsername(newUser.name)) {
     return res.status(400).json({message: "Notendanafn þegar í notkun"});
   } 
   
-  else if (!checkEmail(newUser.email)) {
+  else if (await findByEmail(newUser.email)) {
       return res.status(400).json({message: "Netfang þegar í notkun"});
   }
 
   try {
     // ~~ her tharf ad vera sql skipun sem stofnar notanda ~~
-    users.push(newUser);
+    //users.push(newUser);
+    await createUser(newUser);
     res.status(201).json({message: "Notandi " + newUser.name + " búinn til"});
 
     // ~~ her aetti ad koma jwt token ~~
@@ -84,13 +59,18 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     // her tharf ad bera saman notenda vid gagnagrunn
-    const user = users.find(user => user.name = req.body.name);
-    if (user == null) {
-        console.log(user);
+    const user = await findByUsername(req.body.name);
+    console.log(user)
+    //const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    if (!user) {
         return res.status(400).json({message:'Notandi fannst ekki'});
     }
     try {
-        const loginCheck = await bcrypt.compare(req.body.password, user.password);
+        //const loginCheck = await bcrypt.compare(req.body.password, user.password);
+        console.log(req.body.password)
+        console.log(user.password)
+        const loginCheck = await comparePasswords(req.body.password, user.password);
+        console.log("logincheck: " + loginCheck)
         if (loginCheck) {
             res.status(200).json({message:"Notandi skráður inn"});
             // her kemur jwt token
