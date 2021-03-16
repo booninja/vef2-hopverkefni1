@@ -52,8 +52,6 @@ function errorHandler(error, req, res, next) {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-const port = 3000;
-
 app.listen(port, () => {
   console.info(`Server running at http://localhost:${port}/`);
 });
