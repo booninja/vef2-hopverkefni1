@@ -2,7 +2,6 @@
 import pg from 'pg';
 import dotenv from 'dotenv';
 import { promises as fs } from 'fs';
-// import fs from 'fs';
 import { readSeries, readSeasons, readEpisodes } from './csvReader.js';
 
 async function readFileAsync(sql) {
@@ -19,6 +18,7 @@ dotenv.config();
 const {
   DATABASE_URL: connectionString,
   NODE_ENV: nodeEnv = 'development',
+  CLOUDINARY_URL: cloudinaryURL,
 } = process.env;
 
 if (!connectionString) {
@@ -48,15 +48,6 @@ export async function query(q, v = []) {
   }
 }
 
-async function insert(data) {
-  const q = `
-INSERT INTO signatures
-(name, nationalId, signed, comment, anonymous)
-VALUES
-($1, $2, $3, $4, $5)`;
-  return query(q, data);
-}
-
 async function main() {
   console.info(`Set upp gagnagrunn á ${connectionString}`);
   // droppa töflu ef til
@@ -72,21 +63,26 @@ async function main() {
     console.error('Villa við að búa til töflu:', e.message);
     return;
   }
-
   // bæta færslum við töflu
   try {
     await readSeries();
-    console.log('Þáttaröðum bætt við gagnagrunn');
-
+    console.info('Þáttaröðum bætt við gagnagrunn');
     await readSeasons();
-    console.log('Þáttaseríum bætt við gagnagrunn');
-
+    console.info('Þáttaseríum bætt við gagnagrunn');
     await readEpisodes();
-    console.log('Þáttum bætt við gagnagrunn');
-    
+    console.info('Þáttum bætt við gagnagrunn');
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);
   }
+
+//  // senda myndir á Cloudinary
+//  try {
+//     images = await uploadImagesFromDisk(imageFolder);
+//     console.info(`Sendi ${images.length} myndir á Cloudinary`);
+//   } catch (e) {
+//     console.error('Villa við senda myndir á Cloudinary:', e.message);
+//   }
+
 }
 
 main().catch((err) => {

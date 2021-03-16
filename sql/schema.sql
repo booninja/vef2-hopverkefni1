@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS categories(
   name varchar(255) UNIQUE not null
 );
 
-CREATE TABLE IF NOT EXISTS showToCategories(
+CREATE TABLE IF NOT EXISTS seriesToCategories(
   id serial PRIMARY KEY,
   seriesID integer REFERENCES series (id),
   categoryID integer REFERENCES categories (id)
@@ -40,6 +40,11 @@ CREATE TABLE IF NOT EXISTS episodes(
   description text,
   seasonsID integer REFERENCES seasons (id)
 );
+
+-- CREATE TABLE IF NOT EXISTS images(
+--   imageURL VARCHAR(128) NOT NULL,
+--   cloudinaryID VARCHAR(128) NOT NULL,
+-- );
 
 CREATE TABLE IF NOT EXISTS users(
   id serial primary key,

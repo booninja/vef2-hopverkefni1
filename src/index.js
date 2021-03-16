@@ -63,9 +63,10 @@ async function indexRoute(req, res) {
 
 //hér fyrir neðan eru allar skipanirnar fyrir allar síðurnar, held að best er að
 // taka eina í einu og vinna þannig niður
-/*
-  router.get('/tv', catchErrors(readSeries));//series
 
+
+ // router.get('/tv', catchErrors(getAllSeries()));//series
+/*
   router.post('/tv', catchErrors(insertSeries)); //insertSeries
 
   router.get('/tv/:id', catchErrors(readSeries));//series
@@ -103,9 +104,6 @@ async function indexRoute(req, res) {
   router.get('/users/login', catchErrors(loginUser));
   router.get('/users/me', catchErrors(currentUser));
   router.patch('/users/me', catchErrors(updateCurrentUser));
-
-
-
 
 */
 
