@@ -1,4 +1,5 @@
 import { query } from './utils.js';
+const lim = 10;
 
 export async function getAllSeries() {
   const q = `SELECT * FROM series`;
@@ -8,8 +9,42 @@ export async function getAllSeries() {
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
-  return result.rows;
+  return result;
 }
+export async function listSeries(offset = 0, limit = 10, search = '') {
+    const values = [offset, limit];
+
+    let searchPart = '';
+    if (search) {
+      searchPart = `
+        WHERE
+        to_tsvector('english', name) @@ plainto_tsquery('english', $3)
+        OR
+        to_tsvector('english', comment) @@ plainto_tsquery('english', $3)
+      `;
+      values.push(search);
+    }
+
+    let result = [];
+
+    try {
+      const q = `
+      SELECT * FROM series  ${searchPart}
+        OFFSET $1 LIMIT $2
+      `;
+
+      const queryResult = await query(q, values);
+
+      if (queryResult && queryResult.rows) {
+        result = queryResult.rows;
+      }
+    } catch (e) {
+      console.error('Error selecting signatures', e);
+    }
+
+    return result;
+  }
+
 
 export async function getSerieByID(id) {
   const q = `SELECT * FROM series WHERE id = $1`;

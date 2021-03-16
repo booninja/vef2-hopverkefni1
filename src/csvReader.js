@@ -17,14 +17,14 @@ export async function readSeries() {
 }
 
 async function insertSeries(data) {
-  const q = `INSERT INTO series 
+  const q = `INSERT INTO series
               (name,airDate,inProduction,tagline,poster,description,language,network,website)
               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`;
 
   if (data.airDate === '') data.airDate = null;
   if (data.poster === null) data.poster = 'hallo';
   try {
-    await query(q, 
+    await query(q,
       [
         data.name,
         data.airDate,
@@ -61,7 +61,7 @@ async function insertSeasons(data) {
 
   if (data.airDate === '') data.airDate = null;
   try {
-    await query(q, 
+    await query(q,
       [
         data.name,
         data.number,
@@ -110,12 +110,12 @@ export async function readEpisodes() {
 // }
 
 async function insertEpisodes(data) {
-  const q = `INSERT INTO episodes (name,number,airDate,description,seasonsID) 
+  const q = `INSERT INTO episodes (name,number,airDate,description,seasonsID)
               VALUES ($1,$2,$3,$4,$5)`;
 
   if (data.airDate === '') data.airDate = null;
   try {
-    await query(q, 
+    await query(q,
       [
         data.name,
         data.number,
@@ -132,7 +132,7 @@ async function insertCategories(data) {
   const categories = data.genres.split(",");
   const q = `INSERT INTO categories (name) VALUES ($1)
               ON CONFLICT DO NOTHING`;
-  
+
   categories.forEach(async (category) => {
     try {
       await query(q, [category]);
