@@ -30,7 +30,7 @@ async function insertSeries(data) {
         data.airDate,
         data.inProduction,
         data.tagline,
-        data.image,
+        `https://res.cloudinary.com/vefforritun-hop1-rovv/image/upload/${data.image}`,
         data.description,
         data.language,
         data.network,
@@ -48,6 +48,7 @@ export async function readSeasons() {
     .on('data', async (row) => {
       // console.log(row);
       await insertSeasons(row);
+      // await insertImages(row);
     })
     .on('end', () => {
       console.log('CSV file successfully processed');
@@ -66,7 +67,7 @@ async function insertSeasons(data) {
         data.number,
         data.airDate,
         data.description,
-        data.poster,
+        `https://res.cloudinary.com/vefforritun-hop1-rovv/image/upload/${data.poster}`,
         data.seriesID
       ]);
   } catch (e) {

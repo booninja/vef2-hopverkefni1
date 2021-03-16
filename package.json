@@ -4,6 +4,7 @@
   "main": "app.js",
   "dependencies": {
     "bcrypt": "^5.0.0",
+    "cloudinary": "^1.25.0",
     "concurrently": "^5.3.0",
     "csv-parser": "^3.0.0",
     "dotenv": "^8.2.0",
@@ -35,10 +36,6 @@
   "scripts": {
     "test": "concurrently npm:lint-scss npm:eslint",
     "browser-sync": "browser-sync start --server --files index.ejs styles.css",
-    "sass:build": "node-sass --source-map-embed ./styles/styles.scss ./public/styles.css",
-    "sass:watch": "node-sass --source-map-embed --watch ./styles/styles.scss ./public/styles.css",
-    "lint-css": "stylelint ./public/styles.css",
-    "lint-scss": "stylelint ./styles/*.scss --syntax scss",
     "eslint": "eslint *.js **/*.js --fix",
     "nodemon": "nodemon ./src/app.js",
     "dev": "concurrently npm:nodemon npm:sass:*",

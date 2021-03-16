@@ -18,6 +18,7 @@ dotenv.config();
 const {
   DATABASE_URL: connectionString,
   NODE_ENV: nodeEnv = 'development',
+  CLOUDINARY_URL: cloudinaryURL,
 } = process.env;
 
 if (!connectionString) {
@@ -62,23 +63,28 @@ async function main() {
     console.error('Villa við að búa til töflu:', e.message);
     return;
   }
-
   // bæta færslum við töflu
   try {
     await readSeries();
-    console.log('Þáttaröðum bætt við gagnagrunn');
-
+    console.info('Þáttaröðum bætt við gagnagrunn');
     await readSeasons();
-    console.log('Þáttaseríum bætt við gagnagrunn');
-
+    console.info('Þáttaseríum bætt við gagnagrunn');
     await readEpisodes();
-    console.log('Þáttum bætt við gagnagrunn');
-
+    console.info('Þáttum bætt við gagnagrunn');
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);
   }
+
+//  // senda myndir á Cloudinary
+//  try {
+//     images = await uploadImagesFromDisk(imageFolder);
+//     console.info(`Sendi ${images.length} myndir á Cloudinary`);
+//   } catch (e) {
+//     console.error('Villa við senda myndir á Cloudinary:', e.message);
+//   }
+
 }
 
-// main().catch((err) => {
-//   console.error(err);
-// });
+main().catch((err) => {
+  console.error(err);
+});

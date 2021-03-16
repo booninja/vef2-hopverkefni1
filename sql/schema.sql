@@ -41,6 +41,11 @@ CREATE TABLE IF NOT EXISTS episodes(
   seasonsID integer REFERENCES seasons (id)
 );
 
+-- CREATE TABLE IF NOT EXISTS images(
+--   imageURL VARCHAR(128) NOT NULL,
+--   cloudinaryID VARCHAR(128) NOT NULL,
+-- );
+
 CREATE TABLE IF NOT EXISTS users(
   id serial primary key,
   email varchar(255) not null,
