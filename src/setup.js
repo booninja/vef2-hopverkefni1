@@ -2,7 +2,6 @@
 import pg from 'pg';
 import dotenv from 'dotenv';
 import { promises as fs } from 'fs';
-// import fs from 'fs';
 import { readSeries, readSeasons, readEpisodes } from './csvReader.js';
 
 async function readFileAsync(sql) {
@@ -48,15 +47,6 @@ export async function query(q, v = []) {
   }
 }
 
-async function insert(data) {
-  const q = `
-INSERT INTO signatures
-(name, nationalId, signed, comment, anonymous)
-VALUES
-($1, $2, $3, $4, $5)`;
-  return query(q, data);
-}
-
 async function main() {
   console.info(`Set upp gagnagrunn á ${connectionString}`);
   // droppa töflu ef til
@@ -83,12 +73,12 @@ async function main() {
 
     await readEpisodes();
     console.log('Þáttum bætt við gagnagrunn');
-    
+
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);
   }
 }
 
-main().catch((err) => {
-  console.error(err);
-});
+// main().catch((err) => {
+//   console.error(err);
+// });

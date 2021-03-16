@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS categories(
   name varchar(255) UNIQUE not null
 );
 
-CREATE TABLE IF NOT EXISTS showToCategories(
+CREATE TABLE IF NOT EXISTS seriesToCategories(
   id serial PRIMARY KEY,
   seriesID integer REFERENCES series (id),
   categoryID integer REFERENCES categories (id)

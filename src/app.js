@@ -12,13 +12,16 @@ const path = dirname(fileURLToPath(import.meta.url));
 
 app.use(express.static(join(path, '../public')));
 
-app.set('views', join(path, '../views'));
-app.set('view engine', 'ejs');
+// app.set('views', join(path, '../views'));
+// app.set('view engine', 'ejs');
 
-// app.use(express.static('src'));
+app.use(express.static('src'));
 
 app.use('/', (req, res) => {
-  res.render('index');
+  // res.render('index');
+  res.json({
+    "viktor": "óskar"
+  })
 });
 
 function notFoundHandler(req, res, next) {
