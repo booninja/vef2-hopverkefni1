@@ -1,6 +1,5 @@
-
-import {router as apiRouter} from './index.js';
 import express from 'express';
+import { router as apiRouter } from './index.js';
 
 const app = express();
 
@@ -10,11 +9,10 @@ const data = [
 ];
 app.use('/', apiRouter);
 
-
 app.get('/:id', (req, res) => {
   const { id } = req.params;
 
-  const item = data.find(i => i.id === parseInt(id, 10));
+  const item = data.find((i) => i.id === parseInt(id, 10));
 
   if (item) {
     return res.json(item);

@@ -24,7 +24,7 @@ async function insertSeries(data) {
   if (data.airDate === '') data.airDate = null;
   if (data.poster === null) data.poster = 'hallo';
   try {
-    await query(q, 
+    await query(q,
       [
         data.name,
         data.airDate,
@@ -34,7 +34,7 @@ async function insertSeries(data) {
         data.description,
         data.language,
         data.network,
-        data.website
+        data.website,
       ]);
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);
@@ -42,7 +42,6 @@ async function insertSeries(data) {
 }
 
 export async function readSeasons() {
-
   fs.createReadStream('./data/seasons.csv')
     .pipe(csv())
     .on('data', async (row) => {
@@ -61,14 +60,14 @@ async function insertSeasons(data) {
 
   if (data.airDate === '') data.airDate = null;
   try {
-    await query(q, 
+    await query(q,
       [
         data.name,
         data.number,
         data.airDate,
         data.description,
         `https://res.cloudinary.com/vefforritun-hop1-rovv/image/upload/${data.poster}`,
-        data.seriesID
+        data.seriesID,
       ]);
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);
@@ -115,13 +114,13 @@ async function insertEpisodes(data) {
 
   if (data.airDate === '') data.airDate = null;
   try {
-    await query(q, 
+    await query(q,
       [
         data.name,
         data.number,
         data.airDate,
         data.overview,
-        data.seasonsID
+        data.seasonsID,
       ]);
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);
@@ -129,10 +128,10 @@ async function insertEpisodes(data) {
 }
 
 async function insertCategories(data) {
-  const categories = data.genres.split(",");
+  const categories = data.genres.split(',');
   const q = `INSERT INTO categories (name) VALUES ($1)
               ON CONFLICT DO NOTHING`;
-  
+
   categories.forEach(async (category) => {
     try {
       await query(q, [category]);
@@ -141,4 +140,3 @@ async function insertCategories(data) {
     }
   });
 }
-

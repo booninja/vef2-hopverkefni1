@@ -75,14 +75,13 @@ async function main() {
     console.error('Villa við að bæta gögnum við', e);
   }
 
-//  // senda myndir á Cloudinary
-//  try {
-//     images = await uploadImagesFromDisk(imageFolder);
-//     console.info(`Sendi ${images.length} myndir á Cloudinary`);
-//   } catch (e) {
-//     console.error('Villa við senda myndir á Cloudinary:', e.message);
-//   }
-
+  //  // senda myndir á Cloudinary
+  //  try {
+  //     images = await uploadImagesFromDisk(imageFolder);
+  //     console.info(`Sendi ${images.length} myndir á Cloudinary`);
+  //   } catch (e) {
+  //     console.error('Villa við senda myndir á Cloudinary:', e.message);
+  //   }
 }
 
 main().catch((err) => {
