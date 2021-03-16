@@ -2,8 +2,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-
+//import jwt from 'jsonwebtoken';
+import {router as apiRouter} from './index.js';
 import { router as userRouter } from './users.js';
 
 dotenv.config();
@@ -22,9 +22,7 @@ const data = [
   { id: 2, title: 'Item 2' },
 ];
 
-app.get('/', (req, res) => {
-  res.json(data);
-});
+app.use('/', apiRouter);
 
 app.get('/:id', (req, res) => {
   const { id } = req.params;
