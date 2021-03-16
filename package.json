@@ -15,6 +15,7 @@
     "faker": "^5.4.0",
     "fast-csv": "^4.3.6",
     "json-loader": "^0.5.7",
+    "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
@@ -38,7 +39,7 @@
     "browser-sync": "browser-sync start --server --files index.ejs styles.css",
     "eslint": "eslint *.js **/*.js --fix",
     "nodemon": "nodemon ./src/app.js",
-    "dev": "concurrently npm:nodemon npm:sass:*",
+    "dev": "concurrently npm:nodemon",
     "setup": "node ./src/setup.js",
     "start": "node ./src/app.js"
   },
