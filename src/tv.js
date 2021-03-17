@@ -3,7 +3,7 @@ import { body, validationResult } from 'express-validator';
 import xss from 'xss';
 
 import { catchErrors, setPagenumber, PAGE_SIZE } from './utils.js';
-import { getSerieById, listSeries, getSeasonById, getEpisodeById , deleteSerieById,  deleteEpisodeById, deleteSeasonById} from './tvQueries.js';
+import { getSerieById, listSeries, getSeasonById,getSeasonsById ,getEpisodeById , deleteSerieById,  deleteEpisodeById, deleteSeasonById, getAllSeasons} from './tvQueries.js';
 import { insertSeries} from './csvReader.js';
 
 export const router = express.Router();
@@ -59,17 +59,29 @@ async function deleteSerie(req, res) {
 async function readSeasons(req, res) {
   const { id } = req.params;
 
-  const series = await getSeasonById(id);
+  const series = await getSeasonsById(id);
   console.info(series);
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
   return res.json(series);
 }
-async function deleteSeason(req, res) {
-  const { id } = req.params;
+async function readSeason(req, res) {
+  const { id, season } = req.params;
 
-  const series = await deleteSeasonById(id);
+  const series = await getSeasonById(id, season);
+  console.info(series);
+  if (!series) {
+    return res.status(404).json({ error: 'Series not found' });
+  }
+  return res.json(series);
+}
+
+
+async function deleteSeason(req, res) {
+  const { id, season } = req.params;
+
+  const series = await deleteSeasonById(id, season);
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
@@ -104,7 +116,7 @@ async function readEpisode(req, res) {
 
   router.get('/:id', catchErrors(readSerie));//serie
   // router.patch('/tv/:id', catchErrors(updateSerie));
-   router.delete('/:id', catchErrors(deleteSerie));
+  router.delete('/:id', catchErrors(deleteSerie));
 
   // router.post('/tv/:id/rate', catchErrors(rateSeries));
   // router.patch('/tv/:id/rate', catchErrors(rateSeries));
@@ -115,11 +127,12 @@ async function readEpisode(req, res) {
   // router.delete('/tv/:id/state', catchErrors(stateSeries));
 
   router.get('/:id/season', catchErrors(readSeasons));
-  router.get('/:id/season/{season}', catchErrors(readSeasons));
-  // router.post('/tv/:id/season', catchErrors(readSeasons));
+ // router.post('/:id/season', catchErrors(deleteSeason));
+  router.get('/:id/season/:season', catchErrors(readSeason));
+  router.delete('/:id/season/:season', catchErrors(deleteSeason));
 
   // router.get('/tv/:id/season', catchErrors(readSeason));
-   router.delete('/:id/season', catchErrors(deleteSeason));
+
 
   // router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
 

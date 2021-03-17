@@ -116,11 +116,22 @@ export async function getAllSeasons() {
   return result.rows;
 }
 
-export async function getSeasonById(id) {
-  const q = `SELECT * FROM seasons WHERE id = $1`;
+export async function getSeasonsById(id) {
+  const q = `SELECT * FROM seasons WHERE seriesID = $1`;
   let result;
   try {
     result = await query(q, [id]);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+  return result.rows;
+}
+
+export async function getSeasonById(id, season ) {
+  const q = `SELECT * FROM seasons WHERE seriesID = $1 AND number = $2`;
+  let result;
+  try {
+    result = await query(q, [id, season]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
@@ -153,11 +164,11 @@ export async function editSeasonById(id, data) {
   }
 }
 
-export async function deleteSeasonById(id) {
-  const q = `DELETE FROM seasons WHERE id = $1`;
+export async function deleteSeasonById(seriesId, season) {
+  const q = `DELETE FROM seasons WHERE seriesID = $1 and number = $2`;
 
   try {
-    await query(q, [id]);
+    await query(q, [seriesId, season]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
