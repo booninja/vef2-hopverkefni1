@@ -1,6 +1,10 @@
 import express from 'express';
+import { body, validationResult } from 'express-validator';
+import xss from 'xss';
+
 import { catchErrors, setPagenumber, PAGE_SIZE } from './utils.js';
 import { getSerieById, listSeries, getSeasonById, getEpisodeById } from './tvQueries.js';
+import { insertSeries} from './csvReader.js';
 
 export const router = express.Router();
 
@@ -61,12 +65,11 @@ async function readSerie(req, res) {
   const { id } = req.params;
 
   const series = await getSerieById(id);
-  const data = await getSeasonById(id);
   console.info(series);
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
-  return res.json( {series,data} );
+  return res.json( series );
 }
 
 async function readSeasons(req, res) {
@@ -91,14 +94,19 @@ async function readEpisode(req, res) {
   return res.json(series);
 }
 
+  router.get('/tv', catchErrors(getTv));// series
 
+//ekki er kannað hvort það er rétt form með validation
+ router.post('/tv', (req, res) => {
+    console.log("helllooo");
+    //kanna user
+    const user = req.user;
+        const data = req.body;
+        insertSeries(data);
+        console.log('Data added');
+        getTv(req, res); //kannski skila þessu eftir post?
+  });
 
-
-
-
-// router.get('/tv', catchErrors(tv));// series
-
- //  router.post('/tv', catchErrors(getTv)); //insertSeries
 
   router.get('/:id', catchErrors(readSerie));//serie
   // router.patch('/tv/:id', catchErrors(updateSerie));
@@ -152,3 +160,27 @@ async function readEpisode(req, res) {
   {"name":"Season 5","number":"5","air_date":"2021-01-20T00:00:00.000Z","overview":null,
   "poster":"https://res.cloudinary.com/dhy3vquyz/image/upload/v1614710075/kynyzcgwtfsd7psbcjia.jpg"}]}
   */
+
+
+
+
+
+/*
+async function validationCheck(req, res, next) {
+  const {
+    limit, offset, items, _links,
+  } = req.body;
+
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.json({ errors: validation.errors});
+  }
+  return next();
+}
+const validationMiddleware = [
+  body('name')
+    .isLength({ min: 1 })
+    .withMessage('Nafn má ekki vera tómt'),
+];
+*/

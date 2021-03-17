@@ -65,8 +65,6 @@ async function getSeries(req, res,) {
 
   page = setPagenumber(page);
 
-  const errors = [];
-
   const registrations = await listSeries(offset, limit);
   console.log(registrations);
   res.json(
@@ -86,6 +84,34 @@ async function getSeries(req, res,) {
   );
 }
 
+async function validationCheck(req, res, next) {
+  const {
+    limit, offset, items, _links,
+  } = req.body;
+
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.json({ errors: validation.errors});
+  }
+  return next();
+}
+
+// async function changeSeries(req, res) {
+//   const {
+//     limit, offset, items, _links,
+//   } = req.body;
+//   let success = true;
+
+//   const series = await getSerieById(id);
+//   console.info(series);
+//   if (!series) {
+//     return res.status(404).json({ error: 'Series not found' });
+//   }
+//   return res.json( series );
+// }
+
+
 router.get('/', indexRoute);
 
 // hér fyrir neðan eru allar skipanirnar fyrir allar síðurnar, held að best er að
@@ -93,7 +119,7 @@ router.get('/', indexRoute);
 
 router.get('/tv', catchErrors(getSeries));// series
 
-  // router.post('/tv', catchErrors(insertSeries)); //insertSeries
+//router.post('/tv', catchErrors(validationCheck)), catchErrors(changeSeries); //insertSeries
 
   // router.get('/tv/:id', catchErrors(getSerieById));//series
   // router.patch('/tv/:id', catchErrors(editSerieById));
@@ -169,3 +195,9 @@ router.get('/tv', catchErrors(getSeries));// series
   router.get('/users/me', requireAuth, catchErrors(currentUser));
   router.patch('/users/me', requireAuth, catchErrors(updateCurrentUser));
 */
+
+
+
+
+//minn user
+//{"email": "fallegtblom@net.is","username": "blom", "password": "1234567890"}

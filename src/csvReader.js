@@ -16,9 +16,9 @@ export async function readSeries() {
     });
 }
 
-async function insertSeries(data) {
+export async function insertSeries(data) {
   const q = `INSERT INTO series
-              (id,name,airDate,inProduction,tagline,poster,description,language,network,website)
+              (id,name,airDate, inProduction,tagline,poster,description,language,network,website)
               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`;
 
   if (data.airDate === '') data.airDate = null;
