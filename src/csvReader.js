@@ -34,7 +34,7 @@ async function insertSeries(data) {
         data.description,
         data.language,
         data.network,
-        data.website
+        data.website,
       ]);
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);
@@ -42,7 +42,6 @@ async function insertSeries(data) {
 }
 
 export async function readSeasons() {
-
   fs.createReadStream('./data/seasons.csv')
     .pipe(csv())
     .on('data', async (row) => {
@@ -121,7 +120,7 @@ async function insertEpisodes(data) {
         data.number,
         data.airDate,
         data.overview,
-        data.seasonsID
+        data.seasonsID,
       ]);
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);
@@ -129,7 +128,7 @@ async function insertEpisodes(data) {
 }
 
 async function insertCategories(data) {
-  const categories = data.genres.split(",");
+  const categories = data.genres.split(',');
   const q = `INSERT INTO categories (name) VALUES ($1)
               ON CONFLICT DO NOTHING`;
 
@@ -141,4 +140,3 @@ async function insertCategories(data) {
     }
   });
 }
-

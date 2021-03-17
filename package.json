@@ -39,13 +39,13 @@
     "browser-sync": "browser-sync start --server --files index.ejs styles.css",
     "eslint": "eslint *.js **/*.js --fix",
     "nodemon": "nodemon ./src/app.js",
-    "dev": "concurrently npm:nodemon npm:sass:*",
+    "dev": "concurrently npm:nodemon",
     "setup": "node ./src/setup.js",
     "start": "node ./src/app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/booninja/vef2-v2-vav18"
+    "url": "git+https://github.com/booninja/vef2-h1"
   },
   "author": "",
   "license": "ISC",
