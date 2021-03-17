@@ -18,14 +18,14 @@ export async function readSeries() {
 
 async function insertSeries(data) {
   const q = `INSERT INTO series
-              (name,airDate,inProduction,tagline,poster,description,language,network,website)
-              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`;
+              (id,name,airDate,inProduction,tagline,poster,description,language,network,website)
+              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`;
 
   if (data.airDate === '') data.airDate = null;
-  if (data.poster === null) data.poster = 'hallo';
   try {
     await query(q,
       [
+        data.id,
         data.name,
         data.airDate,
         data.inProduction,
@@ -68,7 +68,7 @@ async function insertSeasons(data) {
         data.airDate,
         data.description,
         `https://res.cloudinary.com/vefforritun-hop1-rovv/image/upload/${data.poster}`,
-        data.seriesID
+        data.serieId
       ]);
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);

@@ -94,17 +94,17 @@ async function indexRoute(req, res) {
 /*
   router.post('/tv', catchErrors(insertSeries)); //insertSeries
 
-  router.get('/tv/:id', catchErrors(readSeries));//series
-  router.patch('/tv/:id', catchErrors(updateSerie));
-  router.delete('/tv/:id', catchErrors(updateSerie));
+  router.get('/tv/:id', catchErrors(getSerieById));//series
+  router.patch('/tv/:id', catchErrors(editSerieById));
+  router.delete('/tv/:id', catchErrors(deleteSerieById));
 
-  router.post('/tv/:id/rate', catchErrors(rateSeries));
-  router.patch('/tv/:id/rate', catchErrors(rateSeries));
-  router.delete('/tv/:id/rate', catchErrors(rateSeries));
+  router.post('/tv/:id/rate', catchErrors(updateEpisodeRating));
+  router.patch('/tv/:id/rate', catchErrors(updateEpisodeRating));
+  router.delete('/tv/:id/rate', catchErrors(updateEpisodeRating));
 
-  router.post('/tv/:id/state', catchErrors(stateSeries));
-  router.patch('/tv/:id/state', catchErrors(stateSeries));
-  router.delete('/tv/:id/state', catchErrors(stateSeries));
+  router.post('/tv/:id/state', catchErrors(updateEpisodeStatus));
+  router.patch('/tv/:id/state', catchErrors(updateEpisodeStatus));
+  router.delete('/tv/:id/state', catchErrors(updateEpisodeStatus));
 
   router.get('/tv/:id/season', catchErrors(readSeasons));
   router.post('/tv/:id/season', catchErrors(readSeasons));
