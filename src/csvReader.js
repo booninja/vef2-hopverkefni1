@@ -17,7 +17,7 @@ export async function readSeries() {
 }
 
 async function insertSeries(data) {
-  const q = `INSERT INTO series 
+  const q = `INSERT INTO series
               (name,airDate,inProduction,tagline,poster,description,language,network,website)
               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`;
 
@@ -109,7 +109,7 @@ export async function readEpisodes() {
 // }
 
 async function insertEpisodes(data) {
-  const q = `INSERT INTO episodes (name,number,airDate,description,seasonsID) 
+  const q = `INSERT INTO episodes (name,number,airDate,description,seasonsID)
               VALUES ($1,$2,$3,$4,$5)`;
 
   if (data.airDate === '') data.airDate = null;

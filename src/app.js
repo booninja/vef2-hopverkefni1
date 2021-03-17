@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 
 import { router as apiRouter } from './index.js';
 import { router as userRouter } from './users.js';
+import { router as tvRouter } from './tv.js';
 
 dotenv.config();
 
@@ -17,23 +18,8 @@ const app = express();
 
 app.use(express.json());
 
-const data = [
-  { id: 1, title: 'Item 1' },
-  { id: 2, title: 'Item 2' },
-];
 app.use('/', apiRouter);
-
-app.get('/:id', (req, res) => {
-  const { id } = req.params;
-
-  const item = data.find((i) => i.id === parseInt(id, 10));
-
-  if (item) {
-    return res.json(item);
-  }
-
-  return res.status(404).json({ error: 'Not found' });
-});
+app.use('/tv', tvRouter);
 
 app.use('/users', userRouter);
 
