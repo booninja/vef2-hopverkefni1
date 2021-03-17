@@ -55,8 +55,8 @@ export async function readSeasons() {
 }
 
 async function insertSeasons(data) {
-  const q = `INSERT INTO seasons (name,number,airDate,description,poster,seriesID)
-              VALUES ($1,$2,$3,$4,$5,$6)`;
+  const q = `INSERT INTO seasons (name,number,airDate,description,poster, serie, seriesID)
+              VALUES ($1,$2,$3,$4,$5,$6,$7)`;
 
   if (data.airDate === '') data.airDate = null;
   try {
@@ -65,8 +65,9 @@ async function insertSeasons(data) {
         data.name,
         data.number,
         data.airDate,
-        data.description,
+        data.overview,
         `https://res.cloudinary.com/vefforritun-hop1-rovv/image/upload/${data.poster}`,
+        data.serie,
         data.serieId
       ]);
   } catch (e) {

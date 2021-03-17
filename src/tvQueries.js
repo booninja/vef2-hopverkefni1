@@ -1,7 +1,5 @@
 import { query, addPageMetadata } from './utils.js';
 
-const lim = 10;
-
 export async function getAllSeries() {
   const q = 'SELECT * FROM series';
   let result;
@@ -49,7 +47,6 @@ export async function getSerieById(id) {
   // if (!isInt(id)) {
   //   return null;
   // }
-
   const q = 'SELECT * FROM series WHERE id = $1';
   let result;
   try {
@@ -78,9 +75,9 @@ export async function editSerieById(id, data) {
               SET network = $8,
               SET website = $9
               WHERE id = $10`;
-  
+
   try {
-    result = await query(q, 
+    result = await query(q,
       [ data.name,
         data.airDate,
         data.inProduction,
@@ -140,9 +137,9 @@ export async function editSeasonById(id, data) {
               SET poster = $5,
               SET seriesID = $6,
               WHERE id = $7`;
-  
+
   try {
-    result = await query(q, 
+    result = await query(q,
       [ data.name,
         data.number,
         data.airDate,
@@ -191,7 +188,7 @@ export async function getEpisodeById(id) {
 export async function getEpisodeByUser(episodeID, userID) {
   const q = `SELECT * FROM EpisodeToUser WHERE
               episodeID = $1 AND userID = $2`;
-  
+
   let result;
   try {
     result = await query(q, [episodeID, userID]);
@@ -210,9 +207,9 @@ export async function editEpisodeById(id, data) {
               SET description = $4,
               SET seasonsID = $5,
               WHERE id = $7`;
-  
+
   try {
-    result = await query(q, 
+    result = await query(q,
       [ data.name,
         data.number,
         data.airDate,
@@ -229,10 +226,10 @@ export async function editEpisodeById(id, data) {
 export async function updateEpisodeStatus(id, episodeID, userID, status) {
   const q = `UPDATE EpisodeToUser SET status = $1
               WHERE id = $2 AND episodeID = $3 AND userID = $4`;
-  
+
   let result;
   try {
-    result = await query(q, 
+    result = await query(q,
       [ status,
         id,
         episodeID,
@@ -247,10 +244,10 @@ export async function updateEpisodeStatus(id, episodeID, userID, status) {
 export async function updateEpisodeRating(id, episodeID, userID, rating) {
   const q = `UPDATE EpisodeToUser SET rating = $1
               WHERE id = $2 AND episodeID = $3 AND userID = $4`;
-  
+
   let result;
   try {
-    result = await query(q, 
+    result = await query(q,
       [ rating,
         id,
         episodeID,

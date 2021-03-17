@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS series(
   airDate date,
   inProduction boolean,
   tagline varchar(255),
-  poster varchar(255) not null, 
+  poster varchar(255) not null,
   description text not null,
   language varchar(255) not NULL,
   network varchar(255) not null,
@@ -29,13 +29,14 @@ CREATE TABLE IF NOT EXISTS seasons(
   airDate date,
   description text,
   poster varchar(255) not null,
+  serie varchar(255) not NULL,
   seriesID integer REFERENCES series (id)
 );
 
 CREATE TABLE IF NOT EXISTS episodes(
   id serial PRIMARY KEY,
   name varchar(255) not null,
-  number integer CHECK (number > 0), 
+  number integer CHECK (number > 0),
   airDate date,
   description text,
   seasonsID integer REFERENCES seasons (id)

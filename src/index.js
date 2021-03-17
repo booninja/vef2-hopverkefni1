@@ -59,7 +59,7 @@ async function indexRoute(req, res) {
   );
 }
 
-async function index(req, res) {
+async function getSeries(req, res,) {
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
 
@@ -91,7 +91,7 @@ router.get('/', indexRoute);
 // hér fyrir neðan eru allar skipanirnar fyrir allar síðurnar, held að best er að
 // taka eina í einu og vinna þannig niður
 
-router.get('/tv', catchErrors(index));// series
+router.get('/tv', catchErrors(getSeries));// series
 
   // router.post('/tv', catchErrors(insertSeries)); //insertSeries
 
