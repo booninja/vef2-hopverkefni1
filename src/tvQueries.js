@@ -185,15 +185,25 @@ export async function getAllEpisodes() {
   return result.rows;
 }
 
-export async function getEpisodeById(id) {
-  const q = `SELECT * FROM episodes WHERE id = $1`;
+export async function getEpisodeById(id, season, episode) {
+  const q = `SELECT * FROM episodes WHERE seriesID = $1 AND season = $2 AND number = $3`;
   let result;
   try {
-    result = await query(q, [id]);
+    result = await query(q, [id, season, episode]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
   return result.rows;
+}
+
+export async function deleteEpisodeById(id, season, episode) {
+  const q = `DELETE FROM episodes WHERE seriesID = $1 AND season = $2 AND number = $3`;
+
+  try {
+    await query(q, [id, season, episode]);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
 }
 
 export async function getEpisodeByUser(episodeID, userID) {
@@ -268,13 +278,48 @@ export async function updateEpisodeRating(id, episodeID, userID, rating) {
     console.error('Villa við að sækja gögn', e);
   }
 }
-
-export async function deleteEpisodeById(id) {
-  const q = `DELETE FROM episodes WHERE id = $1`;
-
+/*
+export async function getGenressd() {
+  const q = `SELECT * FROM categories`;
+  let result;
   try {
-    await query(q, [id]);
+    result = await query(q);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
+  return result.rows;
+}
+*/
+
+export async function getGenres(offset = 0, limit = 10, search = '') {
+  const values = [offset, limit];
+  console.log("hello");
+  let searchPart = '';
+  if (search) {
+    searchPart = `
+        WHERE
+        to_tsvector('english', name) @@ plainto_tsquery('english', $3)
+        OR
+        to_tsvector('english', comment) @@ plainto_tsquery('english', $3)
+      `;
+    values.push(search);
+  }
+
+  let result = [];
+
+  try {
+    const q = `
+    SELECT * FROM categories  ${searchPart}
+        OFFSET $1 LIMIT $2
+      `;
+
+    const queryResult = await query(q, values);
+
+    if (queryResult && queryResult.rows) {
+      result = queryResult.rows;
+    }
+  } catch (e) {
+    console.error('Error selecting signatures', e);
+  }
+  return result;
 }

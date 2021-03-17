@@ -3,7 +3,17 @@ import { body, validationResult } from 'express-validator';
 import xss from 'xss';
 
 import { catchErrors, setPagenumber, PAGE_SIZE } from './utils.js';
-import { getSerieById, listSeries, getSeasonById,getSeasonsById ,getEpisodeById , deleteSerieById,  deleteEpisodeById, deleteSeasonById, getAllSeasons} from './tvQueries.js';
+import {
+  getSerieById,
+  listSeries,
+  getSeasonById,
+  getSeasonsById ,
+  getEpisodeById ,
+  deleteSerieById,
+  deleteEpisodeById,
+  deleteSeasonById,
+  getAllSeasons,
+  getGenres} from './tvQueries.js';
 import { insertSeries} from './csvReader.js';
 
 export const router = express.Router();
@@ -66,6 +76,7 @@ async function readSeasons(req, res) {
   }
   return res.json(series);
 }
+
 async function readSeason(req, res) {
   const { id, season } = req.params;
 
@@ -77,22 +88,17 @@ async function readSeason(req, res) {
   return res.json(series);
 }
 
-
 async function deleteSeason(req, res) {
   const { id, season } = req.params;
 
   const series = await deleteSeasonById(id, season);
-  if (!series) {
-    return res.status(404).json({ error: 'Series not found' });
-  }
-  return res.json( series );
+  return res.json( "Season deleted" );
 }
 
-
 async function readEpisode(req, res) {
-  const { id } = req.params;
+  const { id, season, episode } = req.params;
 
-  const series = await getEpisodeById(id);
+  const series = await getEpisodeById(id, season, episode);
   console.info(series);
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
@@ -100,11 +106,39 @@ async function readEpisode(req, res) {
   return res.json(series);
 }
 
+async function readGenres(req, res) {
+  console.log("hellp");
+  let { page = 1 } = req.query;
+  const { offset = 0, limit = 10 } = req.query;
+
+  console.log("hhææææææ");
+
+  page = setPagenumber(page);
+
+  const registrations = await getGenres(offset, limit);
+  console.log(registrations);
+  res.json(
+    {
+      limit,
+      offset,
+      items: { registrations },
+      _links: {
+        self: {
+          href: req.query,
+        },
+        next: {
+          href: req.query,
+        },
+      },
+    },
+  );
+
+}
+
   router.get('/tv', catchErrors(getTv));// series
 
 //ekki er kannað hvort það er rétt form með validation
  router.post('/tv', (req, res) => {
-    console.log("helllooo");
     //kanna user
     const user = req.user;
         const data = req.body;
@@ -113,6 +147,8 @@ async function readEpisode(req, res) {
         getTv(req, res); //kannski skila þessu eftir post?
   });
 
+  router.get('/genres', catchErrors(readGenres));
+  //router.post('/genres', catchErrors());
 
   router.get('/:id', catchErrors(readSerie));//serie
   // router.patch('/tv/:id', catchErrors(updateSerie));
@@ -127,17 +163,15 @@ async function readEpisode(req, res) {
   // router.delete('/tv/:id/state', catchErrors(stateSeries));
 
   router.get('/:id/season', catchErrors(readSeasons));
- // router.post('/:id/season', catchErrors(deleteSeason));
-  router.get('/:id/season/:season', catchErrors(readSeason));
+  //router.post('/:id/season', catchErrors());
+
+  router.get('/:id/season/:season', catchErrors(readSeason));     //vantar overview
   router.delete('/:id/season/:season', catchErrors(deleteSeason));
-
-  // router.get('/tv/:id/season', catchErrors(readSeason));
-
 
   // router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
 
-  router.get('/tv/{id}/season/{season}/episode/{episode}', catchErrors(readEpisode));
-  // router.delete('/tv/{id}/season/{season}/episode/{episode}',  catchErrors(readEpisode));
+  router.get('/:id/season/:season/episode/:episode', catchErrors(readEpisode));
+  router.delete('/:id/season/:season/episode/:episode', catchErrors(readEpisode));
 
 
 /*

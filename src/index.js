@@ -118,6 +118,7 @@ router.get('/', indexRoute);
 // taka eina í einu og vinna þannig niður
 
 router.get('/tv', catchErrors(getSeries));// series
+//router.get('/genres', catchErrors(readSeasons));
 
 //router.post('/tv', catchErrors(validationCheck)), catchErrors(changeSeries); //insertSeries
 
