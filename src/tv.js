@@ -57,7 +57,6 @@ async function readSerie(req, res) {
   const series = await getSerieById(id);
   const genre = await getGenreBySerieId(id);
   const seasons = await getSeasonsByID(id);
-  // console.info(series);
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
