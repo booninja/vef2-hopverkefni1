@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS episodes(
   airDate date,
   description text,
   season varchar(255) not null,
-  seasonID integer REFERENCES seasons (id),
+  seasonNumber integer ,
   serieID integer REFERENCES series (id)
 );
 

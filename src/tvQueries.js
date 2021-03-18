@@ -216,7 +216,7 @@ export async function getAllEpisodes() {
 }
 
 export async function getEpisodeById(id, season, episode) {
-  const q = `SELECT * FROM episodes WHERE serieID = $1 AND seasonID = $2 AND number = $3`;
+  const q = `SELECT * FROM episodes WHERE serieID = $1 AND seasonNumber = $2 AND number = $3`;
   let result;
   try {
     result = await query(q, [id, season, episode]);
@@ -226,7 +226,7 @@ export async function getEpisodeById(id, season, episode) {
   return result.rows;
 }
 export async function getEpisodesById(id, season) {
-  const q = `SELECT name, number, airDate, description FROM episodes WHERE serieID = $1 AND seasonID = $2`;
+  const q = `SELECT name, number, airDate, description FROM episodes WHERE serieID = $1 AND seasonNumber = $2`;
   let result;
   try {
     result = await query(q, [id, season]);
@@ -237,7 +237,7 @@ export async function getEpisodesById(id, season) {
 }
 
 export async function getEpisodesdfsdById(id, season) {
-  const q = `SELECT * FROM episodes WHERE serieID = $1 AND season = $2`;
+  const q = `SELECT * FROM episodes WHERE serieID = $1 AND seasonNumber = $2`;
   let result;
   console.log('hello');
   try {
@@ -249,7 +249,7 @@ export async function getEpisodesdfsdById(id, season) {
 }
 
 export async function deleteEpisodeById(id, season, episode) {
-  const q = `DELETE FROM episodes WHERE serieID = $1 AND season = $2 AND number = $3`;
+  const q = `DELETE FROM episodes WHERE serieID = $1 AND seasonNumber = $2 AND number = $3`;
 
   try {
     await query(q, [id, season, episode]);
