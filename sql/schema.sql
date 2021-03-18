@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS categories(
 
 CREATE TABLE IF NOT EXISTS seriesToCategories(
   id serial PRIMARY KEY,
-  serieID integer REFERENCES series (id) NOT NULL,
-  categoryID integer REFERENCES categories (id) NOT NULL
+  serieID integer REFERENCES series (id)  ON DELETE CASCADE,
+  categoryID integer REFERENCES categories (id)  ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS seasons(
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS seasons(
   airDate date,
   description text,
   poster varchar(255) not null,
-  serieID integer REFERENCES series (id)
+  serieID integer REFERENCES series (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS episodes(
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS episodes(
   description text,
   season varchar(255) not null,
   seasonNumber integer ,
-  serieID integer REFERENCES series (id)
+  serieID integer REFERENCES series (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS users(
@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS users(
 
 CREATE TABLE IF NOT EXISTS EpisodeToUser(
   id serial primary key,
-  episodeID integer REFERENCES Episodes(id),
-  userID integer REFERENCES Users(id),
+  episodeID integer REFERENCES Episodes(id) ON DELETE CASCADE,
+  userID integer REFERENCES Users(id) ON DELETE CASCADE,
   status varchar(255),
   grade integer NOT NULL CHECK (grade >= 0 and grade <= 5)
 );

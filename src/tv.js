@@ -20,7 +20,7 @@ import {
 
 } from './tvQueries.js';
 
-import { insertSeries } from './csvReader.js';
+import { insertSeries} from './csvReader.js';
 
 export const router = express.Router();
 
@@ -78,6 +78,13 @@ async function readSerie(req, res) {
       },
     },
   );
+}
+
+async function deleteSerie(req, res) {
+  const { id } = req.params;
+
+  const series = await deleteSerieById(id);
+  return res.json('Serie deleted');
 }
 
 async function readSeasons(req, res) {
@@ -170,16 +177,15 @@ router.get('/genres', catchErrors(readGenres));
 //router.post('/genres', catchErrors(updateGenre));
 
 router.get('/:id', catchErrors(readSerie));// serie
+router.delete('/:id', catchErrors(deleteSerie));
+
 
 router.patch('/:id', (req, res) => {
   const { id } = req.params;
   const data = req.body;
-  console.log('blalba');
   editSerieById(id, data);
-  console.log('Data added');
   res.json('Data changed');
 });
-// router.delete('/:id', catchErrors(deleteSerie));
 
 // router.post('/tv/:id/rate', catchErrors(rateSeries));
 // router.patch('/tv/:id/rate', catchErrors(rateSeries));
@@ -191,6 +197,12 @@ router.patch('/:id', (req, res) => {
 
 router.get('/:id/season', catchErrors(readSeasons));
 // router.post('/:id/season', catchErrors());
+
+/*router.post('/:id/season', (req, res) => {
+  const data = req.body;
+  insertSeasons(data);
+  console.log('Data changed');
+});*/
 
 router.get('/:id/season/:season', catchErrors(readSeason)); // vantar overview
 router.delete('/:id/season/:season', catchErrors(deleteSeason));

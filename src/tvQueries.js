@@ -169,13 +169,13 @@ export async function getSeasonById(id, season) {
 
 // Gæti þurft að laga
 export async function editSeasonById(id, data) {
-  const q = `UPDATE serie
-              SET name = $1,
-              SET number = $2,
-              SET airDate = $3,
-              SET description = $4,
-              SET poster = $5,
-              SET serieID = $6,
+  const q = `UPDATE serie SET
+              name = $1,
+              number = $2,
+              airDate = $3,
+              description = $4,
+              poster = $5,
+              serieID = $6
               WHERE id = $7`;
 
   try {
@@ -260,12 +260,12 @@ export async function getEpisodeByUser(episodeID, userID) {
 
 // Gæti þurft að laga
 export async function editEpisodeById(id, data) {
-  const q = `UPDATE serie
-              SET name = $1,
-              SET number = $2,
-              SET airDate = $3,
-              SET description = $4,
-              SET seasonsID = $5,
+  const q = `UPDATE serie SET
+              name = $1,
+              number = $2,
+              airDate = $3,
+              description = $4,
+              seasonsID = $5
               WHERE id = $7`;
 
   try {
