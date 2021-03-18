@@ -29,7 +29,8 @@ export async function listSeries(offset = 0, limit = 10, search = '') {
   try {
     const q = `
       SELECT * FROM series  ${searchPart}
-        OFFSET $1 LIMIT $2
+        ORDER BY id ASC
+        OFFSET $1 LIMIT $2 
       `;
 
     const queryResult = await query(q, values);
@@ -38,16 +39,29 @@ export async function listSeries(offset = 0, limit = 10, search = '') {
       result = queryResult.rows;
     }
   } catch (e) {
-    console.error('Error selecting signatures', e);
+    console.error('Error selecting tv series', e);
   }
   return result;
 }
 
-export async function getSerieById(id) {
+export async function getSerieById(id, offset = 0, limit = 10, search = '') {
   // if (!isInt(id)) {
   //   return null;
   // }
-  const q = 'SELECT * FROM series WHERE id = $1';
+  const values = [offset, limit];
+
+  let searchPart = '';
+  if (search) {
+    searchPart = `
+        WHERE
+        to_tsvector('english', name) @@ plainto_tsquery('english', $3)
+        OR
+        to_tsvector('english', comment) @@ plainto_tsquery('english', $3)
+      `;
+    values.push(search);
+  }
+
+  const q = `SELECT * FROM series ${searchPart} WHERE id = $1`;
   let result;
   try {
     result = await query(q, [id]);

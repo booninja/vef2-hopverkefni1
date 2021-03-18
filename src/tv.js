@@ -29,12 +29,12 @@ async function getTv(req, res) {
 
   const errors = [];
 
-  const registrations = await listSeries(offset, limit);
+  const series = await listSeries(offset, limit);
   res.json(
     {
       limit,
       offset,
-      items: { registrations },
+      items: { series },
       _links: {
         self: {
           href: req.query,
@@ -49,6 +49,10 @@ async function getTv(req, res) {
 
 async function readSerie(req, res) {
   const { id } = req.params;
+  let { page = 1 } = req.query;
+  const { offset = 0, limit = 10 } = req.query;
+
+  page = setPagenumber(page);
 
   const series = await getSerieById(id);
   const genre = await getGenreBySerieId(id);
@@ -57,7 +61,21 @@ async function readSerie(req, res) {
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
-  return res.json({ series, genre, seasons });
+  return res.json(
+    {
+      limit,
+      offset,
+      items: { series, genre, seasons },
+      _links: {
+        self: {
+          href: req.query,
+        },
+        next: {
+          href: req.query,
+        },
+      },
+    },
+  );
 }
 
 async function readSeasons(req, res) {
