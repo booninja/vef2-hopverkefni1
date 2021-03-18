@@ -71,7 +71,7 @@ export async function getGenreBySerieId(id) {
     console.error('Villa við að sækja serieID', e);
   }
 
-  if (result.rows.length !== 1) {
+  if (result.rows.length === 0) {
     return null;
   }
   console.info(result.rows);
