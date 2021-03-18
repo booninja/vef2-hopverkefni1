@@ -5,10 +5,10 @@ import xss from 'xss';
 import { catchErrors, setPagenumber, PAGE_SIZE } from './utils.js';
 import {
   getSerieById,
-  getGenreBySerieID,
+  getGenreBySerieId,
   listSeries,
   getSeasonById,
-  // getSeasonsById,
+  getSeasonsByID,
   getEpisodeById,
   deleteSerieById,
   deleteEpisodeById,
@@ -16,6 +16,7 @@ import {
   getAllSeasons,
   getGenres,
 } from './tvQueries.js';
+
 import { insertSeries } from './csvReader.js';
 
 export const router = express.Router();
@@ -49,10 +50,10 @@ async function getTv(req, res) {
 async function readSerie(req, res) {
   const { id } = req.params;
 
-  const series = await getSerieByID(id);
-  const genre = await getGenreBySerieID(id);
-  const seasons = await getSeasonByID(id);
-  console.info(series);
+  const series = await getSerieById(id);
+  const genre = await getGenreBySerieId(id);
+  const seasons = await getSeasonsByID(id);
+  // console.info(series);
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
@@ -62,8 +63,8 @@ async function readSerie(req, res) {
 async function readSeasons(req, res) {
   const { id } = req.params;
 
-  const series = await getSeasonsById(id);
-  console.info(series);
+  const series = await getSeasonsByID(id);
+  // console.info(series);
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
@@ -127,10 +128,10 @@ async function readGenres(req, res) {
   );
 }
 
-router.get('/tv', catchErrors(getTv));// series
+router.get('/', catchErrors(getTv));// series
 
 // ekki er kannað hvort það er rétt form með validation
-router.post('/tv', (req, res) => {
+router.post('/', (req, res) => {
   // kanna user
   const { user } = req;
   const data = req.body;
