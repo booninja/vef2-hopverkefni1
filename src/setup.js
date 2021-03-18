@@ -50,7 +50,7 @@ export async function query(q, v = []) {
 async function main() {
   console.info(`Set upp gagnagrunn á ${connectionString}`);
   // droppa töflu ef til
-  await query('DROP TABLE IF EXISTS series, categories, seasons, episodes, users CASCADE');
+  await query('DROP TABLE IF EXISTS series, categories, seasons, episodes, users, seriestocategories CASCADE');
   console.info('Töflu eytt');
 
   // búa til töflu út frá skema

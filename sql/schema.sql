@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS series(
-  id serial PRIMARY KEY,
+  id integer PRIMARY KEY,
   name varchar(255) not null,
   airDate date,
   inProduction boolean,
@@ -18,18 +18,18 @@ CREATE TABLE IF NOT EXISTS categories(
 
 CREATE TABLE IF NOT EXISTS seriesToCategories(
   id serial PRIMARY KEY,
-  seriesID integer REFERENCES series (id),
-  categoryID integer REFERENCES categories (id)
+  serieID integer REFERENCES series (id) NOT NULL,
+  categoryID integer REFERENCES categories (id) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS seasons(
   id serial PRIMARY KEY,
   name varchar(255) not NULL,
-  number integer CHECK (number > 0),
+  number integer CHECK (number > 0) NOT NULL,
   airDate date,
   description text,
   poster varchar(255) not null,
-  seriesID integer REFERENCES series (id)
+  serieID integer REFERENCES series (id)
 );
 
 CREATE TABLE IF NOT EXISTS episodes(
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS episodes(
   number integer CHECK (number > 0), 
   airDate date,
   description text,
-  seasonsID integer REFERENCES seasons (id)
+  seasonID integer REFERENCES seasons (id)
 );
 
 CREATE TABLE IF NOT EXISTS users(

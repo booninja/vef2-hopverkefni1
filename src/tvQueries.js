@@ -66,6 +66,32 @@ export async function getSerieByID(id) {
   return result.rows;
 }
 
+export async function getSerieByID2(id) {
+  // if (!isInt(id)) {
+  //   return null;
+  // }
+
+  const q = `
+  SELECT 
+  s.id, s.title, s.airDate, s.tagline, s.inProduction, s.poster, s.description, s.language, 
+  s.network, s.website, c.name as category_name, se
+  FROM series WHERE id = $1`;
+
+  SELECT * FROM seriesToCategories WHERE seriesID = id LEFT JOIN series, categories; 
+  let result;
+  try {
+    result = await query(q, [id]);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+
+  if (result.rows.length !== 1) {
+    return null;
+  }
+  console.info(result.rows);
+  return result.rows;
+}
+
 export async function deleteSerieByID(id) {
   const q = 'DELETE FROM series WHERE id = $1';
 
@@ -139,15 +165,4 @@ export async function deleteEpisodeByID(id) {
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
-}
-
-export async function getUsers() {
-  const q = 'SELECT * FROM users';
-  let result;
-  try {
-    result = await query(q);
-  } catch (e) {
-    console.error('Villa við að sækja gögn ', e);
-  }
-  return result.rows;
 }
