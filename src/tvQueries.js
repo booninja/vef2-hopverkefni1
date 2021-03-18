@@ -56,39 +56,29 @@ export async function getSerieByID(id) {
   try {
     result = await query(q, [id]);
   } catch (e) {
-    console.error('Villa við að sækja gögn', e);
+    console.error('Villa við að sækja seriesID', e);
   }
 
   if (result.rows.length !== 1) {
     return null;
   }
-  console.info(result.rows);
+  // console.info(result.rows);
   return result.rows;
 }
 
-export async function getSerieByID2(id) {
-  // if (!isInt(id)) {
-  //   return null;
-  // }
-
-  const q = `
-  SELECT 
-  s.id, s.title, s.airDate, s.tagline, s.inProduction, s.poster, s.description, s.language, 
-  s.network, s.website, c.name as category_name, se
-  FROM series WHERE id = $1`;
-
-  SELECT * FROM seriesToCategories WHERE seriesID = id LEFT JOIN series, categories; 
+export async function getGenreBySerieID(id) {
+  const q = 'SELECT c.name FROM categories c JOIN seriesToCategories ON seriesToCategories.categoryID = c.id WHERE seriesToCategories.serieid = $1';
   let result;
   try {
     result = await query(q, [id]);
   } catch (e) {
-    console.error('Villa við að sækja gögn', e);
+    console.error('Villa við að sækja seriesID', e);
   }
 
   if (result.rows.length !== 1) {
     return null;
   }
-  console.info(result.rows);
+  // console.info(result.rows);
   return result.rows;
 }
 
@@ -115,7 +105,7 @@ export async function getAllSeasons() {
 }
 
 export async function getSeasonByID(id) {
-  const q = 'SELECT * FROM seasons WHERE id = $1';
+  const q = 'SELECT * FROM seasons WHERE serieid = $1';
   let result;
   try {
     result = await query(q, [id]);

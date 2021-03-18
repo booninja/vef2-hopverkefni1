@@ -1,6 +1,6 @@
 import express from 'express';
 import { catchErrors, setPagenumber, PAGE_SIZE } from './utils.js';
-import { getSerieByID, listSeries, getSeasonByID, getEpisodeByID } from './tvQueries.js';
+import { getSerieByID, getGenreBySerieID, listSeries, getSeasonByID, getEpisodeByID } from './tvQueries.js';
 
 export const router = express.Router();
 
@@ -13,7 +13,6 @@ async function tv(req, res) {
   const errors = [];
 
   const registrations = await listSeries(offset, limit);
-  console.log(registrations);
   res.json(
     {
       limit,
@@ -35,11 +34,13 @@ async function readSeries(req, res) {
   const { id } = req.params;
 
   const series = await getSerieByID(id);
+  const genre = await getGenreBySerieID(id);
+  const seasons = await getSeasonByID(id);
   console.info(series);
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
-  return res.json(series);
+  return res.json({series, genre, seasons});
 }
 
 async function readSeasons(req, res) {
@@ -63,11 +64,6 @@ async function readEpisode(req, res) {
   }
   return res.json(series);
 }
-
-
-
-
-
 
 // router.get('/tv', catchErrors(tv));// series
 
