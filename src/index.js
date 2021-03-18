@@ -59,13 +59,11 @@ async function indexRoute(req, res) {
   );
 }
 
-async function index(req, res) {
+async function getSeries(req, res,) {
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
 
   page = setPagenumber(page);
-
-  const errors = [];
 
   const registrations = await listSeries(offset, limit);
   console.log(registrations);
@@ -86,32 +84,58 @@ async function index(req, res) {
   );
 }
 
+async function validationCheck(req, res, next) {
+  const {
+    limit, offset, items, _links,
+  } = req.body;
+
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.json({ errors: validation.errors});
+  }
+  return next();
+}
+
+// async function changeSeries(req, res) {
+//   const {
+//     limit, offset, items, _links,
+//   } = req.body;
+//   let success = true;
+
+//   const series = await getSerieById(id);
+//   console.info(series);
+//   if (!series) {
+//     return res.status(404).json({ error: 'Series not found' });
+//   }
+//   return res.json( series );
+// }
+
+
 router.get('/', indexRoute);
 
 // hér fyrir neðan eru allar skipanirnar fyrir allar síðurnar, held að best er að
 // taka eina í einu og vinna þannig niður
 
-router.get('/tv', catchErrors(index));// series
+router.get('/tv', catchErrors(getSeries));// series
+//router.get('/genres', catchErrors(readSeasons));
 
-  // router.post('/tv', catchErrors(insertSeries)); //insertSeries
+//router.post('/tv', catchErrors(validationCheck)), catchErrors(changeSeries); //insertSeries
 
-  // router.get('/tv/:id', catchErrors(readSeries));//series
-  // router.patch('/tv/:id', catchErrors(updateSerie));
-  // router.delete('/tv/:id', catchErrors(updateSerie));
+  // router.get('/tv/:id', catchErrors(getSerieById));//series
+  // router.patch('/tv/:id', catchErrors(editSerieById));
+  // router.delete('/tv/:id', catchErrors(deleteSerieById));
 
-  // router.post('/tv/:id/rate', catchErrors(rateSeries));
-  // router.patch('/tv/:id/rate', catchErrors(rateSeries));
-  // router.delete('/tv/:id/rate', catchErrors(rateSeries));
+  // router.post('/tv/:id/rate', catchErrors(updateEpisodeRating));
+  // router.patch('/tv/:id/rate', catchErrors(updateEpisodeRating));
+  // router.delete('/tv/:id/rate', catchErrors(updateEpisodeRating));
 
-  // router.post('/tv/:id/state', catchErrors(stateSeries));
-  // router.patch('/tv/:id/state', catchErrors(stateSeries));
-  // router.delete('/tv/:id/state', catchErrors(stateSeries));
+  // router.post('/tv/:id/state', catchErrors(updateEpisodeStatus));
+  // router.patch('/tv/:id/state', catchErrors(updateEpisodeStatus));
+  // router.delete('/tv/:id/state', catchErrors(updateEpisodeStatus));
 
   // router.get('/tv/:id/season', catchErrors(readSeasons));
   // router.post('/tv/:id/season', catchErrors(readSeasons));
-
-  // router.get('/tv/:id/season', catchErrors(readSeason));
-  // router.delete('/tv/:id/season', catchErrors(readSeason));
 
   // router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
 
@@ -172,3 +196,9 @@ router.get('/tv', catchErrors(index));// series
   router.get('/users/me', requireAuth, catchErrors(currentUser));
   router.patch('/users/me', requireAuth, catchErrors(updateCurrentUser));
 */
+
+
+
+
+//minn user
+//{"email": "fallegtblom@net.is","username": "blom", "password": "1234567890"}
