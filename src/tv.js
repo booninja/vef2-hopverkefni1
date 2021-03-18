@@ -10,11 +10,13 @@ import {
   getSeasonById,
   getSeasonsByID,
   getEpisodeById,
+  getEpisodesById,
   deleteSerieById,
   deleteEpisodeById,
   deleteSeasonById,
   getAllSeasons,
   getGenres,
+
 } from './tvQueries.js';
 
 import { insertSeries } from './csvReader.js';
@@ -90,13 +92,16 @@ async function readSeasons(req, res) {
 
 async function readSeason(req, res) {
   const { id, season } = req.params;
-
+  console.log("hello");
+  console.log("<<<<", id);
   const series = await getSeasonById(id, season);
+  const episodes = await getEpisodesById(id, season);
+  console.log("kemst")
   console.info(series);
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
-  return res.json(series);
+  return res.json({series, episodes});
 }
 
 async function deleteSeason(req, res) {
@@ -118,11 +123,9 @@ async function readEpisode(req, res) {
 }
 
 async function readGenres(req, res) {
-  console.log('hellp');
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
 
-  console.log('hhææææææ');
 
   page = setPagenumber(page);
 
@@ -161,7 +164,7 @@ router.get('/genres', catchErrors(readGenres));
 // router.post('/genres', catchErrors());
 
 router.get('/:id', catchErrors(readSerie));// serie
-// router.patch('/tv/:id', catchErrors(updateSerie));
+ //router.patch('/tv/:id', catchErrors(updateSerie));
 // router.delete('/:id', catchErrors(deleteSerie));
 
 // router.post('/tv/:id/rate', catchErrors(rateSeries));

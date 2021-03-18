@@ -30,7 +30,7 @@ export async function listSeries(offset = 0, limit = 10, search = '') {
     const q = `
       SELECT * FROM series  ${searchPart}
         ORDER BY id ASC
-        OFFSET $1 LIMIT $2 
+        OFFSET $1 LIMIT $2
       `;
 
     const queryResult = await query(q, values);
@@ -216,10 +216,32 @@ export async function getAllEpisodes() {
 }
 
 export async function getEpisodeById(id, season, episode) {
-  const q = `SELECT * FROM episodes WHERE serieID = $1 AND season = $2 AND number = $3`;
+  const q = `SELECT * FROM episodes WHERE serieID = $1 AND seasonID = $2 AND number = $3`;
   let result;
   try {
     result = await query(q, [id, season, episode]);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+  return result.rows;
+}
+export async function getEpisodesById(id, season) {
+  const q = `SELECT name, number, airDate, description FROM episodes WHERE serieID = $1 AND seasonID = $2`;
+  let result;
+  try {
+    result = await query(q, [id, season]);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+  return result.rows;
+}
+
+export async function getEpisodesdfsdById(id, season) {
+  const q = `SELECT * FROM episodes WHERE serieID = $1 AND season = $2`;
+  let result;
+  console.log('hello');
+  try {
+    result = await query(q, [id, season]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }

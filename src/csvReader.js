@@ -124,8 +124,8 @@ export async function readEpisodes() {
 // }
 
 async function insertEpisodes(data) {
-  const q = `INSERT INTO episodes (name,number,airDate,description,seasonID)
-  VALUES ($1,$2,$3,$4,$5)`;
+  const q = `INSERT INTO episodes (name,number,airDate,description, seasonID, season,  serieID)
+  VALUES ($1,$2,$3,$4,$5, $6, $7)`;
   const q2 = `SELECT id FROM seasons WHERE number = $1 AND serieID = $2`;
   if (data.airDate === '') data.airDate = null;
   // console.log(typeof(data.number), ', ', typeof(data.serieId));
@@ -139,7 +139,9 @@ async function insertEpisodes(data) {
         parseInt(data.number),
         data.airDate,
         data.overview,
-        result[0].id,
+        data.season,
+        data.serie,
+        data.serieId
       ]);
   } catch (e) {
     console.error('Villa við að bæta gögnum við inn í Episodes ', e);
