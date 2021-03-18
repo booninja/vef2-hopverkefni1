@@ -16,6 +16,7 @@ import {
   deleteSeasonById,
   getAllSeasons,
   getGenres,
+  editSerieById,
 
 } from './tvQueries.js';
 
@@ -122,6 +123,13 @@ async function readEpisode(req, res) {
   return res.json(series);
 }
 
+async function deleteEpisode(req, res) {
+  const { id, season, episode } = req.params;
+
+  const series = await deleteEpisodeById(id, season, episode);
+  return res.json('Season deleted');
+}
+
 async function readGenres(req, res) {
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
@@ -152,8 +160,6 @@ router.get('/', catchErrors(getTv));// series
 
 // ekki er kannað hvort það er rétt form með validation
 router.post('/', (req, res) => {
-  // kanna user
-  const { user } = req;
   const data = req.body;
   insertSeries(data);
   console.log('Data added');
@@ -161,10 +167,18 @@ router.post('/', (req, res) => {
 });
 
 router.get('/genres', catchErrors(readGenres));
-// router.post('/genres', catchErrors());
+//router.post('/genres', catchErrors(updateGenre));
 
 router.get('/:id', catchErrors(readSerie));// serie
- //router.patch('/tv/:id', catchErrors(updateSerie));
+
+router.patch('/:id', (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  console.log('blalba');
+  editSerieById(id, data);
+  console.log('Data added');
+  res.json('Data changed');
+});
 // router.delete('/:id', catchErrors(deleteSerie));
 
 // router.post('/tv/:id/rate', catchErrors(rateSeries));
@@ -184,7 +198,7 @@ router.delete('/:id/season/:season', catchErrors(deleteSeason));
 // router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
 
 router.get('/:id/season/:season/episode/:episode', catchErrors(readEpisode));
-router.delete('/:id/season/:season/episode/:episode', catchErrors(readEpisode));
+router.delete('/:id/season/:season/episode/:episode', catchErrors(deleteEpisode));
 
 /*
 
