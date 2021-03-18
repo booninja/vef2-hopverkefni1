@@ -10,6 +10,17 @@ export async function readSeries() {
       // console.log(row);
       await insertSeries(row);
       await insertCategories(row);
+    })
+    .on('end', () => {
+      console.info('CSV file successfully processed');
+    });
+}
+
+export async function readSeriesToCategories() {
+  fs.createReadStream('./data/series.csv')
+    .pipe(csv())
+    .on('data', async (row) => {
+      // console.log(row);
       await insertSeriesToCategories(row);
     })
     .on('end', () => {
