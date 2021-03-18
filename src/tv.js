@@ -8,14 +8,15 @@ import {
   getGenreBySerieID,
   listSeries,
   getSeasonById,
-  getSeasonsById,
+  // getSeasonsById,
   getEpisodeById,
   deleteSerieById,
   deleteEpisodeById,
   deleteSeasonById,
   getAllSeasons,
-  getGenres} from './tvQueries.js';
-import { insertSeries} from './csvReader.js';
+  getGenres,
+} from './tvQueries.js';
+import { insertSeries } from './csvReader.js';
 
 export const router = express.Router();
 
@@ -55,7 +56,7 @@ async function readSerie(req, res) {
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
-  return res.json({series, genre, seasons});
+  return res.json({ series, genre, seasons });
 }
 
 async function readSeasons(req, res) {
@@ -84,7 +85,7 @@ async function deleteSeason(req, res) {
   const { id, season } = req.params;
 
   const series = await deleteSeasonById(id, season);
-  return res.json( "Season deleted" );
+  return res.json('Season deleted');
 }
 
 async function readEpisode(req, res) {
@@ -99,11 +100,11 @@ async function readEpisode(req, res) {
 }
 
 async function readGenres(req, res) {
-  console.log("hellp");
+  console.log('hellp');
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
 
-  console.log("hhææææææ");
+  console.log('hhææææææ');
 
   page = setPagenumber(page);
 
@@ -124,47 +125,45 @@ async function readGenres(req, res) {
       },
     },
   );
-
 }
 
-  router.get('/tv', catchErrors(getTv));// series
+router.get('/tv', catchErrors(getTv));// series
 
-//ekki er kannað hvort það er rétt form með validation
- router.post('/tv', (req, res) => {
-    //kanna user
-    const user = req.user;
-        const data = req.body;
-        insertSeries(data);
-        console.log('Data added');
-        getTv(req, res); //kannski skila þessu eftir post?
-  });
+// ekki er kannað hvort það er rétt form með validation
+router.post('/tv', (req, res) => {
+  // kanna user
+  const { user } = req;
+  const data = req.body;
+  insertSeries(data);
+  console.log('Data added');
+  getTv(req, res); // kannski skila þessu eftir post?
+});
 
-  router.get('/genres', catchErrors(readGenres));
-  //router.post('/genres', catchErrors());
+router.get('/genres', catchErrors(readGenres));
+// router.post('/genres', catchErrors());
 
-  router.get('/:id', catchErrors(readSerie));//serie
-  // router.patch('/tv/:id', catchErrors(updateSerie));
-  router.delete('/:id', catchErrors(deleteSerie));
+router.get('/:id', catchErrors(readSerie));// serie
+// router.patch('/tv/:id', catchErrors(updateSerie));
+// router.delete('/:id', catchErrors(deleteSerie));
 
-  // router.post('/tv/:id/rate', catchErrors(rateSeries));
-  // router.patch('/tv/:id/rate', catchErrors(rateSeries));
-  // router.delete('/tv/:id/rate', catchErrors(rateSeries));
+// router.post('/tv/:id/rate', catchErrors(rateSeries));
+// router.patch('/tv/:id/rate', catchErrors(rateSeries));
+// router.delete('/tv/:id/rate', catchErrors(rateSeries));
 
-  // router.post('/tv/:id/state', catchErrors(stateSeries));
-  // router.patch('/tv/:id/state', catchErrors(stateSeries));
-  // router.delete('/tv/:id/state', catchErrors(stateSeries));
+// router.post('/tv/:id/state', catchErrors(stateSeries));
+// router.patch('/tv/:id/state', catchErrors(stateSeries));
+// router.delete('/tv/:id/state', catchErrors(stateSeries));
 
-  router.get('/:id/season', catchErrors(readSeasons));
-  //router.post('/:id/season', catchErrors());
+router.get('/:id/season', catchErrors(readSeasons));
+// router.post('/:id/season', catchErrors());
 
-  router.get('/:id/season/:season', catchErrors(readSeason));     //vantar overview
-  router.delete('/:id/season/:season', catchErrors(deleteSeason));
+router.get('/:id/season/:season', catchErrors(readSeason)); // vantar overview
+router.delete('/:id/season/:season', catchErrors(deleteSeason));
 
-  // router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
+// router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
 
-  router.get('/:id/season/:season/episode/:episode', catchErrors(readEpisode));
-  router.delete('/:id/season/:season/episode/:episode', catchErrors(readEpisode));
-
+router.get('/:id/season/:season/episode/:episode', catchErrors(readEpisode));
+router.delete('/:id/season/:season/episode/:episode', catchErrors(readEpisode));
 
 /*
 
@@ -173,7 +172,6 @@ async function readGenres(req, res) {
   "poster":"https://res.cloudinary.com/vefforritun-hop1-rovv/image/upload/wRbjVBdDo5qHAEOVYoMWpM58FSA.jpg",
   "description":"Set in the present, the series offers a bold, subversive take on Archie, Betty, Veronica and their friends, exploring the surreality of small-town life, the darkness and weirdness bubbling beneath Riverdale’s wholesome facade.",
   "language":"en","network":"The CW","website":null}]
-
 
   {"id":2,"name":"Riverdale","air_date":"2017-01-26T00:00:00.000Z","in_production":true,
   "tagline":"Small town. Big secrets.",
@@ -193,10 +191,6 @@ async function readGenres(req, res) {
   {"name":"Season 5","number":"5","air_date":"2021-01-20T00:00:00.000Z","overview":null,
   "poster":"https://res.cloudinary.com/dhy3vquyz/image/upload/v1614710075/kynyzcgwtfsd7psbcjia.jpg"}]}
   */
-
-
-
-
 
 /*
 async function validationCheck(req, res, next) {

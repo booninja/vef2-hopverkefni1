@@ -29,8 +29,7 @@ CREATE TABLE IF NOT EXISTS seasons(
   airDate date,
   description text,
   poster varchar(255) not null,
-  serie varchar(255) not NULL,
-  seriesID integer REFERENCES series (id)
+  serieID integer REFERENCES series (id)
 );
 
 CREATE TABLE IF NOT EXISTS episodes(
@@ -39,9 +38,7 @@ CREATE TABLE IF NOT EXISTS episodes(
   number integer CHECK (number > 0),
   airDate date,
   description text,
-  season integer,
-  serie varchar(255),
-  seriesID integer REFERENCES series (id)
+  seasonID integer REFERENCES seasons (id)
 );
 
 CREATE TABLE IF NOT EXISTS users(
