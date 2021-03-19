@@ -17,7 +17,7 @@ dotenv.config();
 
 const {
     ACCESS_TOKEN_SECRET: jwtSecret,
-    ACCESS_TOKEN_LIFETIME: tokenLifetime = 30000000000000 
+    ACCESS_TOKEN_LIFETIME: tokenLifetime = "30m"
 } = process.env;
 
 if (!jwtSecret) {
@@ -70,6 +70,7 @@ export function requireAuthentication(req, res, next) {
   )(req, res, next);
 }
   
+
 // tharf ad utfaera
 export function requireAdminAuthentication(req, res, next) {
     return passport.authenticate('jwt', { session: false }, (err, user, info) => {
@@ -93,16 +94,24 @@ export function requireAdminAuthentication(req, res, next) {
     )(req, res, next);
 }
 
-router.get('/', requireAuthentication, async (req, res) => {
+router.get('/', requireAdminAuthentication, async (req, res) => {
     if (await !findByUsername("Teitur")) {
         await createUser({name: "Teitur", email: "teg6@hi.is", password: "cringe"});
     }
     res.json(users);
 });
 
-//router.get('/:id', requireAdminAuthentication, param('id'), async (req, res) => {
-//    const user = await findById(req.params.id);
-//});
+router.get('/:id', requireAdminAuthentication, async (req, res) => {
+    const user = await findById(req.params.id);
+    if (!user) {
+        res.status(404).json({message: "Notandi fannst ekki"});
+    }
+    try {
+        res.json(user);
+    } catch {
+        res.status(500).json({message: "Eitthvað mistókst við að sækja notanda"});
+    }
+});
 
 router.post('/register', async (req, res) => {
     const newUser = { name: req.body.name, email: req.body.email, password: req.body.password};
@@ -118,18 +127,12 @@ router.post('/register', async (req, res) => {
     try {
         await createUser(newUser);
         res.status(201).json({message: "Notandi " + newUser.name + " búinn til"});
-
-        // ~~ her aetti ad koma jwt token ~~
-        //const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET);
-        //res.json({ accessToken: accessToken });
-        
     } catch {
         res.status(500).json({message: "Eitthvað mistókst við nýskráningu"});
     }
 });
 
 router.post('/login', async (req, res) => {
-    // her tharf ad bera saman notenda vid gagnagrunn
     const user = await findByUsername(req.body.name);
     if (!user) {
         return res.status(400).json({message:'Notandi fannst ekki'});
@@ -141,16 +144,17 @@ router.post('/login', async (req, res) => {
         if (loginCheck) {
             // her kemur jwt token
             const token = createJwtToken(user.id);
-            return res.json({"token": token});
-            //return res.json({ 
-            //    "user": {
-            //        id: user.id,
-            //        username: user.name,
-            //        email: user.email,
-            //        admin: user.admin
-            //    },
-            //    token 
-            //});
+            //return res.json({"token": token});
+            return res.json({ 
+                "user": {
+                    id: user.id,
+                    username: user.name,
+                    email: user.email,
+                    admin: user.admin
+                },
+                token,
+                expiresIn: Number(tokenLifetime)
+            });
         } else {
             return res.status(500).json({message: "Rangt lykilorð"});
         }
