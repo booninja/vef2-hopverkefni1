@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import { query, addPageMetadata } from './utils.js';
 
 export async function getAllSeries() {
@@ -93,7 +94,7 @@ export async function getGenreBySerieId(id) {
 }
 
 export async function editSerieById(id, data) {
-   const q = `UPDATE series SET
+  const q = `UPDATE series SET
               name = $1,
               airDate = $2,
               inProduction = $3,
@@ -104,10 +105,10 @@ export async function editSerieById(id, data) {
               network = $8,
               website = $9
               WHERE id = $10`;
-  let result;
+
   try {
-    result = await query(q,
-      [ data.name,
+    await query(q,
+      [data.name,
         data.airDate,
         data.inProduction,
         data.tagline,
@@ -117,18 +118,18 @@ export async function editSerieById(id, data) {
         data.network,
         data.website,
         id,
-    ]);
+      ]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
 }
 
 export async function deleteSerieById(id) {
-  const q = `DELETE FROM series WHERE id = $1`;
+  const q = `DELETE FROM series 
+             WHERE id = $1`;
 
   try {
     await query(q, [id]);
-    console.log('sería deletuð');
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
@@ -157,7 +158,10 @@ export async function getSeasonsByID(id) {
 }
 
 export async function getSeasonById(id, season) {
-  const q = `SELECT * FROM seasons WHERE serieID = $1 AND number = $2`;
+  const q = `SELECT * FROM seasons 
+             WHERE serieID = $1 
+             AND number = $2`;
+
   let result;
   try {
     result = await query(q, [id, season]);
@@ -179,22 +183,24 @@ export async function editSeasonById(id, data) {
               WHERE id = $7`;
 
   try {
-    result = await query(q,
-      [ data.name,
+    await query(q,
+      [data.name,
         data.number,
         data.airDate,
         data.description,
         data.poster,
         data.serieID,
-        id
-    ]);
+        id,
+      ]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
 }
 
 export async function deleteSeasonById(serieId, season) {
-  const q = `DELETE FROM seasons WHERE serieID = $1 and number = $2`;
+  const q = `DELETE FROM seasons 
+             WHERE serieID = $1 
+             AND number = $2`;
 
   try {
     await query(q, [serieId, season]);
@@ -215,7 +221,11 @@ export async function getAllEpisodes() {
 }
 
 export async function getEpisodeById(id, season, episode) {
-  const q = `SELECT * FROM episodes WHERE serieID = $1 AND seasonNumber = $2 AND number = $3`;
+  const q = `SELECT * FROM episodes 
+  WHERE serieID = $1 
+  AND seasonNumber = $2 
+  AND number = $3`;
+
   let result;
   try {
     result = await query(q, [id, season, episode]);
@@ -225,7 +235,9 @@ export async function getEpisodeById(id, season, episode) {
   return result.rows;
 }
 export async function getEpisodesById(id, season) {
-  const q = `SELECT name, number, airDate, description FROM episodes WHERE serieID = $1 AND seasonNumber = $2`;
+  const q = `SELECT name, number, airDate, description FROM episodes 
+  WHERE serieID = $1 
+  AND seasonNumber = $2`;
   let result;
   try {
     result = await query(q, [id, season]);
@@ -236,7 +248,9 @@ export async function getEpisodesById(id, season) {
 }
 
 export async function deleteEpisodeById(id, season, episode) {
-  const q = `DELETE FROM episodes WHERE serieID = $1 AND seasonNumber = $2 AND number = $3`;
+  const q = `DELETE FROM episodes WHERE serieID = $1 
+  AND seasonNumber = $2 
+  AND number = $3`;
 
   try {
     await query(q, [id, season, episode]);
@@ -246,8 +260,9 @@ export async function deleteEpisodeById(id, season, episode) {
 }
 
 export async function getEpisodeByUser(episodeID, userID) {
-  const q = `SELECT * FROM EpisodeToUser WHERE
-              episodeID = $1 AND userID = $2`;
+  const q = `SELECT * FROM EpisodeToUser 
+  WHERE episodeID = $1 
+  AND userID = $2`;
 
   let result;
   try {
@@ -269,14 +284,14 @@ export async function editEpisodeById(id, data) {
               WHERE id = $7`;
 
   try {
-    result = await query(q,
-      [ data.name,
+    await query(q,
+      [data.name,
         data.number,
         data.airDate,
         data.description,
         data.seasonsID,
-        id
-    ]);
+        id,
+      ]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
@@ -287,13 +302,12 @@ export async function updateEpisodeStatus(id, episodeID, userID, status) {
   const q = `UPDATE EpisodeToUser SET status = $1
               WHERE id = $2 AND episodeID = $3 AND userID = $4`;
 
-  let result;
   try {
-    result = await query(q,
-      [ status,
+    await query(q,
+      [status,
         id,
         episodeID,
-        userID
+        userID,
       ]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
@@ -303,15 +317,16 @@ export async function updateEpisodeStatus(id, episodeID, userID, status) {
 // Gæti þurft að laga
 export async function updateEpisodeRating(id, episodeID, userID, rating) {
   const q = `UPDATE EpisodeToUser SET rating = $1
-              WHERE id = $2 AND episodeID = $3 AND userID = $4`;
+              WHERE id = $2 
+              AND episodeID = $3 
+              AND userID = $4`;
 
-  let result;
   try {
-    result = await query(q,
-      [ rating,
+    await query(q,
+      [rating,
         id,
         episodeID,
-        userID
+        userID,
       ]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
@@ -332,7 +347,7 @@ export async function getGenressd() {
 
 export async function getGenres(offset = 0, limit = 10, search = '') {
   const values = [offset, limit];
-  console.log("hello");
+
   let searchPart = '';
   if (search) {
     searchPart = `
