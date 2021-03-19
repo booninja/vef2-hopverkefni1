@@ -33,10 +33,12 @@ export async function query(_query, values = []) {
 
 // athugar ef rett lykilorð var slegið inn
 export async function comparePasswords(password, dbPassword) {
+  console.log(`comparePasswords: password: ${password}`);
+  console.log(`comparePasswords: dbPassword: ${dbPassword}`);
   const checkPassword = await bcrypt.compare(password, dbPassword);
   console.log(`checkPassword: ${checkPassword}`);
   if (checkPassword) {
-    return user;
+    return true;
   }
   return false;
 }

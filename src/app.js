@@ -20,7 +20,6 @@ app.use(express.json());
 
 app.use('/', apiRouter);
 app.use('/tv', tvRouter);
-
 app.use('/users', userRouter);
 
 function notFoundHandler(req, res, next) { // eslint-disable-line
