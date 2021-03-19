@@ -20,7 +20,7 @@ import {
 
 } from './tvQueries.js';
 
-import { insertSeries} from './csvReader.js';
+import { insertSeries, insertSeasonsById, singleInsertCategories} from './csvReader.js';
 
 export const router = express.Router();
 
@@ -100,11 +100,8 @@ async function readSeasons(req, res) {
 
 async function readSeason(req, res) {
   const { id, season } = req.params;
-  console.log("hello");
-  console.log("<<<<", id);
   const series = await getSeasonById(id, season);
   const episodes = await getEpisodesById(id, season);
-  console.log("kemst")
   console.info(series);
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
@@ -141,7 +138,6 @@ async function readGenres(req, res) {
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
 
-
   page = setPagenumber(page);
 
   const registrations = await getGenres(offset, limit);
@@ -174,7 +170,15 @@ router.post('/', (req, res) => {
 });
 
 router.get('/genres', catchErrors(readGenres));
-//router.post('/genres', catchErrors(updateGenre));
+
+//virkar bara fyrir eitt genre í einu þarf mörg ?
+router.post('/genres', (req, res) => {
+  const data = req.body;
+  singleInsertCategories(data);
+  console.log('Data changed');
+  res.json('Data changed');
+});
+
 
 router.get('/:id', catchErrors(readSerie));// serie
 router.delete('/:id', catchErrors(deleteSerie));
@@ -196,13 +200,13 @@ router.patch('/:id', (req, res) => {
 // router.delete('/tv/:id/state', catchErrors(stateSeries));
 
 router.get('/:id/season', catchErrors(readSeasons));
-// router.post('/:id/season', catchErrors());
-
-/*router.post('/:id/season', (req, res) => {
+router.post('/:id/season', (req, res) => {
+  const { id } = req.params;
   const data = req.body;
-  insertSeasons(data);
+  insertSeasonsById(data, id);
   console.log('Data changed');
-});*/
+  res.json('data changed');
+});
 
 router.get('/:id/season/:season', catchErrors(readSeason)); // vantar overview
 router.delete('/:id/season/:season', catchErrors(deleteSeason));

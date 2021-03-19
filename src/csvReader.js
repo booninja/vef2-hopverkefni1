@@ -90,6 +90,26 @@ async function insertSeasons(data) {
   }
 }
 
+export async function insertSeasonsById(data, id) {
+  const q = `INSERT INTO seasons (name,number,airDate,description,poster,serieID)
+              VALUES ($1,$2,$3,$4,$5,$6)`;
+
+  if (data.airDate === '') data.airDate = null;
+  console.log('Insert Season:>> ', parseInt(data.serieid));
+  try {
+    await query(q,
+      [
+        data.name,
+        parseInt(data.number),
+        data.airDate,
+        data.description,
+        `https://res.cloudinary.com/vefforritun-hop1-rovv/image/upload/${data.poster}`,
+        parseInt(id),
+      ]);
+  } catch (e) {
+    console.error('Villa við að bæta gögnum við inn í seasons', e);
+  }
+}
 export async function readEpisodes() {
   fs.createReadStream('./data/episodes.csv')
     .pipe(csv())
@@ -148,7 +168,7 @@ async function insertEpisodes(data) {
   }
 }
 
-async function insertCategories(data) {
+export async function insertCategories(data) {
   const categories = data.genres.split(',');
   const q = `INSERT INTO categories (name) VALUES ($1)
               ON CONFLICT DO NOTHING`;
@@ -159,6 +179,16 @@ async function insertCategories(data) {
       console.error('Villa við að bæta gögnum við inn í Categories ', e);
     }
   });
+}
+export async function singleInsertCategories(data) {
+  const q = `INSERT INTO categories (name) VALUES ($1)
+              ON CONFLICT DO NOTHING`;
+    try {
+      console.log("<<<<hæ", data);
+      await query(q, [data.name]);
+    } catch (e) {
+      console.error('Villa við að bæta gögnum við inn í hér ', e);
+    }
 }
 
 async function insertSeriesToCategories(data) {

@@ -348,7 +348,7 @@ export async function getGenres(offset = 0, limit = 10, search = '') {
 
   try {
     const q = `
-    SELECT * FROM categories  ${searchPart}
+    SELECT name FROM categories  ${searchPart}
         OFFSET $1 LIMIT $2
       `;
 
