@@ -95,16 +95,16 @@ export function requireAdminAuthentication(req, res, next) {
 }
 
 router.get('/', requireAdminAuthentication, async (req, res) => {
-    if (await !findByUsername("Teitur")) {
+    if (await findByUsername("Teitur") === null) {
         await createUser({name: "Teitur", email: "teg6@hi.is", password: "cringe"});
     }
     res.json(users);
 });
 
-router.get('/:id', requireAdminAuthentication, async (req, res) => {
+router.get('/:id(\\d+)', requireAdminAuthentication, async (req, res) => {
     const user = await findById(req.params.id);
     if (!user) {
-        res.status(404).json({message: "Notandi fannst ekki"});
+        return res.status(404).json({message: "Notandi fannst ekki"});
     }
     try {
         res.json(user);
