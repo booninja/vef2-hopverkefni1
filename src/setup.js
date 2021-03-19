@@ -3,6 +3,7 @@ import pg from 'pg';
 import dotenv from 'dotenv';
 import { promises as fs } from 'fs';
 import { readSeries, readSeasons, readEpisodes, readSeriesToCategories } from './csvReader.js';
+import { setupMaster } from 'cluster';
 
 async function readFileAsync(sql) {
   try {
@@ -71,12 +72,12 @@ async function main() {
     await readEpisodes();
     console.info('Þáttum bætt við gagnagrunn');
     setTimeout(async function() { await readSeriesToCategories(); }, 1000);
-    console.info('ha');
+    console.info('Tengutafla búin til');
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);
   }
 }
 
- // main().catch((err) => {
- //      console.error(err);
- // });
+main().catch((err) => {
+  console.error(err);
+});
