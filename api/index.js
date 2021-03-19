@@ -1,6 +1,17 @@
 import express from 'express';
-import { catchErrors, setPagenumber, PAGE_SIZE } from './utils.js';
-import { listSeries } from './tvQueries.js';
+import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
+import { listSeries, editSerieById } from '../src/tvQueries.js';
+import {readSerie,
+        deleteSerie,
+        readSeasons,
+        readSeason,
+        deleteSeason,
+        readEpisode,
+        deleteEpisode,
+        readGenres} from './tv.js'
+import {insertSeries,
+        insertSeasonsById,
+        singleInsertCategories} from '../src/csvReader.js';
 
 export const router = express.Router();
 async function indexRoute(req, res) {
@@ -114,44 +125,68 @@ async function validationCheck(req, res, next) {
 
 router.get('/', indexRoute);
 
+router.get('/tv', catchErrors(getSeries));// series
+
+router.post('/tv', (req, res) => {
+  const data = req.body;
+  insertSeries(data);
+  console.log('Data added');
+  getTv(req, res); // kannski skila þessu eftir post?
+});
+
+router.get('/genres', catchErrors(readGenres));
+
+//virkar bara fyrir eitt genre í einu þarf mörg ?
+router.post('/genres', (req, res) => {
+  const data = req.body;
+  singleInsertCategories(data);
+  console.log('Data changed');
+  res.json('Data changed');
+});
+
+router.get('/tv/:id', catchErrors(readSerie));// serie
+router.delete('/tv/:id', catchErrors(deleteSerie));
+
+router.patch('/tv/:id', (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  editSerieById(id, data);
+  res.json('Data changed');
+});
+
+
+router.get('/tv/:id/season', catchErrors(readSeasons));
+router.post('/tv/:id/season', (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  insertSeasonsById(data, id);
+  console.log('Data changed');
+  res.json('data changed');
+});
+
+
+router.get('/tv/:id/season/:season', catchErrors(readSeason)); // vantar overview
+router.delete('/:id/season/:season', catchErrors(deleteSeason));
+
+// router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
+
+router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
+router.delete('/tv/:id/season/:season/episode/:episode', catchErrors(deleteEpisode));
+
+
+
+
+
+
+
+
+
+
+
+
+
 // hér fyrir neðan eru allar skipanirnar fyrir allar síðurnar, held að best er að
 // taka eina í einu og vinna þannig niður
-
-router.get('/tv', catchErrors(getSeries));// series
-//router.get('/genres', catchErrors(readSeasons));
-
-//router.post('/tv', catchErrors(validationCheck)), catchErrors(changeSeries); //insertSeries
-
-  // router.get('/tv/:id', catchErrors(getSerieById));//series
-  // router.patch('/tv/:id', catchErrors(editSerieById));
-  // router.delete('/tv/:id', catchErrors(deleteSerieById));
-
-  // router.post('/tv/:id/rate', catchErrors(updateEpisodeRating));
-  // router.patch('/tv/:id/rate', catchErrors(updateEpisodeRating));
-  // router.delete('/tv/:id/rate', catchErrors(updateEpisodeRating));
-
-  // router.post('/tv/:id/state', catchErrors(updateEpisodeStatus));
-  // router.patch('/tv/:id/state', catchErrors(updateEpisodeStatus));
-  // router.delete('/tv/:id/state', catchErrors(updateEpisodeStatus));
-
-  // router.get('/tv/:id/season', catchErrors(readSeasons));
-  // router.post('/tv/:id/season', catchErrors(readSeasons));
-
-  // router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
-
-  // router.get('/tv/{id}/season/{season}/episode/{episode}', catchErrors(readEpisode));
-  // router.delete('/tv/{id}/season/{season}/episode/{episode}',  catchErrors(readEpisode));
-
-  // router.get('/genres', catchErrors(readGenre));
-  // router.post('/genres', catchErrors(readGenre));
-
-  // router.get('/users', catchErrors(listUsers));
-  // router.get('/users/:id', catchErrors(listUser));
-  // router.patch('/users/:id', catchErrors(updateUser));
-  // router.post('/users/register', catchErrors(registerUser));
-  // router.get('/users/login', catchErrors(loginUser));
-  // router.get('/users/me', catchErrors(currentUser));
-  // router.patch('/users/me', catchErrors(updateCurrentUser));
 
 
 

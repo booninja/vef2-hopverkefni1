@@ -2,7 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import xss from 'xss';
 
-import { catchErrors, setPagenumber, PAGE_SIZE } from './utils.js';
+import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
 import {
   getSerieById,
   getGenreBySerieId,
@@ -14,17 +14,14 @@ import {
   deleteSerieById,
   deleteEpisodeById,
   deleteSeasonById,
-  getAllSeasons,
   getGenres,
-  editSerieById,
+} from '../src/tvQueries.js';
 
-} from './tvQueries.js';
 
-import { insertSeries, insertSeasonsById, singleInsertCategories} from './csvReader.js';
 
 export const router = express.Router();
 
-async function getTv(req, res) {
+export async function getTv(req, res) {
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
 
@@ -50,7 +47,7 @@ async function getTv(req, res) {
   );
 }
 
-async function readSerie(req, res) {
+export async function readSerie(req, res) {
   const { id } = req.params;
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
@@ -80,14 +77,14 @@ async function readSerie(req, res) {
   );
 }
 
-async function deleteSerie(req, res) {
+export async function deleteSerie(req, res) {
   const { id } = req.params;
 
   const series = await deleteSerieById(id);
   return res.json('Serie deleted');
 }
 
-async function readSeasons(req, res) {
+export async function readSeasons(req, res) {
   const { id } = req.params;
 
   const series = await getSeasonsByID(id);
@@ -98,7 +95,7 @@ async function readSeasons(req, res) {
   return res.json(series);
 }
 
-async function readSeason(req, res) {
+export async function readSeason(req, res) {
   const { id, season } = req.params;
   const series = await getSeasonById(id, season);
   const episodes = await getEpisodesById(id, season);
@@ -109,14 +106,14 @@ async function readSeason(req, res) {
   return res.json({series, episodes});
 }
 
-async function deleteSeason(req, res) {
+export async function deleteSeason(req, res) {
   const { id, season } = req.params;
 
   const series = await deleteSeasonById(id, season);
   return res.json('Season deleted');
 }
 
-async function readEpisode(req, res) {
+export async function readEpisode(req, res) {
   const { id, season, episode } = req.params;
 
   const series = await getEpisodeById(id, season, episode);
@@ -127,14 +124,14 @@ async function readEpisode(req, res) {
   return res.json(series);
 }
 
-async function deleteEpisode(req, res) {
+export async function deleteEpisode(req, res) {
   const { id, season, episode } = req.params;
 
   const series = await deleteEpisodeById(id, season, episode);
   return res.json('Season deleted');
 }
 
-async function readGenres(req, res) {
+export async function readGenres(req, res) {
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
 
@@ -159,37 +156,12 @@ async function readGenres(req, res) {
   );
 }
 
-router.get('/', catchErrors(getTv));// series
+//router.get('/', catchErrors(getTv));// series
 
 // ekki er kannað hvort það er rétt form með validation
-router.post('/', (req, res) => {
-  const data = req.body;
-  insertSeries(data);
-  console.log('Data added');
-  getTv(req, res); // kannski skila þessu eftir post?
-});
-
-router.get('/genres', catchErrors(readGenres));
-
-//virkar bara fyrir eitt genre í einu þarf mörg ?
-router.post('/genres', (req, res) => {
-  const data = req.body;
-  singleInsertCategories(data);
-  console.log('Data changed');
-  res.json('Data changed');
-});
 
 
-router.get('/:id', catchErrors(readSerie));// serie
-router.delete('/:id', catchErrors(deleteSerie));
 
-
-router.patch('/:id', (req, res) => {
-  const { id } = req.params;
-  const data = req.body;
-  editSerieById(id, data);
-  res.json('Data changed');
-});
 
 // router.post('/tv/:id/rate', catchErrors(rateSeries));
 // router.patch('/tv/:id/rate', catchErrors(rateSeries));
@@ -199,22 +171,8 @@ router.patch('/:id', (req, res) => {
 // router.patch('/tv/:id/state', catchErrors(stateSeries));
 // router.delete('/tv/:id/state', catchErrors(stateSeries));
 
-router.get('/:id/season', catchErrors(readSeasons));
-router.post('/:id/season', (req, res) => {
-  const { id } = req.params;
-  const data = req.body;
-  insertSeasonsById(data, id);
-  console.log('Data changed');
-  res.json('data changed');
-});
 
-router.get('/:id/season/:season', catchErrors(readSeason)); // vantar overview
-router.delete('/:id/season/:season', catchErrors(deleteSeason));
 
-// router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
-
-router.get('/:id/season/:season/episode/:episode', catchErrors(readEpisode));
-router.delete('/:id/season/:season/episode/:episode', catchErrors(deleteEpisode));
 
 /*
 

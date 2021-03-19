@@ -3,9 +3,9 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { router as apiRouter } from './index.js';
+import { router as apiRouter } from '../api/index.js';
 import { router as userRouter } from './users.js';
-import { router as tvRouter } from './tv.js';
+import { router as tvRouter } from '../api/tv.js';
 
 dotenv.config();
 
