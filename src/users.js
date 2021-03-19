@@ -6,26 +6,103 @@ Föll tengd notendaumsjón fara hingað t.d. login, register, o.s.frv.
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import express from 'express';
+import jwt from 'jsonwebtoken';
+import passport from 'passport';
+import { Strategy, ExtractJwt } from 'passport-jwt';
 import { findByUsername, findById, createUser, getAllUsers, findByEmail, comparePasswords } from './userQueries.js';
+
+export default passport;
 
 dotenv.config();
 
 const {
     ACCESS_TOKEN_SECRET: jwtSecret,
-    ACCESS_TOKEN_LIFETIME: tokenLifetime = 20
+    ACCESS_TOKEN_LIFETIME: tokenLifetime = 30000000000000 
 } = process.env;
+
+if (!jwtSecret) {
+    console.error('Vantar ACCESS_TOKEN_SECRET í env');
+    process.exit(1);
+}
 
 export const router = express.Router();
 //router.use(express.json());
 
 const users = await getAllUsers();
 
-router.get('/', async (req, res) => {
+const jwtOptions = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: jwtSecret
+};
+
+async function strat(data, next) {
+    const user = await findById(data.id);
+    if (user) {
+        next(null, user);
+    } else {
+        next(null, false);
+    }
+}
+
+passport.use(new Strategy(jwtOptions, strat));
+export function createJwtToken(id) {
+    const payload = { id };
+    const tokenOptions = { expiresIn: tokenLifetime };
+    const token = jwt.sign(payload, jwtSecret, tokenOptions);
+    return token;
+}
+  
+export function requireAuthentication(req, res, next) {
+    return passport.authenticate('jwt', { session: false }, (err, user, info) => {
+        if (err) {
+            return next(err);
+        }
+
+        if (!user) {
+            const error = info.name === 'TokenExpiredError'
+            ? 'expired token' : 'invalid token';
+            return res.status(401).json({ error });
+        }
+
+        req.user = user;
+        return next();
+    },
+  )(req, res, next);
+}
+  
+// tharf ad utfaera
+export function requireAdminAuthentication(req, res, next) {
+    return passport.authenticate('jwt', { session: false }, (err, user, info) => {
+        if (err) {
+            return next(err);
+        }
+
+        if (!user) {
+            const error = info.name === 'TokenExpiredError'
+            ? 'expired token' : 'invalid token';
+            return res.status(401).json({ error });
+        }
+
+        if (!user.admin) {
+            return res.status(401).json({ error: 'Notandi er ekki með stjórnarréttindi' });
+        }
+
+        req.user = user;
+        return next();
+        },
+    )(req, res, next);
+}
+
+router.get('/', requireAuthentication, async (req, res) => {
     if (await !findByUsername("Teitur")) {
         await createUser({name: "Teitur", email: "teg6@hi.is", password: "cringe"});
     }
     res.json(users);
 });
+
+//router.get('/:id', requireAdminAuthentication, param('id'), async (req, res) => {
+//    const user = await findById(req.params.id);
+//});
 
 router.post('/register', async (req, res) => {
     const newUser = { name: req.body.name, email: req.body.email, password: req.body.password};
@@ -39,8 +116,6 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        // ~~ her tharf ad vera sql skipun sem stofnar notanda ~~
-        //users.push(newUser);
         await createUser(newUser);
         res.status(201).json({message: "Notandi " + newUser.name + " búinn til"});
 
@@ -64,11 +139,18 @@ router.post('/login', async (req, res) => {
         console.log(`login: user.password: ${user.password}`);
         const loginCheck = await comparePasswords(req.body.password, user.password);
         if (loginCheck) {
-            res.status(200).json({message:"Notandi skráður inn"});
-
             // her kemur jwt token
-            //const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET);
-            //return res.status(200).json({ accessToken: accessToken });
+            const token = createJwtToken(user.id);
+            return res.json({"token": token});
+            //return res.json({ 
+            //    "user": {
+            //        id: user.id,
+            //        username: user.name,
+            //        email: user.email,
+            //        admin: user.admin
+            //    },
+            //    token 
+            //});
         } else {
             return res.status(500).json({message: "Rangt lykilorð"});
         }
