@@ -16,17 +16,17 @@ export async function readSeries() {
     });
 }
 
-export async function readSeriesToCategories() {
-  fs.createReadStream('./data/series.csv')
-    .pipe(csv())
-    .on('data', async (row) => {
-      // console.log(row);
-      await insertSeriesToCategories(row);
-    })
-    .on('end', () => {
-      console.info('CSV file successfully processed');
-    });
-}
+// export async function readSeriesToCategories() {
+//   fs.createReadStream('./data/series.csv')
+//     .pipe(csv())
+//     .on('data', async (row) => {
+//       // console.log(row);
+//       await insertSeriesToCategories(row);
+//     })
+//     .on('end', () => {
+//       console.info('CSV file successfully processed');
+//     });
+// }
 
 export async function insertSeries(data) {
   const q = `INSERT INTO series
@@ -168,6 +168,8 @@ async function insertEpisodes(data) {
   }
 }
 
+
+
 export async function insertCategories(data) {
   const categories = data.genres.split(',');
   const q = `INSERT INTO categories (name) VALUES ($1)
@@ -204,3 +206,52 @@ async function insertSeriesToCategories(data) {
     }
   });
 }
+
+// export async function readSeries() {
+//   fs.createReadStream('./data/series.csv')
+//     .pipe(csv())
+//     .on('data', async (row) => {
+//       // console.log(row);
+//       await insertSeries(row);
+//       await insertCategories(row);
+//     })
+//     .on('end', () => {
+//       console.info('CSV file successfully processed');
+//     });
+// }
+
+export async function readSeriesToCategories() {
+  fs.createReadStream('./data/series.csv')
+    .pipe(csv())
+    .on('data', async (row) => {
+      // console.log(row);
+      await insertSeriesToCategories(row);
+    })
+    .on('end', () => {
+      console.info('CSV file successfully processed');
+    });
+}
+
+// export async function readSeasons() {
+//   fs.createReadStream('./data/seasons.csv')
+//     .pipe(csv())
+//     .on('data', async (row) => {
+//       // console.log(row);
+//       await insertSeasons(row);
+//       // await insertImages(row);
+//     })
+//     .on('end', () => {
+//       console.log('CSV file successfully processed');
+//     });
+// }
+
+// export async function readEpisodes() {
+//   fs.createReadStream('./data/episodes.csv')
+//     .pipe(csv())
+//     .on('data', async (row) => {
+//       await insertEpisodes(row);
+//     })
+//     .on('end', () => {
+//       console.log('CSV file successfully processed');
+//     });
+// }
