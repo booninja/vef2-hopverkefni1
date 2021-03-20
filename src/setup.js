@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { promises as fs } from 'fs';
 import { readSeries, readSeasons, readEpisodes, readSeriesToCategories } from './csvReader.js';
 import { setupMaster } from 'cluster';
+import { createAdmin } from './userQueries.js';
 
 async function readFileAsync(sql) {
   try {
@@ -65,6 +66,7 @@ async function main() {
   }
   // bæta færslum við töflu
   try {
+    await createAdmin({name:"oskar", email:"osh16@hi.is", password: "oskar"});
     await readSeries();
     console.info('Þáttaröðum bætt við gagnagrunn');
     await readSeasons();

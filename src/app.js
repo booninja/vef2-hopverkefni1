@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import { router as apiRouter } from '../api/index.js';
 import { router as userRouter } from './users.js';
 import { router as tvRouter } from '../api/tv.js';
+import passport, { router as userRouter } from './users.js';
 
 dotenv.config();
 
@@ -18,6 +19,8 @@ const {
 const app = express();
 
 app.use(express.json());
+
+app.use(passport.initialize());
 
 app.use('/', apiRouter);
 app.use('/tv', tvRouter);
