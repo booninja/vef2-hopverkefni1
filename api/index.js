@@ -14,6 +14,10 @@ import {readSerie,
 import {insertSeries,
         insertSeasonsById,
         singleInsertCategories} from '../src/csvReader.js';
+import { seriesValidation,
+        genreValidation,
+        serieValidation,
+        seasonValidation} from './validating.js'
 
 export const router = express.Router();
 async function indexRoute(req, res) {
@@ -98,107 +102,77 @@ async function getSeries(req, res,) {
 }
 
 
-
-// async function changeSeries(req, res) {
-//   const {
-//     limit, offset, items, _links,
-//   } = req.body;
-//   let success = true;
-
-//   const series = await getSerieById(id);
-//   console.info(series);
-//   if (!series) {
-//     return res.status(404).json({ error: 'Series not found' });
-//   }
-//   return res.json( series );
-// }
-
-const SerievalidationMiddleware = [
-  body('name')
-    .isLength({ min: 1 })
-    .withMessage('name is required'),
-  body('name')
-    .isLength({ max: 128 })
-    .withMessage('max 128 characters'),
-  // body('airDate')
-  //   .isDate()
-  //   .withMessage('airDate must be a date'),
-  body('inproduction')
-    .isBoolean()
-    .withMessage('inproduction must be a boolean'),
-  // body('image')
-  //   .isLength({min: 1})
-  //   .withMessage('image is required'),
-  body('description')
-    .isString()
-    .withMessage('description must be a string'),
-  body('language')
-      .isLength({ min: 2 })
-    .withMessage('language must be a string of length 2'),
-  body('language')
-      .isLength({ max: 2 })
-    .withMessage('language must be a string of length 2'),
-  body('network')
-    .isString()
-    .withMessage('network must be a string'),
-  body('website')
-    .isString()
-    .withMessage('url must be a string'),
-
-];
-
-
 router.get('/', indexRoute);
 
 router.get('/tv', catchErrors(getSeries));// series
 
-router.post('/tv', SerievalidationMiddleware, (req, res) => {
+router.post('/tv', seriesValidation, (req, res) => {
   const data = req.body;
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
-   //insertSeries(data);
-    console.log('komst í gegnum validation');
     console.log(' /tv post klikkaði');
     return res.status(404).json({ errors: validation.errors });
   }
   else{
     console.log('komst í gegnum validation');
-
+    insertSeries(data);
     res.json('þetta gekk');
-
   }
-
 });
 
 router.get('/genres', catchErrors(readGenres));
 
 //virkar bara fyrir eitt genre í einu þarf mörg ?
-router.post('/genres', (req, res) => {
+router.post('/genres', genreValidation, (req, res) => {
   const data = req.body;
-  singleInsertCategories(data);
-  console.log('Data changed');
-  res.json('Data changed');
+
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    console.log(' /genre post klikkaði');
+    return res.status(404).json({ errors: validation.errors });
+  }
+  else{
+    console.log('komst í gegnum validation');
+    singleInsertCategories(data);
+    res.json('þetta gekk');
+  }
 });
 
 router.get('/tv/:id', catchErrors(readSerie));// serie
 router.delete('/tv/:id', catchErrors(deleteSerie));
 
-router.patch('/tv/:id', (req, res) => {
+router.patch('/tv/:id', serieValidation, (req, res) => {
   const { id } = req.params;
   const data = req.body;
-  editSerieById(id, data);
-  res.json('Data changed');
+
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.status(404).json({ errors: validation.errors });
+  }
+  else{
+    editSerieById(id, data);
+    res.json('þetta gekk');
+  }
 });
 
 
-router.get('/tv/:id/season', catchErrors(readSeasons));
-router.post('/tv/:id/season', (req, res) => {
+router.get('/tv/:id/season',  catchErrors(readSeasons));
+router.post('/tv/:id/season', seasonValidation,  (req, res) => {
   const { id } = req.params;
   const data = req.body;
-  insertSeasonsById(data, id);
-  console.log('Data changed');
-  res.json('data changed');
+
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.status(404).json({ errors: validation.errors });
+  }
+  else{
+      insertSeasonsById(data, id);
+    res.json('þetta gekk');
+  }
 });
 
 
@@ -210,7 +184,7 @@ router.delete('/:id/season/:season', catchErrors(deleteSeason));
 router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
 router.delete('/tv/:id/season/:season/episode/:episode', catchErrors(deleteEpisode));
 
-//hvernig fær maður userID?
+//hvernig fær maður userID? req.user.id
  /*router.post('/tv/:id/rate', (req, res) => {
   const { id } = req.params;
   const data = req.body;

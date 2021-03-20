@@ -308,11 +308,11 @@ export async function editEpisodeById(id, data) {
               airDate = $3,
               description = $4,
               seasonsID = $5
-              WHERE id = $7`;
+              WHERE id = $6`;
 
   try {
     await query(q,
-      [data.name,
+      [ data.name,
         data.number,
         data.airDate,
         data.description,
