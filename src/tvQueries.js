@@ -125,7 +125,7 @@ export async function editSerieById(id, data) {
 }
 
 export async function deleteSerieById(id) {
-  const q = `DELETE FROM series 
+  const q = `DELETE FROM series
              WHERE id = $1`;
 
   try {
@@ -158,8 +158,8 @@ export async function getSeasonsByID(id) {
 }
 
 export async function getSeasonById(id, season) {
-  const q = `SELECT * FROM seasons 
-             WHERE serieID = $1 
+  const q = `SELECT * FROM seasons
+             WHERE serieID = $1
              AND number = $2`;
 
   let result;
@@ -198,8 +198,8 @@ export async function editSeasonById(id, data) {
 }
 
 export async function deleteSeasonById(serieId, season) {
-  const q = `DELETE FROM seasons 
-             WHERE serieID = $1 
+  const q = `DELETE FROM seasons
+             WHERE serieID = $1
              AND number = $2`;
 
   try {
@@ -221,9 +221,9 @@ export async function getAllEpisodes() {
 }
 
 export async function getEpisodeById(id, season, episode) {
-  const q = `SELECT * FROM episodes 
-  WHERE serieID = $1 
-  AND seasonNumber = $2 
+  const q = `SELECT * FROM episodes
+  WHERE serieID = $1
+  AND seasonNumber = $2
   AND number = $3`;
 
   let result;
@@ -235,8 +235,8 @@ export async function getEpisodeById(id, season, episode) {
   return result.rows;
 }
 export async function getEpisodesById(id, season) {
-  const q = `SELECT name, number, airDate, description FROM episodes 
-  WHERE serieID = $1 
+  const q = `SELECT name, number, airDate, description FROM episodes
+  WHERE serieID = $1
   AND seasonNumber = $2`;
   let result;
   try {
@@ -248,8 +248,8 @@ export async function getEpisodesById(id, season) {
 }
 
 export async function deleteEpisodeById(id, season, episode) {
-  const q = `DELETE FROM episodes WHERE serieID = $1 
-  AND seasonNumber = $2 
+  const q = `DELETE FROM episodes WHERE serieID = $1
+  AND seasonNumber = $2
   AND number = $3`;
 
   try {
@@ -260,8 +260,8 @@ export async function deleteEpisodeById(id, season, episode) {
 }
 
 export async function getEpisodeByUser(episodeID, userID) {
-  const q = `SELECT * FROM EpisodeToUser 
-  WHERE episodeID = $1 
+  const q = `SELECT * FROM EpisodeToUser
+  WHERE episodeID = $1
   AND userID = $2`;
 
   let result;
@@ -317,8 +317,8 @@ export async function updateEpisodeStatus(id, episodeID, userID, status) {
 // Gæti þurft að laga
 export async function updateEpisodeRating(id, episodeID, userID, rating) {
   const q = `UPDATE EpisodeToUser SET rating = $1
-              WHERE id = $2 
-              AND episodeID = $3 
+              WHERE id = $2
+              AND episodeID = $3
               AND userID = $4`;
 
   try {
@@ -332,6 +332,7 @@ export async function updateEpisodeRating(id, episodeID, userID, rating) {
     console.error('Villa við að sækja gögn', e);
   }
 }
+
 /*
 export async function getGenressd() {
   const q = `SELECT * FROM categories`;

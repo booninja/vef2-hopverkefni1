@@ -1,6 +1,8 @@
 import express from 'express';
+import { body, validationResult } from 'express-validator';
+import xss from 'xss';
 import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
-import { listSeries, editSerieById } from '../src/tvQueries.js';
+import { listSeries, editSerieById, updateEpisodeRating } from '../src/tvQueries.js';
 import {readSerie,
         deleteSerie,
         readSeasons,
@@ -95,18 +97,7 @@ async function getSeries(req, res,) {
   );
 }
 
-async function validationCheck(req, res, next) {
-  const {
-    limit, offset, items, _links,
-  } = req.body;
 
-  const validation = validationResult(req);
-
-  if (!validation.isEmpty()) {
-    return res.json({ errors: validation.errors});
-  }
-  return next();
-}
 
 // async function changeSeries(req, res) {
 //   const {
@@ -122,16 +113,68 @@ async function validationCheck(req, res, next) {
 //   return res.json( series );
 // }
 
+const SerievalidationMiddleware = [
+  body('name')
+    .isLength({ min: 1 })
+    .withMessage('name is required'),
+  body('name')
+    .isLength({ max: 128 })
+    .withMessage('max 128 characters'),
+  // body('airDate')
+  //   .isDate()
+  //   .withMessage('airDate must be a date'),
+  body('inproduction is required')
+    .isBoolean()
+    .withMessage('inproduction must be a boolean'),
+  body('image')
+    .isLength({min: 1})
+    .withMessage('image is required'),
+  body('descritption')
+    .isString()
+    .withMessage('description must be a string'),
+  body('language')
+      .isLength({ min: 2 })
+    .withMessage('language must be a string of length 2'),
+  body('language')
+      .isLength({ max: 2 })
+    .withMessage('language must be a string of length 2'),
+  body('network')
+    .isString()
+    .withMessage('network must be a string'),
+  body('website')
+    .isString()
+    .withMessage('url must be a string'),
+
+];
+const SeriexssSanitizationMiddleware = [
+  body('name').customSanitizer((v) => xss(v)),
+  body('nationalId').customSanitizer((v) => xss(v)),
+  body('comment').customSanitizer((v) => xss(v)),
+  body('anonymous').customSanitizer((v) => xss(v)),
+];
+
+
 
 router.get('/', indexRoute);
 
 router.get('/tv', catchErrors(getSeries));// series
 
-router.post('/tv', (req, res) => {
+router.post('/tv', SerievalidationMiddleware, (req, res) => {
   const data = req.body;
-  insertSeries(data);
-  console.log('Data added');
-  getTv(req, res); // kannski skila þessu eftir post?
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+   //insertSeries(data);
+    console.log('komst í gegnum validation');
+    console.log(data);
+    res.json('þetta gekk');
+  }
+  else{
+
+    console.log(' /tv post klikkaði');
+    return res.status(404).json({ errors: validation.errors });
+  }
+
 });
 
 router.get('/genres', catchErrors(readGenres));
@@ -173,8 +216,28 @@ router.delete('/:id/season/:season', catchErrors(deleteSeason));
 router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
 router.delete('/tv/:id/season/:season/episode/:episode', catchErrors(deleteEpisode));
 
+//hvernig fær maður userID?
+ /*router.post('/tv/:id/rate', (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  await updateSeasonRating(data.rating, id, req.user.id );
+  console.log('Data rating changed');
+  res.json(
+    {
+      user: req.user.id,
+      rating: data.rating,
+      serieid: id,
+    },
+  );
+});
+*/
 
+// router.patch('/tv/:id/rate', catchErrors(rateSeries));
+// router.delete('/tv/:id/rate', catchErrors(rateSeries));
 
+// router.post('/tv/:id/state', catchErrors(stateSeries));
+// router.patch('/tv/:id/state', catchErrors(stateSeries));
+// router.delete('/tv/:id/state', catchErrors(stateSeries));
 
 
 
