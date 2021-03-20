@@ -2,23 +2,24 @@ import { body, validationResult } from 'express-validator';
 import xss from 'xss';
 
 
-const SerievalidationMiddleware = [
+
+export const seriesValidation = [
     body('name')
       .isLength({ min: 1 })
       .withMessage('name is required'),
     body('name')
       .isLength({ max: 128 })
       .withMessage('max 128 characters'),
-    body('airDate')
-      .isDate()
-      .withMessage('airDate must be a date'),
-    body('inproduction is required')
+    // body('airDate')
+    //   .isDate()
+    //   .withMessage('airDate must be a date'),
+    body('inproduction')
       .isBoolean()
       .withMessage('inproduction must be a boolean'),
-    body('image')
-      .isLength({min: 1})
-      .withMessage('image is required'),
-    body('descritption')
+    // body('image')
+    //   .is
+    //   .withMessage('image is required'),
+    body('description')
       .isString()
       .withMessage('description must be a string'),
     body('language')
@@ -27,19 +28,44 @@ const SerievalidationMiddleware = [
     body('language')
         .isLength({ max: 2 })
       .withMessage('language must be a string of length 2'),
-  ];
-  const SeriexssSanitizationMiddleware = [
-    body('name').customSanitizer((v) => xss(v)),
-    body('nationalId').customSanitizer((v) => xss(v)),
-    body('comment').customSanitizer((v) => xss(v)),
-    body('anonymous').customSanitizer((v) => xss(v)),
+    body('network')
+      .isString()
+      .withMessage('network must be a string'),
+    body('website')
+      .isString()
+      .withMessage('url must be a string'),
   ];
 
-  body('id')
-  .isLength({ min: 1 })
-  .withMessage('name is required'),
-body('rating')
-  .isLength({ max: 128 })
-  .withMessage('rating must be an integer, one of 0, 1, 2, 3, 4, 5'),
+export  const genreValidation = [
+    body('name')
+      .isLength({ min: 1 })
+      .withMessage('name is required'),
+    body('name')
+      .isLength({ max: 128 })
+      .withMessage('max 128 characters'),
+    ];
+export   const serieValidation = [
+      body('number')
+        .isInt({min: 1})
+        .withMessage('must be an integer larger than 0'),
+      // body('image')
+      //  .is
+      //  .withMessage('image is required'),
+    ];
+export    const seasonValidation = [
+      body('name')
+        .isLength({ min: 1 })
+        .withMessage('name is required'),
+      body('name')
+        .isLength({ max: 128 })
+        .withMessage('max 128 characters'),
+      body('number')
+        .isInt({min: 1})
+        .withMessage('must be an integer larger than 0'),
+      // body('image')
+      //  .is
+      //  .withMessage('image is required'),
+  ];
+
 
   //hvernig validation á image????
