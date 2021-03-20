@@ -43,6 +43,43 @@ export async function comparePasswords(password, dbPassword) {
   return false;
 }
 
+export async function createAdmin(user) {
+  const q = 'INSERT INTO Users (username, email, password, admin) VALUES ($1, $2, $3, TRUE)';
+  try {
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    const result = await query(q, [user.name, user.email, hashedPassword]);
+    return result.rows[0];
+  } catch (e) {
+    console.log(`Gat ekki buid til notanda: ${e}`);
+  }
+  return null;
+}
+
+export async function updateUser(user, email, password, admin) {
+  const q = `UPDATE users SET email=$1, password=$2, admin=$3 WHERE id='${user.id}'`;
+  if (!email) {      
+      email = user.email;
+  }
+  if (!password) {
+      password = user.password;
+  }
+  if (!admin) {
+    admin = user.admin;
+  }
+  console.log(user);
+  console.log(email)
+  console.log(password)
+  console.log(admin)
+  try {
+    const result = await query(q, [email, password, admin]);
+    console.log(`result: ${result}`)
+    return result.rows[0];
+  } catch (e) {
+    console.log(`Gat ekki uppfært notanda: ${e}`);
+  }
+  return null;
+ }
+
 export async function createUser(user) {
   const hashedPassword = await bcrypt.hash(user.password, 10);
   const q = 'INSERT INTO Users (username, email, password, admin) VALUES ($1, $2, $3, FALSE)';
