@@ -51,9 +51,9 @@ CREATE TABLE IF NOT EXISTS users(
   admin boolean DEFAULT FALSE
 );
 
-CREATE TABLE IF NOT EXISTS EpisodeToUser(
+CREATE TABLE IF NOT EXISTS SerieToUser(
   id serial primary key,
-  episodeID integer REFERENCES Episodes(id) ON DELETE CASCADE,
+  serieID integer REFERENCES Episodes(id) ON DELETE CASCADE,
   userID integer REFERENCES Users(id) ON DELETE CASCADE,
   status varchar(255),
   grade integer NOT NULL CHECK (grade >= 0 and grade <= 5)

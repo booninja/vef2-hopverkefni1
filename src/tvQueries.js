@@ -298,15 +298,16 @@ export async function editEpisodeById(id, data) {
 }
 
 // Gæti þurft að laga
-export async function updateEpisodeStatus(id, episodeID, userID, status) {
-  const q = `UPDATE EpisodeToUser SET status = $1
-              WHERE id = $2 AND episodeID = $3 AND userID = $4`;
+export async function updateSerieByUser(id, serieID, userID, data) {
+  const q = `UPDATE SerieToUser SET status = $1, rating = $2
+              WHERE id = $3 AND episodeID = $4 AND userID = $5`;
 
   try {
     await query(q,
-      [status,
+      [ data.status,
+        data.rating,
         id,
-        episodeID,
+        serieID,
         userID,
       ]);
   } catch (e) {
@@ -315,23 +316,23 @@ export async function updateEpisodeStatus(id, episodeID, userID, status) {
 }
 
 // Gæti þurft að laga
-export async function updateEpisodeRating(id, episodeID, userID, rating) {
-  const q = `UPDATE EpisodeToUser SET rating = $1
-              WHERE id = $2 
-              AND episodeID = $3 
-              AND userID = $4`;
+// export async function updateSerieRating(id, serieID, userID, rating) {
+//   const q = `UPDATE EpisodeToUser SET rating = $1
+//               WHERE id = $2 
+//               AND episodeID = $3 
+//               AND userID = $4`;
 
-  try {
-    await query(q,
-      [rating,
-        id,
-        episodeID,
-        userID,
-      ]);
-  } catch (e) {
-    console.error('Villa við að sækja gögn', e);
-  }
-}
+//   try {
+//     await query(q,
+//       [rating,
+//         id,
+//         episodeID,
+//         userID,
+//       ]);
+//   } catch (e) {
+//     console.error('Villa við að sækja gögn', e);
+//   }
+// }
 /*
 export async function getGenressd() {
   const q = `SELECT * FROM categories`;
