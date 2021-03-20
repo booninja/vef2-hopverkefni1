@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import { router as apiRouter } from '../api/index.js';
-import { router as userRouter } from './users.js';
 import { router as tvRouter } from '../api/tv.js';
 import passport, { router as userRouter } from './users.js';
 
