@@ -105,9 +105,23 @@ export async function editSerieById(id, data) {
               network = $8,
               website = $9
               WHERE id = $10`;
+    // const currData = await getSerieById(id);
+    // console.log('>>>>', currData);
 
+    // let newdata  = {
+    //   name: data.name || currData.name,
+    //   airdate: currData.airdate || data.airdate ,
+    //   inProduction: data.inProduction || currData.inProduction,
+    //   tagline: data.tagline || currData.tagline,
+    //   poster: data.poster || currData.poster,
+    //   description: data.description || currData.description,
+    //   language: data.language || currData.language,
+    //   network: data.network || currData.network,
+    //   website: data.website || currData.website,
+    // }
+    // console.log('<<<<', newdata);
   try {
-    await query(q,
+   await query(q,
       [data.name,
         data.airDate,
         data.inProduction,
@@ -119,13 +133,26 @@ export async function editSerieById(id, data) {
         data.website,
         id,
       ]);
+      // await query(q,
+      //   [newdata.name,
+      //     newdata.airDate,
+      //     newdata.inProduction,
+      //     newdata.tagline,
+      //     newdata.poster,
+      //     newdata.description,
+      //     newdata.language,
+      //     newdata.network,
+      //     newdata.website,
+      //     id,
+      //   ]);
+
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
 }
 
 export async function deleteSerieById(id) {
-  const q = `DELETE FROM series 
+  const q = `DELETE FROM series
              WHERE id = $1`;
 
   try {
@@ -158,8 +185,8 @@ export async function getSeasonsByID(id) {
 }
 
 export async function getSeasonById(id, season) {
-  const q = `SELECT * FROM seasons 
-             WHERE serieID = $1 
+  const q = `SELECT * FROM seasons
+             WHERE serieID = $1
              AND number = $2`;
 
   let result;
@@ -198,8 +225,8 @@ export async function editSeasonById(id, data) {
 }
 
 export async function deleteSeasonById(serieId, season) {
-  const q = `DELETE FROM seasons 
-             WHERE serieID = $1 
+  const q = `DELETE FROM seasons
+             WHERE serieID = $1
              AND number = $2`;
 
   try {
@@ -221,9 +248,9 @@ export async function getAllEpisodes() {
 }
 
 export async function getEpisodeById(id, season, episode) {
-  const q = `SELECT * FROM episodes 
-  WHERE serieID = $1 
-  AND seasonNumber = $2 
+  const q = `SELECT * FROM episodes
+  WHERE serieID = $1
+  AND seasonNumber = $2
   AND number = $3`;
 
   let result;
@@ -235,8 +262,8 @@ export async function getEpisodeById(id, season, episode) {
   return result.rows;
 }
 export async function getEpisodesById(id, season) {
-  const q = `SELECT name, number, airDate, description FROM episodes 
-  WHERE serieID = $1 
+  const q = `SELECT name, number, airDate, description FROM episodes
+  WHERE serieID = $1
   AND seasonNumber = $2`;
   let result;
   try {
@@ -248,8 +275,8 @@ export async function getEpisodesById(id, season) {
 }
 
 export async function deleteEpisodeById(id, season, episode) {
-  const q = `DELETE FROM episodes WHERE serieID = $1 
-  AND seasonNumber = $2 
+  const q = `DELETE FROM episodes WHERE serieID = $1
+  AND seasonNumber = $2
   AND number = $3`;
 
   try {
@@ -260,8 +287,8 @@ export async function deleteEpisodeById(id, season, episode) {
 }
 
 export async function getEpisodeByUser(episodeID, userID) {
-  const q = `SELECT * FROM EpisodeToUser 
-  WHERE episodeID = $1 
+  const q = `SELECT * FROM EpisodeToUser
+  WHERE episodeID = $1
   AND userID = $2`;
 
   let result;
@@ -291,6 +318,23 @@ export async function editEpisodeById(id, data) {
         data.description,
         data.seasonsID,
         id,
+      ]);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+}
+
+// Gæti þurft að laga
+export async function setSerieByUser(serieID, userID, data) {
+  const q = `INSERT INTO SerieToUser (serieID,userID,status,grade) 
+              VALUES ($1,$2,$3,$4)`;
+
+  try {
+    await query(q,
+      [ serieID,
+        userID,
+        data.status,
+        data.rating,
       ]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);

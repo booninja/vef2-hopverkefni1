@@ -15,6 +15,7 @@ import {
   deleteEpisodeById,
   deleteSeasonById,
   getGenres,
+  //updateEpisodeRating,
 } from '../src/tvQueries.js';
 
 
@@ -127,7 +128,7 @@ export async function readEpisode(req, res) {
 export async function deleteEpisode(req, res) {
   const { id, season, episode } = req.params;
 
-  const series = await deleteEpisodeById(id, season, episode);
+  await deleteEpisodeById(id, season, episode);
   return res.json('Season deleted');
 }
 
@@ -155,6 +156,8 @@ export async function readGenres(req, res) {
     },
   );
 }
+
+
 
 //router.get('/', catchErrors(getTv));// series
 
