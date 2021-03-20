@@ -105,9 +105,23 @@ export async function editSerieById(id, data) {
               network = $8,
               website = $9
               WHERE id = $10`;
+    // const currData = await getSerieById(id);
+    // console.log('>>>>', currData);
 
+    // let newdata  = {
+    //   name: data.name || currData.name,
+    //   airdate: currData.airdate || data.airdate ,
+    //   inProduction: data.inProduction || currData.inProduction,
+    //   tagline: data.tagline || currData.tagline,
+    //   poster: data.poster || currData.poster,
+    //   description: data.description || currData.description,
+    //   language: data.language || currData.language,
+    //   network: data.network || currData.network,
+    //   website: data.website || currData.website,
+    // }
+    // console.log('<<<<', newdata);
   try {
-    await query(q,
+   await query(q,
       [data.name,
         data.airDate,
         data.inProduction,
@@ -119,6 +133,19 @@ export async function editSerieById(id, data) {
         data.website,
         id,
       ]);
+      // await query(q,
+      //   [newdata.name,
+      //     newdata.airDate,
+      //     newdata.inProduction,
+      //     newdata.tagline,
+      //     newdata.poster,
+      //     newdata.description,
+      //     newdata.language,
+      //     newdata.network,
+      //     newdata.website,
+      //     id,
+      //   ]);
+
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }

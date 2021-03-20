@@ -123,13 +123,13 @@ const SerievalidationMiddleware = [
   // body('airDate')
   //   .isDate()
   //   .withMessage('airDate must be a date'),
-  body('inproduction is required')
+  body('inproduction')
     .isBoolean()
     .withMessage('inproduction must be a boolean'),
-  body('image')
-    .isLength({min: 1})
-    .withMessage('image is required'),
-  body('descritption')
+  // body('image')
+  //   .isLength({min: 1})
+  //   .withMessage('image is required'),
+  body('description')
     .isString()
     .withMessage('description must be a string'),
   body('language')
@@ -146,13 +146,6 @@ const SerievalidationMiddleware = [
     .withMessage('url must be a string'),
 
 ];
-const SeriexssSanitizationMiddleware = [
-  body('name').customSanitizer((v) => xss(v)),
-  body('nationalId').customSanitizer((v) => xss(v)),
-  body('comment').customSanitizer((v) => xss(v)),
-  body('anonymous').customSanitizer((v) => xss(v)),
-];
-
 
 
 router.get('/', indexRoute);
@@ -166,13 +159,14 @@ router.post('/tv', SerievalidationMiddleware, (req, res) => {
   if (!validation.isEmpty()) {
    //insertSeries(data);
     console.log('komst í gegnum validation');
-    console.log(data);
-    res.json('þetta gekk');
-  }
-  else{
-
     console.log(' /tv post klikkaði');
     return res.status(404).json({ errors: validation.errors });
+  }
+  else{
+    console.log('komst í gegnum validation');
+
+    res.json('þetta gekk');
+
   }
 
 });

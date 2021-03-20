@@ -35,5 +35,11 @@ const SerievalidationMiddleware = [
     body('anonymous').customSanitizer((v) => xss(v)),
   ];
 
+  body('id')
+  .isLength({ min: 1 })
+  .withMessage('name is required'),
+body('rating')
+  .isLength({ max: 128 })
+  .withMessage('rating must be an integer, one of 0, 1, 2, 3, 4, 5'),
 
   //hvernig validation á image????
