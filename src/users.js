@@ -151,6 +151,7 @@ router.post('/register', registerValidation, async (req, res) => {
 router.post('/login', loginValidation, async (req, res) => {
     //const user = await findByUsername(req.body.name);
     const user = await findByEmail(req.body.email);
+    console.log(`login user ${user}`);
     const validation = validationResult(req);
 
     if (!validation.isEmpty()) {
