@@ -261,6 +261,7 @@ export async function getEpisodeById(id, season, episode) {
   }
   return result.rows;
 }
+
 export async function getEpisodesById(id, season) {
   const q = `SELECT name, number, airDate, description FROM episodes
   WHERE serieID = $1
@@ -340,14 +341,13 @@ export async function setSerieRating(serieID, userID, data) {
   }
 }
 
-// Gæti þurft að laga
-export async function updateSerieRating(serieID, userID, rating) {
+export async function updateSerieRating(serieID, userID, data) {
   const q = `UPDATE SerieToUser SET grade = $1
-              WHERE episodeID = $2 AND userID = $3`;
+              WHERE serieID = $2 AND userID = $3`;
 
   try {
     await query(q,
-      [ rating,
+      [ data.rating,
         serieID,
         userID,
       ]);
@@ -356,7 +356,18 @@ export async function updateSerieRating(serieID, userID, rating) {
   }
 }
 
-export async function setSerieStatus(serieID, userID, status) {
+export async function deleteSerieRating(serieID, userID) {
+  const q = `DELETE FROM SerieToUser WHERE serieID = $1 AND
+             userID = $2 AND status is null`;
+
+  try {
+    await query(q, [serieID, userID]);
+  } catch (e) {
+    console.error('Villa við að eyða gögnum', e);
+  }
+}
+
+export async function setSerieStatus(serieID, userID, data) {
   const q = `INSERT INTO SerieToUser (serieID,userID,status) 
               VALUES ($1,$2,$3)`;
 
@@ -364,25 +375,36 @@ export async function setSerieStatus(serieID, userID, status) {
     await query(q,
       [ serieID,
         userID,
-        status,
+        data.status,
       ]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
 }
 
-export async function updateSerieStatus(serieID, userID, status) {
+export async function updateSerieStatus(serieID, userID, data) {
   const q = `UPDATE SerieToUser SET status = $1
-              WHERE episodeID = $2 AND userID = $3`;
+              WHERE serieID = $2 AND userID = $3`;
 
   try {
     await query(q,
-      [ status,
+      [ data.status,
         serieID,
         userID,
       ]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
+  }
+}
+
+export async function deleteSerieStatus(serieID, userID) {
+  const q = `DELETE FROM SerieToUser WHERE serieID = $1 AND
+             userID = $2 AND grade is null`;
+
+  try {
+    await query(q, [serieID, userID]);
+  } catch (e) {
+    console.error('Villa við að eyða gögnum', e);
   }
 }
 
