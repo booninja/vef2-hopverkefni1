@@ -55,7 +55,7 @@ export const genreValidation = [
     .withMessage('name is required'),
 ];
 
-export const seriesValidation = [
+export const serieValidation = [
     body('name')
       .isLength({ min: 1 })
       .withMessage('name is required'),
@@ -88,22 +88,6 @@ export const seriesValidation = [
       .withMessage('url must be a string'),
   ];
 
-export  const genreValidation = [
-    body('name')
-      .isLength({ min: 1 })
-      .withMessage('name is required'),
-    body('name')
-      .isLength({ max: 128 })
-      .withMessage('max 128 characters'),
-    ];
-export const serieValidation = [
-      body('number')
-        .isInt({min: 1})
-        .withMessage('must be an integer larger than 0'),
-      // body('image')
-      //  .is
-      //  .withMessage('image is required'),
-    ];
 export const seasonValidation = [
       body('name')
         .isLength({ min: 1 })

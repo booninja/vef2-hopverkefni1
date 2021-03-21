@@ -5,7 +5,7 @@ import fs from 'fs';
 import csv from 'csv-parser';
 import { v2 as cloudinary } from 'cloudinary';
 import { query } from './utils.js';
-import { getSeriesCount } from './tvQueries.js'
+import { getSeriesCount } from './tvQueries.js';
 
 cloudinary.config({
   cloud_name: 'vefforritun-hop1-rovv',
@@ -19,7 +19,7 @@ export async function readSeries() {
     .on('data', async (row) => {
       await insertSeries(row);
       await insertCategories(row);
-      setTimeout(async function() {
+      setTimeout(async () => {
         await insertSeriesToCategories(row);
       }, 1000);
     })
@@ -32,7 +32,7 @@ export async function readSeasons() {
   fs.createReadStream('./data/seasons.csv')
     .pipe(csv())
     .on('data', async (row) => {
-       //console.log(row);
+      // console.log(row);
       await insertSeasons(row);
       // await insertImages(row);
     })
@@ -62,7 +62,7 @@ export async function insertSeries(data) {
 
   try {
     await query(q,
-      [ data.id,
+      [data.id,
         data.name,
         data.airDate,
         data.inProduction,
@@ -71,7 +71,7 @@ export async function insertSeries(data) {
         data.description,
         data.language,
         data.network,
-        data.homepage
+        data.homepage,
       ]);
   } catch (e) {
     console.error('Villa við að bæta gögnum við inn í series', e);
@@ -82,14 +82,14 @@ export async function NOTinsertSeries(data) {
   const q = `INSERT INTO series
               (id, name,airDate,inProduction,tagline,poster,description,language,network,homepage)
               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10)`;
- console.log('<<<<<<', data.name);
+  console.log('<<<<<<', data.name);
   if (data.airDate === '') data.airDate = null;
   if (data.poster === null) data.poster = 'hallo';
- const count = await getSeriesCount();
-console.log(count);
+  const count = await getSeriesCount();
+  console.log(count);
   try {
     await query(q,
-      [ parseInt(count.count)+1,
+      [parseInt(count.count) + 1,
         data.name,
         data.airDate,
         data.inProduction,
@@ -98,7 +98,7 @@ console.log(count);
         data.description,
         data.language,
         data.network,
-        data.homepage
+        data.homepage,
       ]);
   } catch (e) {
     console.error('Villa við að bæta gögnum við inn í series', e);

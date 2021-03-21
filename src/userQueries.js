@@ -56,14 +56,14 @@ export async function createAdmin(user) {
 }
 
 export async function updateUser(user, email, password, admin) {
-  console.log(user, email, password, admin)
+  console.log(user, email, password, admin);
   const q = `UPDATE users SET email=$1, password=$2, admin=$3 WHERE id='${user.id}'`;
   console.log(q);
-  if (!email) {      
-      email = user.email;
+  if (!email) {
+    email = user.email;
   }
   if (!password) {
-      password = user.password;
+    password = user.password;
   }
   if (!admin) {
     admin = user.admin;
@@ -76,7 +76,7 @@ export async function updateUser(user, email, password, admin) {
     console.log(`Gat ekki uppfært notanda: ${e}`);
   }
   return null;
- }
+}
 
 export async function createUser(user) {
   const hashedPassword = await bcrypt.hash(user.password, 10);

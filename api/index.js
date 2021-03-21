@@ -139,28 +139,28 @@ async function createSerie(req, res) {
     network: req.body.network,
     homepage: req.body.homepage,
   };
-
-router.post('/tv', requireAdminAuthentication, seriesValidation, (req, res) => {
+}
+router.post('/tv', requireAdminAuthentication, seriesValidation, async (req, res) => {
   const data = req.body;
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
   }
-
-  if (await findByName(newSerie.name)) {
+  console.log()
+  if (await findByName(data.name)) {
     return res.status(400).json({ message: 'Sjónvarpsþáttur nú þegar til' });
   }
   try {
-    await insertSeries(newSerie);
+    await insertSeries(data);
     return res.status(201).json({ message: `Sjónvarpsþáttur ${newSerie.name} búinn til` });
   } catch (e) {
     return res.status(500).json({ message: e });
   }
-}
+});
 
-router.get('/tv', catchErrors(getSeries));// series
-router.post('/tv', seriesValidation, catchErrors(createSerie));
+router.get('/tv', catchErrors(getSeries)); // series
+// router.post('/tv', seriesValidation, catchErrors(createSerie));
 
 router.get('/genres', catchErrors(readGenres));
 
@@ -186,7 +186,7 @@ router.delete('/tv/:id', requireAdminAuthentication, catchErrors(deleteSerie));
 router.patch('/tv/:id',
 //requireAdminAuthentication,
 //patchSeriesValidation,
- (req, res) => {
+ async (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
@@ -196,12 +196,12 @@ router.patch('/tv/:id',
     return res.status(404).json({ errors: validation.errors });
   }
 
-  editSerieById(id, data);
+  await editSerieById(id, data);
   res.json('þetta gekk');
 });
 
 router.get('/tv/:id/season',  catchErrors(readSeasons));
-router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  (req, res) => {
+router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  async (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
@@ -210,7 +210,7 @@ router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  (re
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
   }
-  insertSeasonsById(data, id);
+  await insertSeasonsById(data, id);
   return res.json('þetta gekk');
 });
 

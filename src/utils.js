@@ -31,7 +31,7 @@ export async function query(q, v = []) {
     return result;
   } catch (e) {
     //eslint-disable-line
-      throw e;
+    throw e;
   } finally {
     client.release();
   }
@@ -64,7 +64,7 @@ export function setPagenumber(page) {
 }
 
 export function addPageMetadata(obj, path,
-  { offset = 0, limit = 10, length = 0 } = {},) {
+  { offset = 0, limit = 10, length = 0 } = {}) {
   if (obj._links) {
     return obj;
   }

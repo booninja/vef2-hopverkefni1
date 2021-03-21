@@ -17,15 +17,15 @@ import {
   deleteSeasonById,
   getGenres,
   getGenreCount,
-  setSerieRating, 
+  setSerieRating,
   updateSerieRating,
   deleteSerieRating,
-  setSerieStatus, 
+  setSerieStatus,
   updateSerieStatus,
   deleteSerieStatus,
-  //updateEpisodeRating,
+  // updateEpisodeRating,
 } from '../src/tvQueries.js';
-import { requireAuthentication, requireAdminAuthentication} from '../src/users.js';
+import { requireAuthentication, requireAdminAuthentication } from '../src/users.js';
 
 export const router = express.Router();
 
@@ -78,7 +78,7 @@ export async function readSeasons(req, res) {
   if (offset + 10 < seasonsCount) {
     _links.next = {
       href: `http://localhost:3000/tv/:id/season/?offset=${offset + 10}&limit=10`,
-    }
+    };
   }
   if (offset - 10 >= 0) {
     _links.prev = {
@@ -128,10 +128,10 @@ export async function readEpisode(req, res) {
 export async function deleteEpisode(req, res) {
   const { id, season, episode } = req.params;
 
-  try{
+  try {
     await deleteEpisodeById(id, season, episode);
-      return res.json('Season deleted');
-  } catch(e) {
+    return res.json('Season deleted');
+  } catch (e) {
 
   }
 }
@@ -154,14 +154,14 @@ export async function readGenres(req, res) {
   if (offset + 10 < genreCount) {
     _links.next = {
       href: `http://localhost:3000/genres?offset=${offset + 10}&limit=10`,
-    }
+    };
   }
   if (offset - 10 >= 0) {
     _links.prev = {
       href: `http://localhost:3000/genres?offset=${offset - 10}&limit=10`,
     };
   }
-  
+
   res.json(
     {
       limit,
@@ -172,16 +172,9 @@ export async function readGenres(req, res) {
   );
 }
 
-
-
-
-
-//router.get('/', catchErrors(getTv));// series
+// router.get('/', catchErrors(getTv));// series
 
 // ekki er kannað hvort það er rétt form með validation
-
-
-
 
 // router.post('/tv/:id/rate', catchErrors(rateSeries));
 // router.patch('/tv/:id/rate', catchErrors(rateSeries));
@@ -250,7 +243,7 @@ export async function deleteRateSerie(req, res) {
 export async function stateSerie(req, res) {
   const { id } = req.params;
   const data = req.body;
-  
+
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
@@ -271,7 +264,7 @@ export async function stateSerie(req, res) {
 export async function updateStateSerie(req, res) {
   const { id } = req.params;
   const data = req.body;
-  
+
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
