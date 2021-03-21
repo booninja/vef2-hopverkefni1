@@ -140,6 +140,7 @@ async function createSerie(req, res) {
     network: req.body.network,
     homepage: req.body.homepage,
   };
+}
 
 router.post('/tv', requireAdminAuthentication, seriesValidation, (req, res) => {
   const data = req.body;
@@ -158,9 +159,10 @@ router.post('/tv', requireAdminAuthentication, seriesValidation, (req, res) => {
   } catch (e) {
     return res.status(500).json({ message: e });
   }
-}
+});
 
-router.get('/tv', catchErrors(getSeries));// series
+router.get('/tv', catchErrors(getSeries));
+
 router.post('/tv', seriesValidation, catchErrors(createSerie));
 
 router.get('/genres', catchErrors(readGenres));
