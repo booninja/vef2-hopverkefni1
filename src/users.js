@@ -6,10 +6,12 @@ Föll tengd notendaumsjón fara hingað t.d. login, register, o.s.frv.
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import express from 'express';
+import { body, validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { findByUsername, findById, createUser, getAllUsers, findByEmail, comparePasswords, updateUser } from './userQueries.js';
+import { loginValidation, registerValidation, profileValidation } from './userValidation.js';
 
 export default passport;
 
@@ -70,7 +72,6 @@ export function requireAuthentication(req, res, next) {
   )(req, res, next);
 }
   
-// tharf ad utfaera
 export function requireAdminAuthentication(req, res, next) {
     return passport.authenticate('jwt', { session: false }, (err, user, info) => {
         if (err) {
@@ -112,7 +113,6 @@ router.get('/:id(\\d+)', requireAdminAuthentication, async (req, res) => {
     }
 });
 
-// tharf ad utfaera
 router.patch('/:id(\\d+)', requireAdminAuthentication, async (req, res) => {
     const user = await findById(req.params.id);
     const admin = user.admin ? 'f' : 't';
@@ -124,8 +124,13 @@ router.patch('/:id(\\d+)', requireAdminAuthentication, async (req, res) => {
     }
 });
 
-router.post('/register', async (req, res) => {
+router.post('/register', registerValidation, async (req, res) => {
     const newUser = { name: req.body.name, email: req.body.email, password: req.body.password};
+    const validation = validationResult(req);
+
+    if (!validation.isEmpty()) {
+        return res.status(400).json({ errors: validation.errors })
+    }
     
     if (await findByUsername(newUser.name)) {
         return res.status(400).json({message: "Notendanafn þegar í notkun"});
@@ -143,8 +148,15 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
-    const user = await findByUsername(req.body.name);
+router.post('/login', loginValidation, async (req, res) => {
+    //const user = await findByUsername(req.body.name);
+    const user = await findByEmail(req.body.email);
+    const validation = validationResult(req);
+
+    if (!validation.isEmpty()) {
+        return res.status(400).json({ errors: validation.errors })
+    }
+
     if (!user) {
         return res.status(400).json({message:'Notandi fannst ekki'});
     }
@@ -175,12 +187,16 @@ router.get('/me', requireAuthentication, async (req, res) => {
     res.json(req.user);
 });
 
-router.patch('/me', requireAuthentication, async (req, res) => {
-    console.log(`rwqebodypass ${req.body.password}`)
-    console.log(`hehe ${!req.body.password}`)
-    console.log(`haha ${req.body.password === null}`)
+router.patch('/me', requireAuthentication, profileValidation, async (req, res) => {
     const email = !req.body.email ? req.user.email : req.body.email;
     const password = !req.body.password ? req.user.password : await bcrypt.hash(req.body.password,10);
+
+    const validation = validationResult(req);
+
+    if (!validation.isEmpty()) {
+        return res.status(400).json({ errors: validation.errors })
+    }
+
     try {
         await updateUser(req.user, email, password, req.user.admin);
         return res.status(201).json({message: `${req.user.username} uppfærður`});
