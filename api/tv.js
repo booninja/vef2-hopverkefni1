@@ -14,7 +14,14 @@ import {
   deleteSerieById,
   deleteEpisodeById,
   deleteSeasonById,
-  getGenres,
+  getGenres, 
+  setSerieRating, 
+  updateSerieRating,
+  deleteSerieRating,
+  setSerieStatus, 
+  updateSerieStatus,
+  deleteSerieStatus
+  //updateEpisodeRating,
 } from '../src/tvQueries.js';
 
 export const router = express.Router();
@@ -74,6 +81,10 @@ export async function readSerie(req, res) {
     },
   );
 }
+
+// export async function rateSerie(req, res) {
+
+// }
 
 export async function deleteSerie(req, res) {
   const { id } = req.params;
@@ -154,6 +165,10 @@ export async function readGenres(req, res) {
   );
 }
 
+
+
+
+
 //router.get('/', catchErrors(getTv));// series
 
 // ekki er kannað hvort það er rétt form með validation
@@ -165,12 +180,122 @@ export async function readGenres(req, res) {
 // router.patch('/tv/:id/rate', catchErrors(rateSeries));
 // router.delete('/tv/:id/rate', catchErrors(rateSeries));
 
+export async function rateSerie(req, res) {
+  const { id } = req.params;
+  const data = req.body;
+
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.status(404).json({ errors: validation.errors });
+  }
+
+  await setSerieRating(id, req.user.id, data);
+  console.log('Data rating changed');
+  res.json(
+    {
+      user: req.user.username,
+      rating: data.rating,
+      serieid: id,
+    },
+  );
+}
+
+export async function updateRateSerie(req, res) {
+  const { id } = req.params;
+  const data = req.body;
+
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.status(404).json({ errors: validation.errors });
+  }
+
+  await updateSerieRating(id, req.user.id, data);
+  console.log('Data rating changed');
+  res.json(
+    {
+      user: req.user.username,
+      rating: data.rating,
+      serieid: id,
+    },
+  );
+}
+
+export async function deleteRateSerie(req, res) {
+  const { id } = req.params;
+  const data = req.body;
+  await deleteSerieRating(id, req.user.id);
+  console.log('Data rating deleted');
+  res.json(
+    {
+      user: req.user.username,
+      rating: data.rating,
+      serieid: id,
+    },
+  );
+}
+
 // router.post('/tv/:id/state', catchErrors(stateSeries));
 // router.patch('/tv/:id/state', catchErrors(stateSeries));
 // router.delete('/tv/:id/state', catchErrors(stateSeries));
 
+export async function stateSerie(req, res) {
+  const { id } = req.params;
+  const data = req.body;
+  
+  const validation = validationResult(req);
 
+  if (!validation.isEmpty()) {
+    return res.status(404).json({ errors: validation.errors });
+  }
 
+  await setSerieStatus(id, req.user.id, data);
+  console.log('Data status changed');
+  res.json(
+    {
+      user: req.user.username,
+      status: data.status,
+      serieid: id,
+    },
+  );
+}
+
+export async function updateStateSerie(req, res) {
+  const { id } = req.params;
+  const data = req.body;
+  
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.status(404).json({ errors: validation.errors });
+  }
+
+  await updateSerieStatus(id, req.user.id, data);
+  console.log('Data status changed');
+  res.json(
+    {
+      user: req.user.username,
+      status: data.status,
+      serieid: id,
+    },
+  );
+}
+
+export async function deleteStateSerie(req, res) {
+  const { id } = req.params;
+  const data = req.body;
+
+  await deleteSerieStatus(id, req.user.id);
+  console.log('Data status deleted');
+  res.json(
+    {
+      user: req.user.username,
+      status: data.status,
+      serieid: id,
+    },
+  );
+}
 
 /*
 

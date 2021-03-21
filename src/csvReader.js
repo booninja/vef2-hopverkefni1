@@ -12,6 +12,10 @@ cloudinary.config({
   api_secret: 'LAHnLbWZvxPl_6U3YOLeNCJiQ6w',
 });
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4e37b348210ef970d4c7813d85311e6c7c6af16c
 export async function readSeries() {
   fs.createReadStream('./data/series.csv')
     .pipe(csv())
@@ -19,6 +23,12 @@ export async function readSeries() {
       // console.log(row);
       await insertSeries(row);
       await insertCategories(row);
+<<<<<<< HEAD
+=======
+      setTimeout(async function() {
+        await insertSeriesToCategories(row);
+      }, 1000);
+>>>>>>> 4e37b348210ef970d4c7813d85311e6c7c6af16c
     })
     .on('end', () => {
       console.info('CSV file successfully processed');
@@ -156,6 +166,7 @@ export async function insertCategories(data) {
     }
   });
 }
+
 export async function singleInsertCategories(data) {
   const q = `INSERT INTO categories (name) VALUES ($1)
               ON CONFLICT DO NOTHING`;
@@ -173,13 +184,14 @@ async function insertSeriesToCategories(data) {
   categories.forEach(async (category) => {
     try {
       const resultId = await query(q, [category]);
-      await query(q2, [parseInt(data.id), resultId[0].id]);
+      await query(q2, [parseInt(data.id), resultId.rows[0].id]);
     } catch (e) {
       console.error('Villa við að bæta gögnum við', e);
     }
   });
 }
 
+<<<<<<< HEAD
 export async function readSeriesToCategories() {
   fs.createReadStream('./data/series.csv')
     .pipe(csv())
@@ -191,3 +203,53 @@ export async function readSeriesToCategories() {
       console.info('CSV file successfully processed');
     });
 }
+=======
+// export async function readSeries() {
+//   fs.createReadStream('./data/series.csv')
+//     .pipe(csv())
+//     .on('data', async (row) => {
+//       // console.log(row);
+//       await insertSeries(row);
+//       await insertCategories(row);
+//     })
+//     .on('end', () => {
+//       console.info('CSV file successfully processed');
+//     });
+// }
+
+// export async function readSeasons() {
+//   fs.createReadStream('./data/seasons.csv')
+//     .pipe(csv())
+//     .on('data', async (row) => {
+//       // console.log(row);
+//       await insertSeasons(row);
+//       // await insertImages(row);
+//     })
+//     .on('end', () => {
+//       console.info('CSV file successfully processed');
+//     });
+// }
+
+// export async function readEpisodes() {
+//   fs.createReadStream('./data/episodes.csv')
+//     .pipe(csv())
+//     .on('data', async (row) => {
+//       await insertEpisodes(row);
+//     })
+//     .on('end', () => {
+//       console.info('CSV file successfully processed');
+//     });
+// }
+
+// export async function readSeriesToCategories() {
+//   fs.createReadStream('./data/series.csv')
+//     .pipe(csv())
+//     .on('data', async (row) => {
+//       // console.log(row);
+//       await insertSeriesToCategories(row);
+//     })
+//     .on('end', () => {
+//       console.info('CSV file successfully processed');
+//     });
+// }
+>>>>>>> 4e37b348210ef970d4c7813d85311e6c7c6af16c

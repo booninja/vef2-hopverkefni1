@@ -2,8 +2,9 @@
 import pg from 'pg';
 import dotenv from 'dotenv';
 import { promises as fs } from 'fs';
-import { readSeries, readSeasons, readEpisodes, readSeriesToCategories } from './csvReader.js';
+import { readSeries, readSeasons, readEpisodes } from './csvReader.js';
 import { setupMaster } from 'cluster';
+import { createAdmin, createUser } from './userQueries.js';
 
 async function readFileAsync(sql) {
   try {
@@ -51,7 +52,7 @@ export async function query(q, v = []) {
 async function main() {
   console.info(`Set upp gagnagrunn á ${connectionString}`);
   // droppa töflu ef til
-  await query('DROP TABLE IF EXISTS series, categories, seasons, episodes, users, seriestocategories CASCADE');
+  await query('DROP TABLE IF EXISTS series, categories, seasons, episodes, users, seriestocategories, SerieToUser CASCADE');
   console.info('Töflu eytt');
 
   // búa til töflu út frá skema
@@ -65,13 +66,15 @@ async function main() {
   }
   // bæta færslum við töflu
   try {
+    await createAdmin({name:"oskar", email:"osh16@hi.is", password: "oskar"});
+    await createUser({name:"stalin", email:"ios24@hi.su", password: "gulag"});
     await readSeries();
     console.info('Þáttaröðum bætt við gagnagrunn');
     await readSeasons();
     console.info('Þáttaseríum bætt við gagnagrunn');
     await readEpisodes();
     console.info('Þáttum bætt við gagnagrunn');
-    setTimeout(async function() { await readSeriesToCategories(); }, 1000);
+    // setTimeout(async function() { await readSeriesToCategories(); }, 1000);
     console.info('Tengutafla búin til');
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);
