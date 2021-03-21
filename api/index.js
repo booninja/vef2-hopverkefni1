@@ -2,8 +2,9 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import xss from 'xss';
 import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
-import { listSeries, editSerieById } from '../src/tvQueries.js';
+import { listSeries, editSerieById, setSerieRating, updateSerieRating, setSerieStatus, updateSerieStatus} from '../src/tvQueries.js';
 import {readSerie,
+        stateSerie,
         deleteSerie,
         readSeasons,
         readSeason,
@@ -18,6 +19,7 @@ import { seriesValidation,
         genreValidation,
         serieValidation,
         seasonValidation} from './validating.js'
+import { requireAuthentication } from '../src/users.js';
 
 export const router = express.Router();
 async function indexRoute(req, res) {
@@ -184,21 +186,65 @@ router.delete('/:id/season/:season', catchErrors(deleteSeason));
 router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
 router.delete('/tv/:id/season/:season/episode/:episode', catchErrors(deleteEpisode));
 
-//hvernig fær maður userID? req.user.id
- /*router.post('/tv/:id/rate', (req, res) => {
+router.post('/tv/:id/rate', requireAuthentication, async (req, res) => {
   const { id } = req.params;
   const data = req.body;
-  await updateSeasonRating(data.rating, id, req.user.id );
+  await setSerieRating(id, req.user.id, data);
   console.log('Data rating changed');
   res.json(
     {
-      user: req.user.id,
+      user: req.user.username,
       rating: data.rating,
       serieid: id,
     },
   );
 });
-*/
+
+router.patch('/tv/:id/rate', requireAuthentication, async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  await updateSerieRating(id, req.user.id, data);
+  console.log('Data rating changed');
+  res.json(
+    {
+      user: req.user.username,
+      rating: data.rating,
+      serieid: id,
+    },
+  );
+});
+
+router.post('/tv/:id/state', requireAuthentication, async (req, res) => {
+  const { id } = req.params;
+
+  const data = req.body;
+  await setSerieStatus(id, req.user.id, data);
+  console.log('Data status changed');
+  res.json(
+    {
+      user: req.user.username,
+      status: data.status,
+      serieid: id,
+    },
+  );
+});
+
+// GERA SVONA
+// router.post('tv/:id/state', catchErrors(stateSerie));
+
+router.patch('/tv/:id/state', requireAuthentication, async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  await updateSerieStatus(id, req.user.id, data);
+  console.log('Data status changed');
+  res.json(
+    {
+      user: req.user.username,
+      status: data.status,
+      serieid: id,
+    },
+  );
+});
 
 // router.patch('/tv/:id/rate', catchErrors(rateSeries));
 // router.delete('/tv/:id/rate', catchErrors(rateSeries));

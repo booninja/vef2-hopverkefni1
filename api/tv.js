@@ -18,6 +18,8 @@ import {
   //updateEpisodeRating,
 } from '../src/tvQueries.js';
 
+import { requireAuthentication } from '../src/users.js';
+
 
 
 export const router = express.Router();
@@ -77,6 +79,10 @@ export async function readSerie(req, res) {
     },
   );
 }
+
+// export async function rateSerie(req, res) {
+
+// }
 
 export async function deleteSerie(req, res) {
   const { id } = req.params;
@@ -159,6 +165,8 @@ export async function readGenres(req, res) {
 
 
 
+
+
 //router.get('/', catchErrors(getTv));// series
 
 // ekki er kannað hvort það er rétt form með validation
@@ -174,7 +182,21 @@ export async function readGenres(req, res) {
 // router.patch('/tv/:id/state', catchErrors(stateSeries));
 // router.delete('/tv/:id/state', catchErrors(stateSeries));
 
+// LAGA ÞANNIG AUTHENTICATION MEIKI SENS
+export async function stateSerie(req, res, requireAuthentication) {
+  const { id } = req.params;
 
+  const data = req.body;
+  await setSerieStatus(id, req.user.id, data);
+  console.log('Data status changed');
+  res.json(
+    {
+      user: req.user.username,
+      status: data.status,
+      serieid: id,
+    },
+  );
+}
 
 
 /*

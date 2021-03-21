@@ -325,15 +325,14 @@ export async function editEpisodeById(id, data) {
 }
 
 // Gæti þurft að laga
-export async function setSerieByUser(serieID, userID, data) {
-  const q = `INSERT INTO SerieToUser (serieID,userID,status,grade) 
-              VALUES ($1,$2,$3,$4)`;
+export async function setSerieRating(serieID, userID, data) {
+  const q = `INSERT INTO SerieToUser (serieID,userID,grade) 
+              VALUES ($1,$2,$3)`;
 
   try {
     await query(q,
       [ serieID,
         userID,
-        data.status,
         data.rating,
       ]);
   } catch (e) {
@@ -342,15 +341,43 @@ export async function setSerieByUser(serieID, userID, data) {
 }
 
 // Gæti þurft að laga
-export async function updateSerieByUser(id, serieID, userID, data) {
-  const q = `UPDATE SerieToUser SET status = $1, rating = $2
-              WHERE id = $3 AND episodeID = $4 AND userID = $5`;
+export async function updateSerieRating(serieID, userID, rating) {
+  const q = `UPDATE SerieToUser SET grade = $1
+              WHERE episodeID = $2 AND userID = $3`;
 
   try {
     await query(q,
-      [ data.status,
-        data.rating,
-        id,
+      [ rating,
+        serieID,
+        userID,
+      ]);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+}
+
+export async function setSerieStatus(serieID, userID, status) {
+  const q = `INSERT INTO SerieToUser (serieID,userID,status) 
+              VALUES ($1,$2,$3)`;
+
+  try {
+    await query(q,
+      [ serieID,
+        userID,
+        status,
+      ]);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+}
+
+export async function updateSerieStatus(serieID, userID, status) {
+  const q = `UPDATE SerieToUser SET status = $1
+              WHERE episodeID = $2 AND userID = $3`;
+
+  try {
+    await query(q,
+      [ status,
         serieID,
         userID,
       ]);
