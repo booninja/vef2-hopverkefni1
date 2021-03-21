@@ -56,7 +56,9 @@ export async function createAdmin(user) {
 }
 
 export async function updateUser(user, email, password, admin) {
+  console.log(user, email, password, admin)
   const q = `UPDATE users SET email=$1, password=$2, admin=$3 WHERE id='${user.id}'`;
+  console.log(q);
   if (!email) {      
       email = user.email;
   }
