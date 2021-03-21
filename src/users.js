@@ -176,8 +176,11 @@ router.get('/me', requireAuthentication, async (req, res) => {
 });
 
 router.patch('/me', requireAuthentication, async (req, res) => {
-    let email = req.body.email === null ? req.user.email : req.body.email;
-    let password = req.body.password === null ? req.user.password : req.body.password;
+    console.log(`rwqebodypass ${req.body.password}`)
+    console.log(`hehe ${!req.body.password}`)
+    console.log(`haha ${req.body.password === null}`)
+    const email = !req.body.email ? req.user.email : req.body.email;
+    const password = !req.body.password ? req.user.password : await bcrypt.hash(req.body.password,10);
     try {
         await updateUser(req.user, email, password, req.user.admin);
         return res.status(201).json({message: `${req.user.username} uppfærður`});
