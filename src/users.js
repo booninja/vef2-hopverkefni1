@@ -126,6 +126,11 @@ router.patch('/:id(\\d+)', requireAdminAuthentication, async (req, res) => {
 
 router.post('/register', registerValidation, async (req, res) => {
     const newUser = { name: req.body.name, email: req.body.email, password: req.body.password};
+    const validation = validationResult(req);
+
+    if (!validation.isEmpty()) {
+        return res.status(400).json({ errors: validation.errors })
+    }
     
     if (await findByUsername(newUser.name)) {
         return res.status(400).json({message: "Notendanafn þegar í notkun"});
@@ -146,6 +151,12 @@ router.post('/register', registerValidation, async (req, res) => {
 router.post('/login', loginValidation, async (req, res) => {
     //const user = await findByUsername(req.body.name);
     const user = await findByEmail(req.body.email);
+    const validation = validationResult(req);
+
+    if (!validation.isEmpty()) {
+        return res.status(400).json({ errors: validation.errors })
+    }
+
     if (!user) {
         return res.status(400).json({message:'Notandi fannst ekki'});
     }
@@ -176,9 +187,16 @@ router.get('/me', requireAuthentication, async (req, res) => {
     res.json(req.user);
 });
 
-router.patch('/me', profileValidation, requireAuthentication, async (req, res) => {
+router.patch('/me', requireAuthentication, profileValidation, async (req, res) => {
     const email = !req.body.email ? req.user.email : req.body.email;
     const password = !req.body.password ? req.user.password : await bcrypt.hash(req.body.password,10);
+
+    const validation = validationResult(req);
+
+    if (!validation.isEmpty()) {
+        return res.status(400).json({ errors: validation.errors })
+    }
+
     try {
         await updateUser(req.user, email, password, req.user.admin);
         return res.status(201).json({message: `${req.user.username} uppfærður`});
