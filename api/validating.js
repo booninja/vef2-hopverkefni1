@@ -15,9 +15,9 @@ export const seriesValidation = [
     body('inProduction')
       .isBoolean()
       .withMessage('inproduction must be a boolean'),
-    // body('image')
-    //   .is
-    //   .withMessage('image is required'),
+    body('image')
+       .matches(new RegExp('^[A-Za-z0-9-_]+\.(jpg|jpeg|png|gif)$'))
+       .withMessage('image is required'),
     body('description')
       .isString()
       .withMessage('description must be a string'),
@@ -34,6 +34,7 @@ export const seriesValidation = [
       .isString()
       .withMessage('url must be a string'),
   ];
+
 export  const genreValidation = [
     body('name')
       .isLength({ min: 1 })
