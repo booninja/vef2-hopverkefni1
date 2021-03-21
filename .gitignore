@@ -23,4 +23,5 @@ yarn-error.log*
 .env
 .oskar
 *.rest
+cringe.eslint
 package-lock.json
