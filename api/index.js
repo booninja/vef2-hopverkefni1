@@ -141,10 +141,6 @@ async function createSerie(req, res) {
     homepage: req.body.homepage,
   };
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> db47949c449303967c74c24c5d83553e080ffcd3
 router.post('/tv', requireAdminAuthentication, seriesValidation, async (req, res) => {
   const data = req.body;
   const validation = validationResult(req);
@@ -163,16 +159,10 @@ router.post('/tv', requireAdminAuthentication, seriesValidation, async (req, res
     return res.status(500).json({ message: e });
   }
 });
-<<<<<<< HEAD
-
-router.get('/tv', catchErrors(getSeries)); // series
-// router.post('/tv', seriesValidation, catchErrors(createSerie));
-=======
 
 router.get('/tv', catchErrors(getSeries));
 
 router.post('/tv', seriesValidation, catchErrors(createSerie));
->>>>>>> db47949c449303967c74c24c5d83553e080ffcd3
 
 router.get('/genres', catchErrors(readGenres));
 

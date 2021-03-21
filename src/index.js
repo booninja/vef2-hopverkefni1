@@ -59,7 +59,7 @@ async function indexRoute(req, res) {
   );
 }
 
-async function getSeries(req, res,) {
+async function getSeries(req, res) {
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
 
@@ -92,7 +92,7 @@ async function validationCheck(req, res, next) {
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
-    return res.json({ errors: validation.errors});
+    return res.json({ errors: validation.errors });
   }
   return next();
 }
@@ -111,49 +111,46 @@ async function validationCheck(req, res, next) {
 //   return res.json( series );
 // }
 
-
 router.get('/', indexRoute);
 
 // hér fyrir neðan eru allar skipanirnar fyrir allar síðurnar, held að best er að
 // taka eina í einu og vinna þannig niður
 
 router.get('/tv', catchErrors(getSeries));// series
-//router.get('/genres', catchErrors(readSeasons));
+// router.get('/genres', catchErrors(readSeasons));
 
-//router.post('/tv', catchErrors(validationCheck)), catchErrors(changeSeries); //insertSeries
+// router.post('/tv', catchErrors(validationCheck)), catchErrors(changeSeries); //insertSeries
 
-  // router.get('/tv/:id', catchErrors(getSerieById));//series
-  // router.patch('/tv/:id', catchErrors(editSerieById));
-  // router.delete('/tv/:id', catchErrors(deleteSerieById));
+// router.get('/tv/:id', catchErrors(getSerieById));//series
+// router.patch('/tv/:id', catchErrors(editSerieById));
+// router.delete('/tv/:id', catchErrors(deleteSerieById));
 
-  // router.post('/tv/:id/rate', catchErrors(updateEpisodeRating));
-  // router.patch('/tv/:id/rate', catchErrors(updateEpisodeRating));
-  // router.delete('/tv/:id/rate', catchErrors(updateEpisodeRating));
+// router.post('/tv/:id/rate', catchErrors(updateEpisodeRating));
+// router.patch('/tv/:id/rate', catchErrors(updateEpisodeRating));
+// router.delete('/tv/:id/rate', catchErrors(updateEpisodeRating));
 
-  // router.post('/tv/:id/state', catchErrors(updateEpisodeStatus));
-  // router.patch('/tv/:id/state', catchErrors(updateEpisodeStatus));
-  // router.delete('/tv/:id/state', catchErrors(updateEpisodeStatus));
+// router.post('/tv/:id/state', catchErrors(updateEpisodeStatus));
+// router.patch('/tv/:id/state', catchErrors(updateEpisodeStatus));
+// router.delete('/tv/:id/state', catchErrors(updateEpisodeStatus));
 
-  // router.get('/tv/:id/season', catchErrors(readSeasons));
-  // router.post('/tv/:id/season', catchErrors(readSeasons));
+// router.get('/tv/:id/season', catchErrors(readSeasons));
+// router.post('/tv/:id/season', catchErrors(readSeasons));
 
-  // router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
+// router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
 
-  // router.get('/tv/{id}/season/{season}/episode/{episode}', catchErrors(readEpisode));
-  // router.delete('/tv/{id}/season/{season}/episode/{episode}',  catchErrors(readEpisode));
+// router.get('/tv/{id}/season/{season}/episode/{episode}', catchErrors(readEpisode));
+// router.delete('/tv/{id}/season/{season}/episode/{episode}',  catchErrors(readEpisode));
 
-  // router.get('/genres', catchErrors(readGenre));
-  // router.post('/genres', catchErrors(readGenre));
+// router.get('/genres', catchErrors(readGenre));
+// router.post('/genres', catchErrors(readGenre));
 
-  // router.get('/users', catchErrors(listUsers));
-  // router.get('/users/:id', catchErrors(listUser));
-  // router.patch('/users/:id', catchErrors(updateUser));
-  // router.post('/users/register', catchErrors(registerUser));
-  // router.get('/users/login', catchErrors(loginUser));
-  // router.get('/users/me', catchErrors(currentUser));
-  // router.patch('/users/me', catchErrors(updateCurrentUser));
-
-
+// router.get('/users', catchErrors(listUsers));
+// router.get('/users/:id', catchErrors(listUser));
+// router.patch('/users/:id', catchErrors(updateUser));
+// router.post('/users/register', catchErrors(registerUser));
+// router.get('/users/login', catchErrors(loginUser));
+// router.get('/users/me', catchErrors(currentUser));
+// router.patch('/users/me', catchErrors(updateCurrentUser));
 
 // hér fyrir neðan er það með kalli á autherazation fyrir user og admin,
 // veit ekki hvort það var alltaf rétt að velja admin frekar en user ??
@@ -197,8 +194,5 @@ router.get('/tv', catchErrors(getSeries));// series
   router.patch('/users/me', requireAuth, catchErrors(updateCurrentUser));
 */
 
-
-
-
-//minn user
-//{"email": "fallegtblom@net.is","username": "blom", "password": "1234567890"}
+// minn user
+// {"email": "fallegtblom@net.is","username": "blom", "password": "1234567890"}

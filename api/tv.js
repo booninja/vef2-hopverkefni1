@@ -68,7 +68,7 @@ export async function readSeasons(req, res) {
     return res.status(404).json({ error: 'Seasons not found' });
   }
 
-  res.json({seasons});
+  res.json({ seasons });
 }
 
 export async function readSeason(req, res) {
