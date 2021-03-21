@@ -9,48 +9,25 @@ import {
   listSeries,
   getSeasonById,
   getSeasonsByID,
+  getSeasonsCountBySerie,
   getEpisodeById,
   getEpisodesById,
   deleteSerieById,
   deleteEpisodeById,
   deleteSeasonById,
-  getGenres, 
+  getGenres,
+  getGenreCount,
   setSerieRating, 
   updateSerieRating,
   deleteSerieRating,
   setSerieStatus, 
   updateSerieStatus,
-  deleteSerieStatus
+  deleteSerieStatus,
   //updateEpisodeRating,
 } from '../src/tvQueries.js';
+import { requireAuthentication, requireAdminAuthentication} from '../src/users.js';
 
 export const router = express.Router();
-
-export async function getTv(req, res) {
-  let { page = 1 } = req.query;
-  const { offset = 0, limit = 10 } = req.query;
-
-  page = setPagenumber(page);
-
-  const errors = [];
-
-  const series = await listSeries(offset, limit);
-  res.json(
-    {
-      limit,
-      offset,
-      items: { series },
-      _links: {
-        self: {
-          href: req.query,
-        },
-        next: {
-          href: req.query,
-        },
-      },
-    },
-  );
-}
 
 export async function readSerie(req, res) {
   const { id } = req.params;
@@ -70,14 +47,6 @@ export async function readSerie(req, res) {
       limit,
       offset,
       items: { series, genre, seasons },
-      _links: {
-        self: {
-          href: req.query,
-        },
-        next: {
-          href: req.query,
-        },
-      },
     },
   );
 }
@@ -93,11 +62,38 @@ export async function readSeasons(req, res) {
   const { id } = req.params;
 
   const series = await getSeasonsByID(id);
-  // console.info(series);
+  const seasonsCount = await getSeasonsCountBySerie(id);
+  console.log(series);
+  console.log(seasonsCount);
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
-  return res.json(series);
+
+  const _links = {
+    self: {
+      href: `http://localhost:3000/tv/:id/season/offset=${offset}&limit=10`,
+    },
+  };
+
+  if (offset + 10 < seasonsCount) {
+    _links.next = {
+      href: `http://localhost:3000/tv/:id/season/?offset=${offset + 10}&limit=10`,
+    }
+  }
+  if (offset - 10 >= 0) {
+    _links.prev = {
+      href: `http://localhost:3000/tv/:id/season/?offset=${offset - 10}&limit=10`,
+    };
+  }
+
+  res.json(
+    {
+      limit,
+      offset,
+      items: { series },
+      _links,
+    },
+  );
 }
 
 export async function readSeason(req, res) {
@@ -147,20 +143,31 @@ export async function readGenres(req, res) {
   page = setPagenumber(page);
 
   const registrations = await getGenres(offset, limit);
-  console.info(registrations);
+  const genreCount = await getGenreCount();
+
+  const _links = {
+    self: {
+      href: `http://localhost:3000/genres/offset=${offset}&limit=10`,
+    },
+  };
+
+  if (offset + 10 < genreCount) {
+    _links.next = {
+      href: `http://localhost:3000/genres?offset=${offset + 10}&limit=10`,
+    }
+  }
+  if (offset - 10 >= 0) {
+    _links.prev = {
+      href: `http://localhost:3000/genres?offset=${offset - 10}&limit=10`,
+    };
+  }
+  
   res.json(
     {
       limit,
       offset,
       items: { registrations },
-      _links: {
-        self: {
-          href: req.query,
-        },
-        next: {
-          href: req.query,
-        },
-      },
+      _links,
     },
   );
 }

@@ -1,4 +1,4 @@
-/* 
+/*
 users.js
 Föll tengd notendaumsjón fara hingað t.d. login, register, o.s.frv.
 */
@@ -53,7 +53,7 @@ export function createJwtToken(id) {
     const token = jwt.sign(payload, jwtSecret, tokenOptions);
     return token;
 }
-  
+
 export function requireAuthentication(req, res, next) {
     return passport.authenticate('jwt', { session: false }, (err, user, info) => {
         if (err) {
@@ -71,7 +71,7 @@ export function requireAuthentication(req, res, next) {
     },
   )(req, res, next);
 }
-  
+
 export function requireAdminAuthentication(req, res, next) {
     return passport.authenticate('jwt', { session: false }, (err, user, info) => {
         if (err) {
@@ -118,31 +118,31 @@ router.patch('/:id(\\d+)', requireAdminAuthentication, async (req, res) => {
     const admin = user.admin ? 'f' : 't';
     try {
         await updateUser(user, null, null, admin);
-        return res.status(201).json({message: `Stjornarréttindi ${user.username} uppfærð í ${!user.admin}`});
+        return res.status(201).json({message: `Stjornarréttindi ${user.name} uppfærð í ${!user.admin}`});
     } catch {
-        return res.status(500).json({message: `Ekki tókst að upppfæra ${user.username} með stjórnarréttindi`});
+        return res.status(500).json({message: `Ekki tókst að upppfæra ${user.name} með stjórnarréttindi`});
     }
 });
 
 router.post('/register', registerValidation, async (req, res) => {
-    const newUser = { name: req.body.username, email: req.body.email, password: req.body.password};
+    const newUser = { name: req.body.name, email: req.body.email, password: req.body.password};
     const validation = validationResult(req);
 
     if (!validation.isEmpty()) {
         return res.status(400).json({ errors: validation.errors })
     }
-    
+
     if (await findByUsername(newUser.name)) {
         return res.status(400).json({message: "Notendanafn þegar í notkun"});
-    } 
-    
+    }
+
     else if (await findByEmail(newUser.email)) {
         return res.status(400).json({message: "Netfang þegar í notkun"});
     }
 
     try {
         await createUser(newUser);
-        return res.status(201).json({message: "Notandi " + newUser.name + " búinn til"});
+        return res.status(201).json({message: "Notandi " + newUser.name+ " búinn til"});
     } catch {
         return res.status(500).json({message: "Eitthvað mistókst við nýskráningu"});
     }
@@ -151,6 +151,7 @@ router.post('/register', registerValidation, async (req, res) => {
 router.post('/login', loginValidation, async (req, res) => {
     //const user = await findByUsername(req.body.name);
     const user = await findByEmail(req.body.email);
+    console.log(`login user ${user}`);
     const validation = validationResult(req);
 
     if (!validation.isEmpty()) {
@@ -165,10 +166,10 @@ router.post('/login', loginValidation, async (req, res) => {
         if (loginCheck) {
             // her kemur jwt token
             const token = createJwtToken(user.id);
-            return res.json({ 
+            return res.json({
                 "user": {
                     id: user.id,
-                    username: user.name,
+                    name: user.name,
                     email: user.email,
                     admin: user.admin
                 },
@@ -199,9 +200,9 @@ router.patch('/me', requireAuthentication, profileValidation, async (req, res) =
 
     try {
         await updateUser(req.user, email, password, req.user.admin);
-        return res.status(201).json({message: `${req.user.username} uppfærður`});
+        return res.status(201).json({message: `${req.user.name} uppfærður`});
     } catch (e) {
-        return res.status(500).json({message: `Ekki tókst að upppfæra ${req.user.username}: ${e}`});
+        return res.status(500).json({message: `Ekki tókst að upppfæra ${req.user.name}: ${e}`});
     }
 
 });

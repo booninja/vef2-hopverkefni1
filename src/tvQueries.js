@@ -11,6 +11,7 @@ export async function getAllSeries() {
   }
   return result;
 }
+
 export async function listSeries(offset = 0, limit = 10, search = '') {
   const values = [offset, limit];
 
@@ -74,6 +75,40 @@ export async function getSerieById(id, offset = 0, limit = 10, search = '') {
     return null;
   }
   // console.info(result.rows);
+  return result.rows[0];
+}
+export async function getSeriesCount() {
+  const q = 'SELECT COUNT(*) AS count FROM series';
+  let result = '';
+  try {
+    result = await query(q);
+  } catch (e) {
+    console.info('Villa við að sækja fjölda', e);
+  }
+  const number = result.rows[0]
+  return number;
+}
+export async function getSeasonsCountBySerie(id) {
+  const q = 'SELECT COUNT(id) FROM seasons where serieID = $1';
+  let result;
+
+  try {
+    result = await query(q, [id]);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+  return result.rows;
+}
+
+export async function getGenreCount() {
+  const q = 'SELECT COUNT(id) FROM categories';
+  let result;
+
+  try {
+    result = await query(q);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
   return result.rows;
 }
 
@@ -93,6 +128,7 @@ export async function getGenreBySerieId(id) {
   return result.rows;
 }
 
+
 export async function editSerieById(id, data) {
   const q = `UPDATE series SET
               name = $1,
@@ -103,27 +139,44 @@ export async function editSerieById(id, data) {
               description = $6,
               language = $7,
               network = $8,
-              website = $9
-              WHERE id = $10`;
+              homepage = $9
+              WHERE id = $10
+              RETURNING *`;
 
   const beforeUpdate = await getSerieById(id);
+
+  const now = {
+     name: data.name || beforeUpdate.name,
+      airdate:  data.airdate || beforeUpdate.airdate,
+      inproduction: data.inproduction ||  beforeUpdate.inproduction,
+      tagline:  data.tagline ||  beforeUpdate.tagline,
+      poster:  data.poster || beforeUpdate.poster,
+      description:  data.description || beforeUpdate.description,
+      language:  data.language || beforeUpdate.language,
+      network:  data.network || beforeUpdate.network,
+      homepage:  data.homepage|| beforeUpdate.homepage,
+      id:  id,
+  }
+
   try {
     await query(q,
-      [data.name || beforeUpdate.name,
-        data.airDate || beforeUpdate.airDate,
-        data.inProduction || beforeUpdate.inProduction,
-        data.tagline || beforeUpdate.tagline,
-        data.poster || beforeUpdate.poster,
-        data.description || beforeUpdate.description,
-        data.language || beforeUpdate.language,
-        data.network || beforeUpdate.network,
-        data.website || beforeUpdate.website,
-        id,
+      [ now.name,
+        now.airdate,
+        now.inproduction,
+        now.tagline,
+        now.poster,
+        now.description,
+        now.language,
+        now.network,
+        now.homepage,
+      id,
       ]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
 }
+
+
 
 export async function deleteSerieById(id) {
   const q = `DELETE FROM series
@@ -300,7 +353,7 @@ export async function editEpisodeById(id, data) {
 
 // Gæti þurft að laga
 export async function setSerieRating(serieID, userID, data) {
-  const q = `INSERT INTO SerieToUser (serieID,userID,grade) 
+  const q = `INSERT INTO SerieToUser (serieID,userID,grade)
               VALUES ($1,$2,$3)`;
 
   try {
@@ -341,7 +394,7 @@ export async function deleteSerieRating(serieID, userID) {
 }
 
 export async function setSerieStatus(serieID, userID, data) {
-  const q = `INSERT INTO SerieToUser (serieID,userID,status) 
+  const q = `INSERT INTO SerieToUser (serieID,userID,status)
               VALUES ($1,$2,$3)`;
 
   try {
@@ -397,8 +450,8 @@ export async function findByName(username) {
 // Gæti þurft að laga
 // export async function updateSerieRating(id, serieID, userID, rating) {
 //   const q = `UPDATE EpisodeToUser SET rating = $1
-//               WHERE id = $2 
-//               AND episodeID = $3 
+//               WHERE id = $2
+//               AND episodeID = $3
 //               AND userID = $4`;
 
 //   try {

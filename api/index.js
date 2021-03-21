@@ -2,39 +2,33 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import xss from 'xss';
 import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
-import {
-  listSeries, editSerieById, setSerieRating, findByName,
-} from '../src/tvQueries.js';
-import {
-  readSerie,
-  rateSerie,
-  updateRateSerie,
-  deleteRateSerie,
-  stateSerie,
-  updateStateSerie,
-  deleteStateSerie,
-  deleteSerie,
-  readSeasons,
-  readSeason,
-  deleteSeason,
-  readEpisode,
-  deleteEpisode,
-  readGenres,
-} from './tv.js';
-import {
-  insertSeries,
-  insertSeasonsById,
-  singleInsertCategories,
-} from '../src/csvReader.js';
-import {
-  seriesValidation,
-  genreValidation,
-  serieValidation,
-  seasonValidation,
-  rateValidation,
-  stateValidation,
-} from './validating.js';
-import { requireAuthentication } from '../src/users.js';
+import { listSeries, editSerieById, getSeriesCount, findByName} from '../src/tvQueries.js';
+import {readSerie,
+        rateSerie,
+        updateRateSerie,
+        deleteRateSerie,
+        stateSerie,
+        updateStateSerie,
+        deleteStateSerie,
+        deleteSerie,
+        readSeasons,
+        readSeason,
+        deleteSeason,
+        readEpisode,
+        deleteEpisode,
+        readGenres} from './tv.js'
+import {NOTinsertSeries,
+        insertSeasonsById,
+        singleInsertCategories } from '../src/csvReader.js';
+import { seriesValidation,
+         genreValidation,
+         serieValidation,
+         seasonValidation,
+        // patchSeriesValidation
+         //rateValidation,
+         //stateValidation
+         } from './validating.js'
+import { requireAuthentication, requireAdminAuthentication } from '../src/users.js';
 
 export const router = express.Router();
 async function indexRoute(req, res) {
@@ -93,27 +87,40 @@ async function indexRoute(req, res) {
   );
 }
 
-async function getSeries(req, res) {
+const seriesCount = await getSeriesCount();
+
+async function getSeries(req, res,) {
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
 
   page = setPagenumber(page);
 
   const registrations = await listSeries(offset, limit);
-  console.log(registrations);
+  const seriesCount = await getSeriesCount();
+
+  const _links = {
+    self: {
+      href: `http://localhost:3000/tv/offset=${offset}&limit=10`,
+    },
+  };
+
+  if (offset + 10 < seriesCount) {
+    _links.next = {
+      href: `http://localhost:3000/tv?offset=${offset + 10}&limit=10`,
+    }
+  }
+  if (offset - 10 >= 0) {
+    _links.prev = {
+      href: `http://localhost:3000/tv?offset=${offset - 10}&limit=10`,
+    };
+  }
+
   res.json(
     {
       limit,
       offset,
       items: { registrations },
-      _links: {
-        self: {
-          href: req.query,
-        },
-        next: {
-          href: req.query,
-        },
-      },
+      _links,
     },
   );
 }
@@ -133,6 +140,8 @@ async function createSerie(req, res) {
     homepage: req.body.homepage,
   };
 
+router.post('/tv', requireAdminAuthentication, seriesValidation, (req, res) => {
+  const data = req.body;
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
@@ -155,9 +164,9 @@ router.post('/tv', seriesValidation, catchErrors(createSerie));
 
 router.get('/genres', catchErrors(readGenres));
 
-// virkar bara fyrir eitt genre í einu þarf mörg ?
-router.post('/genres', genreValidation, (req, res) => {
-  const data = req.body.params;
+//virkar bara fyrir eitt genre í einu þarf mörg ?
+router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) => {
+  const data = req.body;
 
   const validation = validationResult(data);
 
@@ -172,9 +181,12 @@ router.post('/genres', genreValidation, (req, res) => {
 });
 
 router.get('/tv/:id', catchErrors(readSerie));// serie
-router.delete('/tv/:id', catchErrors(deleteSerie));
+router.delete('/tv/:id', requireAdminAuthentication, catchErrors(deleteSerie));
 
-router.patch('/tv/:id', serieValidation, (req, res) => {
+router.patch('/tv/:id',
+//requireAdminAuthentication,
+//patchSeriesValidation,
+ (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
@@ -188,8 +200,8 @@ router.patch('/tv/:id', serieValidation, (req, res) => {
   res.json('þetta gekk');
 });
 
-router.get('/tv/:id/season', catchErrors(readSeasons));
-router.post('/tv/:id/season', seasonValidation, (req, res) => {
+router.get('/tv/:id/season',  catchErrors(readSeasons));
+router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
@@ -208,9 +220,9 @@ router.delete('/tv/:id/season/:season', catchErrors(deleteSeason));
 // router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
 
 router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
-router.delete('/tv/:id/season/:season/episode/:episode', catchErrors(deleteEpisode));
+router.delete('/tv/:id/season/:season/episode/:episode', requireAdminAuthentication, catchErrors(deleteEpisode));
 
-router.post('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(rateSerie));
+/*router.post('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(rateSerie));
 router.patch('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(updateRateSerie));
 router.delete('/tv/:id/rate', requireAuthentication, catchErrors(deleteRateSerie));
 
@@ -218,57 +230,4 @@ router.post('/tv/:id/state', stateValidation, requireAuthentication, catchErrors
 router.patch('/tv/:id/state', stateValidation, requireAuthentication, catchErrors(updateStateSerie));
 router.delete('/tv/:id/state', requireAuthentication, catchErrors(deleteStateSerie));
 
-// router.patch('/tv/:id/rate', catchErrors(rateSeries));
-// router.delete('/tv/:id/rate', catchErrors(rateSeries));
-
-// router.post('/tv/:id/state', catchErrors(stateSeries));
-// router.patch('/tv/:id/state', catchErrors(stateSeries));
-// router.delete('/tv/:id/state', catchErrors(stateSeries));
-
-// hér fyrir neðan eru allar skipanirnar fyrir allar síðurnar, held að best er að
-// taka eina í einu og vinna þannig niður
-
-// hér fyrir neðan er það með kalli á autherazation fyrir user og admin,
-// veit ekki hvort það var alltaf rétt að velja admin frekar en user ??
-
-/*
-  router.get('/tv', catchErrors(readSeries));//series
-  router.post('/tv', requireAdmin, catchErrors(insertSeries)); //insertSeries
-
-  router.get('/tv/:id', catchErrors(readSeries));//series
-  router.patch('/tv/:id', requireAdmin, catchErrors(updateSerie));
-  router.delete('/tv/:id', requireAdmin, catchErrors(updateSerie));
-
-  router.post('/tv/:id/rate', catchErrors(rateSeries));
-  router.patch('/tv/:id/rate', requireAdmin, catchErrors(rateSeries));
-  router.delete('/tv/:id/rate', requireAuth, catchErrors(rateSeries));
-
-  router.post('/tv/:id/state', catchErrors(stateSeries));
-  router.patch('/tv/:id/state', requireAdmin, catchErrors(stateSeries));
-  router.delete('/tv/:id/state', requireAuth, catchErrors(stateSeries));
-
-  router.get('/tv/:id/season', catchErrors(readSeasons));
-  router.post('/tv/:id/season', requireAdmin, catchErrors(readSeasons));
-
-  router.get('/tv/:id/season', catchErrors(readSeason));
-  router.delete('/tv/:id/season', requireAdmin, catchErrors(readSeason));
-
-  router.post('/tv/{id}/season/{season}/episode', requireAdmin, catchErrors(readEpisodes));
-
-  router.get('/tv/{id}/season/{season}/episode/{episode}', catchErrors(readEpisode));
-  router.delete('/tv/{id}/season/{season}/episode/{episode}', requireAdmin, catchErrors(readEpisode));
-
-  router.get('/genres', catchErrors(readGenre));
-  router.post('/genres', requireAdmin, catchErrors(readGenre));
-
-  router.get('/users', requireAdmin, catchErrors(listUsers));
-  router.get('/users/:id', requireAdmin, catchErrors(listUser));
-  router.patch('/users/:id', requireAdmin, catchErrors(updateUser));
-  router.post('/users/register', requireAdmin, catchErrors(registerUser));
-  router.get('/users/login', requireAuth, catchErrors(loginUser));
-  router.get('/users/me', requireAuth, catchErrors(currentUser));
-  router.patch('/users/me', requireAuth, catchErrors(updateCurrentUser));
 */
-
-// minn user
-// {"email": "fallegtblom@net.is","username": "blom", "password": "1234567890"}
