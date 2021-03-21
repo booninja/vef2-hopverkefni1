@@ -17,7 +17,7 @@ dotenv.config();
 
 const {
     ACCESS_TOKEN_SECRET: jwtSecret,
-    ACCESS_TOKEN_LIFETIME: tokenLifetime = 9999
+    ACCESS_TOKEN_LIFETIME: tokenLifetime = 9999999999999999
 } = process.env;
 
 if (!jwtSecret) {
@@ -173,4 +173,19 @@ router.post('/login', async (req, res) => {
 
 router.get('/me', requireAuthentication, async (req, res) => {
     res.json(req.user);
+});
+
+router.patch('/me', requireAuthentication, async (req, res) => {
+    console.log(`rwqebodypass ${req.body.password}`)
+    console.log(`hehe ${!req.body.password}`)
+    console.log(`haha ${req.body.password === null}`)
+    const email = !req.body.email ? req.user.email : req.body.email;
+    const password = !req.body.password ? req.user.password : await bcrypt.hash(req.body.password,10);
+    try {
+        await updateUser(req.user, email, password, req.user.admin);
+        return res.status(201).json({message: `${req.user.username} uppfærður`});
+    } catch (e) {
+        return res.status(500).json({message: `Ekki tókst að upppfæra ${req.user.username}: ${e}`});
+    }
+
 });
