@@ -1,7 +1,5 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 
 import { router as apiRouter } from '../api/index.js';
 import { router as tvRouter } from '../api/tv.js';

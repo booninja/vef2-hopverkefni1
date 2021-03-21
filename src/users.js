@@ -1,14 +1,9 @@
-/*
-users.js
-Föll tengd notendaumsjón fara hingað t.d. login, register, o.s.frv.
-*/
-
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import express from 'express';
-import validationResult from 'express-validator';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
+import { validationResult } from 'express-validator';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import {
   findByUsername, findById, createUser, getAllUsers, findByEmail, comparePasswords, updateUser,
@@ -118,21 +113,21 @@ router.patch('/:id(\\d+)', requireAdminAuthentication, async (req, res) => {
   const admin = user.admin ? 'f' : 't';
   try {
     await updateUser(user, null, null, admin);
-    return res.status(201).json({ message: `Stjornarréttindi ${user.name} uppfærð í ${!user.admin}` });
+    return res.status(201).json({ message: `Stjornarréttindi ${user.username} uppfærð í ${!user.admin}` });
   } catch {
-    return res.status(500).json({ message: `Ekki tókst að upppfæra ${user.name} með stjórnarréttindi` });
+    return res.status(500).json({ message: `Ekki tókst að upppfæra ${user.username} með stjórnarréttindi` });
   }
 });
 
 router.post('/register', registerValidation, async (req, res) => {
-  const newUser = { name: req.body.name, email: req.body.email, password: req.body.password };
+  const newUser = { username: req.body.name, email: req.body.email, password: req.body.password };
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
     return res.status(400).json({ errors: validation.errors });
   }
 
-  if (await findByUsername(newUser.name)) {
+  if (await findByUsername(newUser.username)) {
     return res.status(400).json({ message: 'Notendanafn þegar í notkun' });
   }
 
@@ -142,7 +137,7 @@ router.post('/register', registerValidation, async (req, res) => {
 
   try {
     await createUser(newUser);
-    return res.status(201).json({ message: `Notandi ${newUser.name} búinn til` });
+    return res.status(201).json({ message: `Notandi ${newUser.username} búinn til` });
   } catch {
     return res.status(500).json({ message: 'Eitthvað mistókst við nýskráningu' });
   }
@@ -198,8 +193,8 @@ router.patch('/me', requireAuthentication, profileValidation, async (req, res) =
 
   try {
     await updateUser(req.user, email, password, req.user.admin);
-    return res.status(201).json({ message: `${req.user.name} uppfærður` });
+    return res.status(201).json({ message: `${req.user.username} uppfærður` });
   } catch (e) {
-    return res.status(500).json({ message: `Ekki tókst að upppfæra ${req.user.name}: ${e}` });
+    return res.status(500).json({ message: `Ekki tókst að upppfæra ${req.user.username}: ${e}` });
   }
 });
