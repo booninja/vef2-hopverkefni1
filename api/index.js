@@ -17,13 +17,14 @@ import {readSerie,
         readEpisode,
         deleteEpisode,
         readGenres} from './tv.js'
-import {insertSeries,
+import {NOTinsertSeries,
         insertSeasonsById,
         singleInsertCategories } from '../src/csvReader.js';
 import { seriesValidation,
          genreValidation,
          serieValidation,
          seasonValidation,
+        // patchSeriesValidation
          //rateValidation,
          //stateValidation
          } from './validating.js'
@@ -138,7 +139,7 @@ router.post('/tv', requireAdminAuthentication, seriesValidation, (req, res) => {
   }
   else{
     console.log('komst í gegnum validation');
-    insertSeries(data);
+    NOTinsertSeries(data);
     res.json('þetta gekk');
   }
 });
@@ -165,7 +166,10 @@ router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) =
 router.get('/tv/:id', catchErrors(readSerie));// serie
 router.delete('/tv/:id', requireAdminAuthentication, catchErrors(deleteSerie));
 
-router.patch('/tv/:id', requireAdminAuthentication, serieValidation, (req, res) => {
+router.patch('/tv/:id',
+//requireAdminAuthentication,
+//patchSeriesValidation,
+ (req, res) => {
   const { id } = req.params;
   const data = req.body;
 

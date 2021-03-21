@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS series(
-  id serial PRIMARY KEY,
+  id integer PRIMARY KEY,
   name varchar(255) not null,
   airDate date,
   inProduction boolean,

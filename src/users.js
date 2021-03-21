@@ -1,4 +1,4 @@
-/* 
+/*
 users.js
 Föll tengd notendaumsjón fara hingað t.d. login, register, o.s.frv.
 */
@@ -53,7 +53,7 @@ export function createJwtToken(id) {
     const token = jwt.sign(payload, jwtSecret, tokenOptions);
     return token;
 }
-  
+
 export function requireAuthentication(req, res, next) {
     return passport.authenticate('jwt', { session: false }, (err, user, info) => {
         if (err) {
@@ -71,7 +71,7 @@ export function requireAuthentication(req, res, next) {
     },
   )(req, res, next);
 }
-  
+
 export function requireAdminAuthentication(req, res, next) {
     return passport.authenticate('jwt', { session: false }, (err, user, info) => {
         if (err) {
@@ -125,24 +125,24 @@ router.patch('/:id(\\d+)', requireAdminAuthentication, async (req, res) => {
 });
 
 router.post('/register', registerValidation, async (req, res) => {
-    const newUser = { name: req.body.name, email: req.body.email, password: req.body.password};
+    const newUser = { name: req.body.username, email: req.body.email, password: req.body.password};
     const validation = validationResult(req);
 
     if (!validation.isEmpty()) {
         return res.status(400).json({ errors: validation.errors })
     }
-    
-    if (await findByUsername(newUser.name)) {
+
+    if (await findByUsername(newUser.username)) {
         return res.status(400).json({message: "Notendanafn þegar í notkun"});
-    } 
-    
+    }
+
     else if (await findByEmail(newUser.email)) {
         return res.status(400).json({message: "Netfang þegar í notkun"});
     }
 
     try {
         await createUser(newUser);
-        return res.status(201).json({message: "Notandi " + newUser.name + " búinn til"});
+        return res.status(201).json({message: "Notandi " + newUser.username + " búinn til"});
     } catch {
         return res.status(500).json({message: "Eitthvað mistókst við nýskráningu"});
     }
@@ -166,7 +166,7 @@ router.post('/login', loginValidation, async (req, res) => {
         if (loginCheck) {
             // her kemur jwt token
             const token = createJwtToken(user.id);
-            return res.json({ 
+            return res.json({
                 "user": {
                     id: user.id,
                     username: user.name,
