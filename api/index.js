@@ -19,11 +19,13 @@ import {readSerie,
         readGenres} from './tv.js'
 import {insertSeries,
         insertSeasonsById,
-        singleInsertCategories} from '../src/csvReader.js';
+        singleInsertCategories } from '../src/csvReader.js';
 import { seriesValidation,
-        genreValidation,
-        serieValidation,
-        seasonValidation} from './validating.js'
+         genreValidation,
+         serieValidation,
+         seasonValidation,
+         rateValidation,
+         stateValidation } from './validating.js'
 import { requireAuthentication } from '../src/users.js';
 
 export const router = express.Router();
@@ -191,12 +193,12 @@ router.delete('/:id/season/:season', catchErrors(deleteSeason));
 router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
 router.delete('/tv/:id/season/:season/episode/:episode', catchErrors(deleteEpisode));
 
-router.post('/tv/:id/rate', requireAuthentication, catchErrors(rateSerie));
-router.patch('/tv/:id/rate', requireAuthentication, catchErrors(updateRateSerie));
+router.post('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(rateSerie));
+router.patch('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(updateRateSerie));
 router.delete('/tv/:id/rate', requireAuthentication, catchErrors(deleteRateSerie));
 
-router.post('/tv/:id/state', requireAuthentication, catchErrors(stateSerie));
-router.patch('/tv/:id/state', requireAuthentication, catchErrors(updateStateSerie));
+router.post('/tv/:id/state', stateValidation, requireAuthentication, catchErrors(stateSerie));
+router.patch('/tv/:id/state', stateValidation, requireAuthentication, catchErrors(updateStateSerie));
 router.delete('/tv/:id/state', requireAuthentication, catchErrors(deleteStateSerie));
 
 // router.patch('/tv/:id/rate', catchErrors(rateSeries));
