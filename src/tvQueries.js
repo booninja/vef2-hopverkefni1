@@ -90,24 +90,12 @@ export async function getSerieById(id, offset = 0, limit = 10, search = '') {
   return result.rows;
 }
 
-export async function getSeriesCount() {
-  const q = 'SELECT COUNT(id) FROM series';
+export async function getSeasonsCountBySerie(id) {
+  const q = 'SELECT COUNT(id) FROM seasons where serieID = $1';
   let result;
 
   try {
-    result = await query(q);
-  } catch (e) {
-    console.error('Villa við að sækja gögn', e);
-  }
-  return result.rows;
-}
-
-export async function getSeasonsCount() {
-  const q = 'SELECT COUNT(id) FROM seasons';
-  let result;
-
-  try {
-    result = await query(q);
+    result = await query(q, [id]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }

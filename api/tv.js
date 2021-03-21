@@ -9,7 +9,7 @@ import {
   listSeries,
   getSeasonById,
   getSeasonsByID,
-  getSeasonsCount,
+  getSeasonsCountBySerie,
   getEpisodeById,
   getEpisodesById,
   deleteSerieById,
@@ -66,8 +66,9 @@ export async function readSeasons(req, res) {
   const { id } = req.params;
 
   const series = await getSeasonsByID(id);
-  const seasonsCount = await getSeasonsCount();
+  const seasonsCount = await getSeasonsCountBySerie(id);
   console.log(series);
+  console.log(seasonsCount);
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
