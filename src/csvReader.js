@@ -58,7 +58,7 @@ export async function insertSeries(data) {
               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`;
 
   if (data.airDate === '') data.airDate = null;
-  if (data.poster === null) data.poster = 'hallo';
+  if (data.poster === null) data.poster = '';
 
   try {
     await query(q,

@@ -74,12 +74,12 @@ export const rateValidation = [
   body('rating')
     .isInt({ max: 5})
     .withMessage('Rating can be from 0-5')
-]
+];
 
 export const stateValidation = [
   body('status')
     .matches('Langar að horfa|Er að horfa|Hef horft|')
     .withMessage('Verður að tilgreina stöðu: Langar að horfa, Er að horfa, Heft horft eða enga stöðu'),
-]
+];
 
   //hvernig validation á image????

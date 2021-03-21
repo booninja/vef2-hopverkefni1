@@ -77,6 +77,42 @@ export async function getSerieById(id, offset = 0, limit = 10, search = '') {
   return result.rows;
 }
 
+export async function getSeriesCount() {
+  const q = 'SELECT COUNT(id) FROM series';
+  let result;
+
+  try {
+    result = await query(q);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+  return result.rows;
+}
+
+export async function getSeasonsCount() {
+  const q = 'SELECT COUNT(id) FROM seasons';
+  let result;
+
+  try {
+    result = await query(q);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+  return result.rows;
+}
+
+export async function getGenreCount() {
+  const q = 'SELECT COUNT(id) FROM categories';
+  let result;
+
+  try {
+    result = await query(q);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+  return result.rows;
+}
+
 export async function getGenreBySerieId(id) {
   const q = 'SELECT c.name FROM categories c JOIN seriesToCategories ON seriesToCategories.categoryID = c.id WHERE seriesToCategories.serieid = $1';
   let result;
