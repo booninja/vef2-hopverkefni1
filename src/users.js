@@ -125,7 +125,7 @@ router.patch('/:id(\\d+)', requireAdminAuthentication, async (req, res) => {
 });
 
 router.post('/register', registerValidation, async (req, res) => {
-    const newUser = { name: req.body.name, email: req.body.email, password: req.body.password};
+    const newUser = { name: req.body.username, email: req.body.email, password: req.body.password};
     const validation = validationResult(req);
 
     if (!validation.isEmpty()) {

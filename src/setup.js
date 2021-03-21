@@ -3,7 +3,6 @@ import pg from 'pg';
 import dotenv from 'dotenv';
 import { promises as fs } from 'fs';
 import { readSeries, readSeasons, readEpisodes } from './csvReader.js';
-import { setupMaster } from 'cluster';
 import { createAdmin, createUser } from './userQueries.js';
 
 async function readFileAsync(sql) {
@@ -66,8 +65,8 @@ async function main() {
   }
   // bæta færslum við töflu
   try {
-    await createAdmin({name:"oskar", email:"osh16@hi.is", password: "oskar"});
-    await createUser({name:"stalin", email:"ios24@hi.su", password: "gulag"});
+    await createAdmin({ name: 'oskar', email: 'osh16@hi.is', password: 'oskar' });
+    await createUser({ name: 'stalin', email: 'ios24@hi.su', password: 'gulag' });
     await readSeries();
     console.info('Þáttaröðum bætt við gagnagrunn');
     await readSeasons();

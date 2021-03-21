@@ -109,30 +109,17 @@ export async function editSerieById(id, data) {
   const beforeUpdate = await getSerieById(id);
   try {
     await query(q,
-      [data.name || beforeUpdate.rows[0].name,
-        data.airDate || beforeUpdate.rows[0].airDate,
-        data.inProduction || beforeUpdate.rows[0].inProduction,
-        data.tagline || beforeUpdate.rows[0].tagline,
-        data.poster || beforeUpdate.rows[0].poster,
-        data.description || beforeUpdate.rows[0].description,
-        data.language || beforeUpdate.rows[0].language,
-        data.network || beforeUpdate.rows[0].network,
-        data.website || beforeUpdate.rows[0].website,
+      [data.name || beforeUpdate.name,
+        data.airDate || beforeUpdate.airDate,
+        data.inProduction || beforeUpdate.inProduction,
+        data.tagline || beforeUpdate.tagline,
+        data.poster || beforeUpdate.poster,
+        data.description || beforeUpdate.description,
+        data.language || beforeUpdate.language,
+        data.network || beforeUpdate.network,
+        data.website || beforeUpdate.website,
         id,
       ]);
-      // await query(q,
-      //   [newdata.name,
-      //     newdata.airDate,
-      //     newdata.inProduction,
-      //     newdata.tagline,
-      //     newdata.poster,
-      //     newdata.description,
-      //     newdata.language,
-      //     newdata.network,
-      //     newdata.website,
-      //     id,
-      //   ]);
-
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
@@ -266,7 +253,6 @@ export async function deleteEpisodeById(id, season, episode) {
   const q = `DELETE FROM episodes WHERE serieID = $1
   AND seasonNumber = $2
   AND number = $3`;
-
   try {
     await query(q, [id, season, episode]);
   } catch (e) {
@@ -395,6 +381,19 @@ export async function deleteSerieStatus(serieID, userID) {
   }
 }
 
+export async function findByName(username) {
+  const q = 'SELECT * FROM Series WHERE name = $1';
+  try {
+    const result = await query(q, [username]);
+    if (result.rowCount === 1) {
+      return result.rows[0];
+    }
+  } catch (e) {
+    console.error('Gat ekki fundið notanda eftir notendnafni');
+    return null;
+  }
+  return false;
+}
 // Gæti þurft að laga
 // export async function updateSerieRating(id, serieID, userID, rating) {
 //   const q = `UPDATE EpisodeToUser SET rating = $1

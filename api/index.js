@@ -2,30 +2,38 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import xss from 'xss';
 import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
-import { listSeries, editSerieById, setSerieRating} from '../src/tvQueries.js';
-import {readSerie,
-        rateSerie,
-        updateRateSerie,
-        deleteRateSerie,
-        stateSerie,
-        updateStateSerie,
-        deleteStateSerie,
-        deleteSerie,
-        readSeasons,
-        readSeason,
-        deleteSeason,
-        readEpisode,
-        deleteEpisode,
-        readGenres} from './tv.js'
-import {insertSeries,
-        insertSeasonsById,
-        singleInsertCategories } from '../src/csvReader.js';
-import { seriesValidation,
-         genreValidation,
-         serieValidation,
-         seasonValidation,
-         rateValidation,
-         stateValidation } from './validating.js'
+import {
+  listSeries, editSerieById, setSerieRating, findByName,
+} from '../src/tvQueries.js';
+import {
+  readSerie,
+  rateSerie,
+  updateRateSerie,
+  deleteRateSerie,
+  stateSerie,
+  updateStateSerie,
+  deleteStateSerie,
+  deleteSerie,
+  readSeasons,
+  readSeason,
+  deleteSeason,
+  readEpisode,
+  deleteEpisode,
+  readGenres,
+} from './tv.js';
+import {
+  insertSeries,
+  insertSeasonsById,
+  singleInsertCategories,
+} from '../src/csvReader.js';
+import {
+  seriesValidation,
+  genreValidation,
+  serieValidation,
+  seasonValidation,
+  rateValidation,
+  stateValidation,
+} from './validating.js';
 import { requireAuthentication } from '../src/users.js';
 
 export const router = express.Router();
@@ -85,7 +93,7 @@ async function indexRoute(req, res) {
   );
 }
 
-async function getSeries(req, res,) {
+async function getSeries(req, res) {
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
 
@@ -112,40 +120,55 @@ async function getSeries(req, res,) {
 
 router.get('/', indexRoute);
 
-router.get('/tv', catchErrors(getSeries));// series
+async function createSerie(req, res) {
+  const newSerie = {
+    name: req.body.name,
+    airDate: req.body.airDate,
+    inProduction: req.body.inProduction,
+    tagline: req.body.tagline,
+    image: req.body.image,
+    description: req.body.description,
+    language: req.body.language,
+    network: req.body.network,
+    homepage: req.body.homepage,
+  };
 
-router.post('/tv', seriesValidation, (req, res) => {
-  const data = req.body;
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
-    console.log(' /tv post klikkaði');
     return res.status(404).json({ errors: validation.errors });
   }
-  else{
-    console.log('komst í gegnum validation');
-    insertSeries(data);
-    res.json('þetta gekk');
+
+  if (await findByName(newSerie.name)) {
+    return res.status(400).json({ message: 'Sjónvarpsþáttur nú þegar til' });
   }
-});
+  try {
+    await insertSeries(newSerie);
+    return res.status(201).json({ message: `Sjónvarpsþáttur ${newSerie.name} búinn til` });
+  } catch (e) {
+    return res.status(500).json({ message: e });
+  }
+}
+
+router.get('/tv', catchErrors(getSeries));// series
+router.post('/tv', seriesValidation, catchErrors(createSerie));
 
 router.get('/genres', catchErrors(readGenres));
 
-//virkar bara fyrir eitt genre í einu þarf mörg ?
+// virkar bara fyrir eitt genre í einu þarf mörg ?
 router.post('/genres', genreValidation, (req, res) => {
-  const data = req.body;
+  const data = req.body.params;
 
-  const validation = validationResult(req);
+  const validation = validationResult(data);
 
   if (!validation.isEmpty()) {
     console.log(' /genre post klikkaði');
     return res.status(404).json({ errors: validation.errors });
   }
-  else{
-    console.log('komst í gegnum validation');
-    singleInsertCategories(data);
-    res.json('þetta gekk');
-  }
+
+  console.log('komst í gegnum validation');
+  singleInsertCategories(data);
+  res.json('þetta gekk');
 });
 
 router.get('/tv/:id', catchErrors(readSerie));// serie
@@ -160,15 +183,13 @@ router.patch('/tv/:id', serieValidation, (req, res) => {
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
   }
-  else{
-    editSerieById(id, data);
-    res.json('þetta gekk');
-  }
+
+  editSerieById(id, data);
+  res.json('þetta gekk');
 });
 
-
-router.get('/tv/:id/season',  catchErrors(readSeasons));
-router.post('/tv/:id/season', seasonValidation,  (req, res) => {
+router.get('/tv/:id/season', catchErrors(readSeasons));
+router.post('/tv/:id/season', seasonValidation, (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
@@ -177,15 +198,12 @@ router.post('/tv/:id/season', seasonValidation,  (req, res) => {
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
   }
-  else{
-      insertSeasonsById(data, id);
-    res.json('þetta gekk');
-  }
+  insertSeasonsById(data, id);
+  return res.json('þetta gekk');
 });
 
-
 router.get('/tv/:id/season/:season', catchErrors(readSeason)); // vantar overview
-router.delete('/:id/season/:season', catchErrors(deleteSeason));
+router.delete('/tv/:id/season/:season', catchErrors(deleteSeason));
 
 // router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
 
@@ -207,19 +225,8 @@ router.delete('/tv/:id/state', requireAuthentication, catchErrors(deleteStateSer
 // router.patch('/tv/:id/state', catchErrors(stateSeries));
 // router.delete('/tv/:id/state', catchErrors(stateSeries));
 
-
-
-
-
-
-
-
-
-
 // hér fyrir neðan eru allar skipanirnar fyrir allar síðurnar, held að best er að
 // taka eina í einu og vinna þannig niður
-
-
 
 // hér fyrir neðan er það með kalli á autherazation fyrir user og admin,
 // veit ekki hvort það var alltaf rétt að velja admin frekar en user ??
@@ -263,8 +270,5 @@ router.delete('/tv/:id/state', requireAuthentication, catchErrors(deleteStateSer
   router.patch('/users/me', requireAuth, catchErrors(updateCurrentUser));
 */
 
-
-
-
-//minn user
-//{"email": "fallegtblom@net.is","username": "blom", "password": "1234567890"}
+// minn user
+// {"email": "fallegtblom@net.is","username": "blom", "password": "1234567890"}
