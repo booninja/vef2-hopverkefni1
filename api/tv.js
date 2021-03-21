@@ -23,6 +23,7 @@ import {
   deleteSerieStatus
   //updateEpisodeRating,
 } from '../src/tvQueries.js';
+import { requireAuthentication, requireAdminAuthentication} from '../src/users.js';
 
 export const router = express.Router();
 
