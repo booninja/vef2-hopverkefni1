@@ -6,7 +6,7 @@ Föll tengd notendaumsjón fara hingað t.d. login, register, o.s.frv.
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import express from 'express';
-import { body, validationResult } from 'express-validator';
+import validationResult from 'express-validator';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
@@ -107,9 +107,9 @@ router.get('/:id(\\d+)', requireAdminAuthentication, async (req, res) => {
     return res.status(404).json({ message: 'Notandi fannst ekki' });
   }
   try {
-    res.json(user);
+    return res.json(user);
   } catch {
-    res.status(500).json({ message: 'Eitthvað mistókst við að sækja notanda' });
+    return res.status(500).json({ message: 'Eitthvað mistókst við að sækja notanda' });
   }
 });
 
@@ -151,7 +151,6 @@ router.post('/register', registerValidation, async (req, res) => {
 router.post('/login', loginValidation, async (req, res) => {
   // const user = await findByUsername(req.body.name);
   const user = await findByEmail(req.body.email);
-  console.log(`login user ${user}`);
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
@@ -164,7 +163,6 @@ router.post('/login', loginValidation, async (req, res) => {
   try {
     const loginCheck = await comparePasswords(req.body.password, user.password);
     if (loginCheck) {
-      // her kemur jwt token
       const token = createJwtToken(user.id);
       return res.json({
         user: {
@@ -189,7 +187,8 @@ router.get('/me', requireAuthentication, async (req, res) => {
 
 router.patch('/me', requireAuthentication, profileValidation, async (req, res) => {
   const email = !req.body.email ? req.user.email : req.body.email;
-  const password = !req.body.password ? req.user.password : await bcrypt.hash(req.body.password, 10);
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+  const password = !req.body.password ? req.user.password : hashedPassword;
 
   const validation = validationResult(req);
 
