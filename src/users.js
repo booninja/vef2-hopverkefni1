@@ -125,14 +125,14 @@ router.patch('/:id(\\d+)', requireAdminAuthentication, async (req, res) => {
 });
 
 router.post('/register', registerValidation, async (req, res) => {
-    const newUser = { name: req.body.username, email: req.body.email, password: req.body.password};
+    const newUser = { name: req.body.name, email: req.body.email, password: req.body.password};
     const validation = validationResult(req);
 
     if (!validation.isEmpty()) {
         return res.status(400).json({ errors: validation.errors })
     }
 
-    if (await findByUsername(newUser.username)) {
+    if (await findByUsername(newUser.name)) {
         return res.status(400).json({message: "Notendanafn þegar í notkun"});
     }
 
@@ -142,7 +142,7 @@ router.post('/register', registerValidation, async (req, res) => {
 
     try {
         await createUser(newUser);
-        return res.status(201).json({message: "Notandi " + newUser.username + " búinn til"});
+        return res.status(201).json({message: "Notandi " + newUser.name+ " búinn til"});
     } catch {
         return res.status(500).json({message: "Eitthvað mistókst við nýskráningu"});
     }
