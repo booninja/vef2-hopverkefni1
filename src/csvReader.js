@@ -17,7 +17,6 @@ export async function readSeries() {
   fs.createReadStream('./data/series.csv')
     .pipe(csv())
     .on('data', async (row) => {
-      console.log(row);
       await insertSeries(row);
       await insertCategories(row);
       setTimeout(async function() {
@@ -57,7 +56,7 @@ export async function insertSeries(data) {
   const q = `INSERT INTO series
               (id, name,airDate,inProduction,tagline,poster,description,language,network,homepage)
               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10)`;
- console.log('<<<<<<', data.name);
+
   if (data.airDate === '') data.airDate = null;
   if (data.poster === null) data.poster = '';
 
