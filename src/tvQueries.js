@@ -105,32 +105,19 @@ export async function editSerieById(id, data) {
               network = $8,
               website = $9
               WHERE id = $10`;
-    // const currData = await getSerieById(id);
-    // console.log('>>>>', currData);
 
-    // let newdata  = {
-    //   name: data.name || currData.name,
-    //   airdate: currData.airdate || data.airdate ,
-    //   inProduction: data.inProduction || currData.inProduction,
-    //   tagline: data.tagline || currData.tagline,
-    //   poster: data.poster || currData.poster,
-    //   description: data.description || currData.description,
-    //   language: data.language || currData.language,
-    //   network: data.network || currData.network,
-    //   website: data.website || currData.website,
-    // }
-    // console.log('<<<<', newdata);
+  const beforeUpdate = await getSerieById(id);
   try {
-   await query(q,
-      [data.name,
-        data.airDate,
-        data.inProduction,
-        data.tagline,
-        data.poster,
-        data.description,
-        data.language,
-        data.network,
-        data.website,
+    await query(q,
+      [data.name || beforeUpdate.rows[0].name,
+        data.airDate || beforeUpdate.rows[0].airDate,
+        data.inProduction || beforeUpdate.rows[0].inProduction,
+        data.tagline || beforeUpdate.rows[0].tagline,
+        data.poster || beforeUpdate.rows[0].poster,
+        data.description || beforeUpdate.rows[0].description,
+        data.language || beforeUpdate.rows[0].language,
+        data.network || beforeUpdate.rows[0].network,
+        data.website || beforeUpdate.rows[0].website,
         id,
       ]);
       // await query(q,

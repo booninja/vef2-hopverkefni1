@@ -1,20 +1,16 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable radix */
 import fs from 'fs';
-import dotenv from 'dotenv';
 // import fastcsv from 'fast-csv';
 import csv from 'csv-parser';
 import { v2 as cloudinary } from 'cloudinary';
 import { query } from './utils.js';
-
-dotenv.config();
 
 cloudinary.config({
   cloud_name: 'vefforritun-hop1-rovv',
   api_key: '579452795597197',
   api_secret: 'LAHnLbWZvxPl_6U3YOLeNCJiQ6w',
 });
-
 
 export async function readSeries() {
   fs.createReadStream('./data/series.csv')

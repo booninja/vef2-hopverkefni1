@@ -68,10 +68,6 @@ export async function updateUser(user, email, password, admin) {
   if (!admin) {
     admin = user.admin;
   }
-  console.log(user);
-  console.log(email)
-  console.log(password)
-  console.log(admin)
   try {
     const result = await query(q, [email, password, admin]);
     console.log(`result: ${result}`)

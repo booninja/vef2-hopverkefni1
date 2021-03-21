@@ -26,7 +26,7 @@ import { seriesValidation,
          seasonValidation,
          rateValidation,
          stateValidation } from './validating.js'
-import { requireAuthentication } from '../src/users.js';
+import { requireAuthentication, requireAdminAuthentication } from '../src/users.js';
 
 export const router = express.Router();
 async function indexRoute(req, res) {
@@ -110,12 +110,11 @@ async function getSeries(req, res,) {
   );
 }
 
-
 router.get('/', indexRoute);
 
 router.get('/tv', catchErrors(getSeries));// series
 
-router.post('/tv', seriesValidation, (req, res) => {
+router.post('/tv', requireAdminAuthentication, seriesValidation, (req, res) => {
   const data = req.body;
   const validation = validationResult(req);
 
@@ -133,7 +132,7 @@ router.post('/tv', seriesValidation, (req, res) => {
 router.get('/genres', catchErrors(readGenres));
 
 //virkar bara fyrir eitt genre í einu þarf mörg ?
-router.post('/genres', genreValidation, (req, res) => {
+router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) => {
   const data = req.body;
 
   const validation = validationResult(req);
@@ -150,9 +149,9 @@ router.post('/genres', genreValidation, (req, res) => {
 });
 
 router.get('/tv/:id', catchErrors(readSerie));// serie
-router.delete('/tv/:id', catchErrors(deleteSerie));
+router.delete('/tv/:id', requireAdminAuthentication, catchErrors(deleteSerie));
 
-router.patch('/tv/:id', serieValidation, (req, res) => {
+router.patch('/tv/:id', requireAdminAuthentication, serieValidation, (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
@@ -169,7 +168,7 @@ router.patch('/tv/:id', serieValidation, (req, res) => {
 
 
 router.get('/tv/:id/season',  catchErrors(readSeasons));
-router.post('/tv/:id/season', seasonValidation,  (req, res) => {
+router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
@@ -186,12 +185,12 @@ router.post('/tv/:id/season', seasonValidation,  (req, res) => {
 
 
 router.get('/tv/:id/season/:season', catchErrors(readSeason)); // vantar overview
-router.delete('/:id/season/:season', catchErrors(deleteSeason));
+router.delete('/:id/season/:season', requireAdminAuthentication, catchErrors(deleteSeason));
 
 // router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
 
 router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
-router.delete('/tv/:id/season/:season/episode/:episode', catchErrors(deleteEpisode));
+router.delete('/tv/:id/season/:season/episode/:episode', requireAdminAuthentication, catchErrors(deleteEpisode));
 
 router.post('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(rateSerie));
 router.patch('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(updateRateSerie));
