@@ -23,3 +23,4 @@ yarn-error.log*
 .env
 .oskar
 *.rest
+package-lock.json
