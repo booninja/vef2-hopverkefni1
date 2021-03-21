@@ -24,6 +24,7 @@ import { seriesValidation,
          genreValidation,
          serieValidation,
          seasonValidation,
+        // patchSeriesValidation
          //rateValidation,
          //stateValidation
          } from './validating.js'
@@ -152,7 +153,10 @@ router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) =
 router.get('/tv/:id', catchErrors(readSerie));// serie
 router.delete('/tv/:id', requireAdminAuthentication, catchErrors(deleteSerie));
 
-router.patch('/tv/:id', requireAdminAuthentication, serieValidation, (req, res) => {
+router.patch('/tv/:id',
+//requireAdminAuthentication,
+//patchSeriesValidation,
+ (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
