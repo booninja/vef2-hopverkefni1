@@ -17,8 +17,6 @@ import {
   getGenres,
 } from '../src/tvQueries.js';
 
-
-
 export const router = express.Router();
 
 export async function getTv(req, res) {
@@ -80,7 +78,7 @@ export async function readSerie(req, res) {
 export async function deleteSerie(req, res) {
   const { id } = req.params;
 
-  const series = await deleteSerieById(id);
+  await deleteSerieById(id);
   return res.json('Serie deleted');
 }
 
@@ -103,13 +101,13 @@ export async function readSeason(req, res) {
   if (!series) {
     return res.status(404).json({ error: 'Series not found' });
   }
-  return res.json({series, episodes});
+  return res.json({ series, episodes });
 }
 
 export async function deleteSeason(req, res) {
   const { id, season } = req.params;
 
-  const series = await deleteSeasonById(id, season);
+  await deleteSeasonById(id, season);
   return res.json('Season deleted');
 }
 
@@ -127,7 +125,7 @@ export async function readEpisode(req, res) {
 export async function deleteEpisode(req, res) {
   const { id, season, episode } = req.params;
 
-  const series = await deleteEpisodeById(id, season, episode);
+  await deleteEpisodeById(id, season, episode);
   return res.json('Season deleted');
 }
 
@@ -138,7 +136,7 @@ export async function readGenres(req, res) {
   page = setPagenumber(page);
 
   const registrations = await getGenres(offset, limit);
-  console.log(registrations);
+  console.info(registrations);
   res.json(
     {
       limit,

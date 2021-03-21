@@ -1,17 +1,22 @@
 import express from 'express';
 import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
 import { listSeries, editSerieById } from '../src/tvQueries.js';
-import {readSerie,
-        deleteSerie,
-        readSeasons,
-        readSeason,
-        deleteSeason,
-        readEpisode,
-        deleteEpisode,
-        readGenres} from './tv.js'
-import {insertSeries,
-        insertSeasonsById,
-        singleInsertCategories} from '../src/csvReader.js';
+import {
+  readSerie,
+  deleteSerie,
+  readSeasons,
+  readSeason,
+  deleteSeason,
+  readEpisode,
+  deleteEpisode,
+  readGenres,
+} from './tv.js';
+
+import {
+  insertSeries,
+  insertSeasonsById,
+  singleInsertCategories,
+} from '../src/csvReader.js';
 
 export const router = express.Router();
 async function indexRoute(req, res) {
@@ -122,7 +127,6 @@ async function validationCheck(req, res, next) {
 //   return res.json( series );
 // }
 
-
 router.get('/', indexRoute);
 
 router.get('/tv', catchErrors(getSeries));// series
@@ -130,8 +134,9 @@ router.get('/tv', catchErrors(getSeries));// series
 router.post('/tv', (req, res) => {
   const data = req.body;
   insertSeries(data);
-  console.log('Data added');
-  getTv(req, res); // kannski skila þessu eftir post?
+  console.info('Data added');
+  res.redirect('/');
+  // getTv(req, res); // kannski skila þessu eftir post?
 });
 
 router.get('/genres', catchErrors(readGenres));
@@ -140,7 +145,7 @@ router.get('/genres', catchErrors(readGenres));
 router.post('/genres', (req, res) => {
   const data = req.body;
   singleInsertCategories(data);
-  console.log('Data changed');
+  console.info('Data changed');
   res.json('Data changed');
 });
 
@@ -154,13 +159,12 @@ router.patch('/tv/:id', (req, res) => {
   res.json('Data changed');
 });
 
-
 router.get('/tv/:id/season', catchErrors(readSeasons));
 router.post('/tv/:id/season', (req, res) => {
   const { id } = req.params;
   const data = req.body;
   insertSeasonsById(data, id);
-  console.log('Data changed');
+  console.info('Data changed');
   res.json('data changed');
 });
 
@@ -172,18 +176,6 @@ router.delete('/:id/season/:season', catchErrors(deleteSeason));
 
 router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
 router.delete('/tv/:id/season/:season/episode/:episode', catchErrors(deleteEpisode));
-
-
-
-
-
-
-
-
-
-
-
-
 
 // hér fyrir neðan eru allar skipanirnar fyrir allar síðurnar, held að best er að
 // taka eina í einu og vinna þannig niður

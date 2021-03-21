@@ -106,17 +106,18 @@ export async function editSerieById(id, data) {
               website = $9
               WHERE id = $10`;
 
+  const beforeUpdate = await getSerieById(id);
   try {
     await query(q,
-      [data.name,
-        data.airDate,
-        data.inProduction,
-        data.tagline,
-        data.poster,
-        data.description,
-        data.language,
-        data.network,
-        data.website,
+      [data.name || beforeUpdate.rows[0].name,
+        data.airDate || beforeUpdate.rows[0].airDate,
+        data.inProduction || beforeUpdate.rows[0].inProduction,
+        data.tagline || beforeUpdate.rows[0].tagline,
+        data.poster || beforeUpdate.rows[0].poster,
+        data.description || beforeUpdate.rows[0].description,
+        data.language || beforeUpdate.rows[0].language,
+        data.network || beforeUpdate.rows[0].network,
+        data.website || beforeUpdate.rows[0].website,
         id,
       ]);
   } catch (e) {
