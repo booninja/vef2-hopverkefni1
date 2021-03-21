@@ -51,10 +51,6 @@ export async function readSerie(req, res) {
   );
 }
 
-// export async function rateSerie(req, res) {
-
-// }
-
 export async function deleteSerie(req, res) {
   const { id } = req.params;
 
@@ -107,8 +103,12 @@ export async function readEpisode(req, res) {
 export async function deleteEpisode(req, res) {
   const { id, season, episode } = req.params;
 
-  await deleteEpisodeById(id, season, episode);
-  return res.json('Season deleted');
+  try{
+    await deleteEpisodeById(id, season, episode);
+      return res.json('Season deleted');
+  } catch(e) {
+
+  }
 }
 
 export async function readGenres(req, res) {

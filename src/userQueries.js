@@ -82,8 +82,7 @@ export async function createUser(user) {
   const hashedPassword = await bcrypt.hash(user.password, 10);
   const q = 'INSERT INTO Users (username, email, password, admin) VALUES ($1, $2, $3, FALSE)';
   try {
-    const result = await query(q, [user.name, user.email, hashedPassword]);
-    return result.rows[0];
+    await query(q, [user.name, user.email, hashedPassword]);
   } catch (e) {
     console.log(`Gat ekki buid til notanda: ${e}`); // eslint disable-line
   }

@@ -303,7 +303,6 @@ export async function deleteEpisodeById(id, season, episode) {
   const q = `DELETE FROM episodes WHERE serieID = $1
   AND seasonNumber = $2
   AND number = $3`;
-
   try {
     await query(q, [id, season, episode]);
   } catch (e) {
@@ -432,6 +431,19 @@ export async function deleteSerieStatus(serieID, userID) {
   }
 }
 
+export async function findByName(username) {
+  const q = 'SELECT * FROM Series WHERE name = $1';
+  try {
+    const result = await query(q, [username]);
+    if (result.rowCount === 1) {
+      return result.rows[0];
+    }
+  } catch (e) {
+    console.error('Gat ekki fundið notanda eftir notendnafni');
+    return null;
+  }
+  return false;
+}
 // Gæti þurft að laga
 // export async function updateSerieRating(id, serieID, userID, rating) {
 //   const q = `UPDATE EpisodeToUser SET rating = $1

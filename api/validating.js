@@ -1,4 +1,63 @@
+<<<<<<< HEAD
 import { body } from 'express-validator';
+=======
+import { body} from 'express-validator';
+
+export const seriesValidation = [
+  body('name')
+    .isString()
+    .withMessage('name is required'),
+  body('name')
+    .isLength({ min: 1 })
+    .withMessage('name is required'),
+  body('name')
+    .isLength({ max: 128 })
+    .withMessage('max 128 characters'),
+  body('airDate')
+    .if(body('airDate').exists())
+    .isDate()
+    .withMessage('airDate must be a date'),
+  body('inProduction')
+    .if(body('inProduction').exists())
+    .isBoolean()
+    .withMessage('inproduction must be a boolean'),
+  body('image')
+    .if(body('image').exists())
+    .isBase64()
+    .withMessage('image is required'),
+  body('description')
+    .if(body('description').exists())
+    .isString()
+    .withMessage('description must be a string'),
+  body('language')
+    .if(body('language').exists())
+    .isLength({ min: 2 })
+    .withMessage('language must be a string of length 2'),
+  body('language')
+    .if(body('language').exists())
+    .isLength({ max: 2 })
+    .withMessage('language must be a string of length 2'),
+  body('network')
+    .isString()
+    .withMessage('network must be a string'),
+  body('homepage')
+    .if(body('homepage').exists())
+    .isURL()
+    .withMessage('url must be a string'),
+];
+
+export const genreValidation = [
+  body('name')
+    .isLength({ min: 1 })
+    .withMessage('name is required'),
+  body('name')
+    .isLength({ max: 128 })
+    .withMessage('max 128 characters'),
+  body('name')
+    .isString()
+    .withMessage('name is required'),
+];
+>>>>>>> e965351aa7d0ead15dfb5b0ba53cfefdb1632099
 
 export const seriesValidation = [
   body('name')
