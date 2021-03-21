@@ -2,7 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import xss from 'xss';
 import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
-import { listSeries, editSerieById, setSerieRating} from '../src/tvQueries.js';
+import { listSeries, editSerieById, getSeriesCount} from '../src/tvQueries.js';
 import {readSerie,
         rateSerie,
         updateRateSerie,
@@ -17,13 +17,14 @@ import {readSerie,
         readEpisode,
         deleteEpisode,
         readGenres} from './tv.js'
-import {insertSeries,
+import {NOTinsertSeries,
         insertSeasonsById,
         singleInsertCategories } from '../src/csvReader.js';
 import { seriesValidation,
          genreValidation,
          serieValidation,
          seasonValidation,
+        // patchSeriesValidation
          //rateValidation,
          //stateValidation
          } from './validating.js'
@@ -86,6 +87,8 @@ async function indexRoute(req, res) {
   );
 }
 
+const seriesCount = await getSeriesCount();
+
 async function getSeries(req, res,) {
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
@@ -93,20 +96,31 @@ async function getSeries(req, res,) {
   page = setPagenumber(page);
 
   const registrations = await listSeries(offset, limit);
-  console.log(registrations);
+  const seriesCount = await getSeriesCount();
+  
+  const _links = {
+    self: {
+      href: `http://localhost:3000/tv/offset=${offset}&limit=10`,
+    },
+  };
+
+  if (offset + 10 < seriesCount) {
+    _links.next = {
+      href: `http://localhost:3000/tv?offset=${offset + 10}&limit=10`,
+    }
+  }
+  if (offset - 10 >= 0) {
+    _links.prev = {
+      href: `http://localhost:3000/tv?offset=${offset - 10}&limit=10`,
+    };
+  }
+
   res.json(
     {
       limit,
       offset,
       items: { registrations },
-      _links: {
-        self: {
-          href: req.query,
-        },
-        next: {
-          href: req.query,
-        },
-      },
+      _links,
     },
   );
 }
@@ -125,7 +139,7 @@ router.post('/tv', requireAdminAuthentication, seriesValidation, (req, res) => {
   }
   else{
     console.log('komst í gegnum validation');
-    insertSeries(data);
+    NOTinsertSeries(data);
     res.json('þetta gekk');
   }
 });
@@ -152,7 +166,10 @@ router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) =
 router.get('/tv/:id', catchErrors(readSerie));// serie
 router.delete('/tv/:id', requireAdminAuthentication, catchErrors(deleteSerie));
 
-router.patch('/tv/:id', requireAdminAuthentication, serieValidation, (req, res) => {
+router.patch('/tv/:id',
+//requireAdminAuthentication,
+//patchSeriesValidation,
+ (req, res) => {
   const { id } = req.params;
   const data = req.body;
 

@@ -11,6 +11,19 @@ export async function getAllSeries() {
   }
   return result;
 }
+
+export async function getSeriesCount() {
+  const q = 'SELECT COUNT(*) AS count FROM series';
+  let result = '';
+  try {
+    result = await query(q);
+  } catch (e) {
+    console.info('Villa við að sækja fjölda', e);
+  }
+  const number = result.rows[0]
+  return number;
+}
+
 export async function listSeries(offset = 0, limit = 10, search = '') {
   const values = [offset, limit];
 
@@ -77,6 +90,30 @@ export async function getSerieById(id, offset = 0, limit = 10, search = '') {
   return result.rows;
 }
 
+export async function getSeasonsCountBySerie(id) {
+  const q = 'SELECT COUNT(id) FROM seasons where serieID = $1';
+  let result;
+
+  try {
+    result = await query(q, [id]);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+  return result.rows;
+}
+
+export async function getGenreCount() {
+  const q = 'SELECT COUNT(id) FROM categories';
+  let result;
+
+  try {
+    result = await query(q);
+  } catch (e) {
+    console.error('Villa við að sækja gögn', e);
+  }
+  return result.rows;
+}
+
 export async function getGenreBySerieId(id) {
   const q = 'SELECT c.name FROM categories c JOIN seriesToCategories ON seriesToCategories.categoryID = c.id WHERE seriesToCategories.serieid = $1';
   let result;
@@ -93,6 +130,7 @@ export async function getGenreBySerieId(id) {
   return result.rows;
 }
 
+
 export async function editSerieById(id, data) {
   const q = `UPDATE series SET
               name = $1,
@@ -107,12 +145,29 @@ export async function editSerieById(id, data) {
               WHERE id = $10`;
 
   const beforeUpdate = await getSerieById(id);
+  console.log(data);
+  console.log('<<<', beforeUpdate);
+  console.log("hvað er þetta", beforeUpdate.rows[0].name);
+
+  const now = [
+    data.name || beforeUpdate.name,
+        data.airDate || beforeUpdate.airDate,
+        data.inProduction ||  beforeUpdate.inProduction,
+        data.tagline ||  beforeUpdate.tagline,
+        data.poster || beforeUpdate.poster,
+        data.description || beforeUpdate.description,
+        data.language || beforeUpdate.language,
+        data.network || beforeUpdate.network,
+        data.website || beforeUpdate.website,
+        id,
+  ]
+  console.log('hvernig', now);
   try {
     await query(q,
       [data.name || beforeUpdate.rows[0].name,
         data.airDate || beforeUpdate.rows[0].airDate,
-        data.inProduction || beforeUpdate.rows[0].inProduction,
-        data.tagline || beforeUpdate.rows[0].tagline,
+        data.inProduction ||  beforeUpdate.rows[0].inProduction,
+        data.tagline ||  beforeUpdate.rows[0].tagline,
         data.poster || beforeUpdate.rows[0].poster,
         data.description || beforeUpdate.rows[0].description,
         data.language || beforeUpdate.rows[0].language,
@@ -120,24 +175,10 @@ export async function editSerieById(id, data) {
         data.website || beforeUpdate.rows[0].website,
         id,
       ]);
-      // await query(q,
-      //   [newdata.name,
-      //     newdata.airDate,
-      //     newdata.inProduction,
-      //     newdata.tagline,
-      //     newdata.poster,
-      //     newdata.description,
-      //     newdata.language,
-      //     newdata.network,
-      //     newdata.website,
-      //     id,
-      //   ]);
-
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
 }
-
 export async function deleteSerieById(id) {
   const q = `DELETE FROM series
              WHERE id = $1`;
@@ -314,7 +355,7 @@ export async function editEpisodeById(id, data) {
 
 // Gæti þurft að laga
 export async function setSerieRating(serieID, userID, data) {
-  const q = `INSERT INTO SerieToUser (serieID,userID,grade) 
+  const q = `INSERT INTO SerieToUser (serieID,userID,grade)
               VALUES ($1,$2,$3)`;
 
   try {
@@ -355,7 +396,7 @@ export async function deleteSerieRating(serieID, userID) {
 }
 
 export async function setSerieStatus(serieID, userID, data) {
-  const q = `INSERT INTO SerieToUser (serieID,userID,status) 
+  const q = `INSERT INTO SerieToUser (serieID,userID,status)
               VALUES ($1,$2,$3)`;
 
   try {
@@ -398,8 +439,8 @@ export async function deleteSerieStatus(serieID, userID) {
 // Gæti þurft að laga
 // export async function updateSerieRating(id, serieID, userID, rating) {
 //   const q = `UPDATE EpisodeToUser SET rating = $1
-//               WHERE id = $2 
-//               AND episodeID = $3 
+//               WHERE id = $2
+//               AND episodeID = $3
 //               AND userID = $4`;
 
 //   try {
