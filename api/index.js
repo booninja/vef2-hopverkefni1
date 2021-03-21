@@ -142,7 +142,7 @@ async function createSerie(req, res) {
   };
 }
 
-router.post('/tv', requireAdminAuthentication, seriesValidation, (req, res) => {
+router.post('/tv', requireAdminAuthentication, seriesValidation, async (req, res) => {
   const data = req.body;
   const validation = validationResult(req);
 
