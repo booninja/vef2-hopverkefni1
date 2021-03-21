@@ -10,10 +10,10 @@ export const seriesValidation = [
     body('name')
       .isLength({ max: 128 })
       .withMessage('max 128 characters'),
-    // body('airDate')
-    //   .isDate()
-    //   .withMessage('airDate must be a date'),
-    body('inproduction')
+     body('airDate')
+       .isDate()
+       .withMessage('airDate must be a date'),
+    body('inProduction')
       .isBoolean()
       .withMessage('inproduction must be a boolean'),
     // body('image')
@@ -31,11 +31,10 @@ export const seriesValidation = [
     body('network')
       .isString()
       .withMessage('network must be a string'),
-    body('website')
+    body('homepage')
       .isString()
       .withMessage('url must be a string'),
   ];
-
 export  const genreValidation = [
     body('name')
       .isLength({ min: 1 })
@@ -44,7 +43,7 @@ export  const genreValidation = [
       .isLength({ max: 128 })
       .withMessage('max 128 characters'),
     ];
-export   const serieValidation = [
+export const serieValidation = [
       body('number')
         .isInt({min: 1})
         .withMessage('must be an integer larger than 0'),
@@ -52,7 +51,7 @@ export   const serieValidation = [
       //  .is
       //  .withMessage('image is required'),
     ];
-export    const seasonValidation = [
+export const seasonValidation = [
       body('name')
         .isLength({ min: 1 })
         .withMessage('name is required'),
@@ -67,19 +66,37 @@ export    const seasonValidation = [
       //  .withMessage('image is required'),
   ];
 
-export const rateValidation = [
-  body('rating')
-    .isInt({ min: 0})
-    .withMessage('Rating can be from 0-5'),
-  body('rating')
-    .isInt({ max: 5})
-    .withMessage('Rating can be from 0-5')
-]
 
-export const stateValidation = [
-  body('status')
-    .isLength({ max: 128})
+//patch
+/*export const patchSeriesValidation = [
+  body('name').if().exists()
+    .isLength({ min: 1 })
+    .withMessage('name is required'),
+  body('name').if().exists()
+    .isLength({ max: 128 })
     .withMessage('max 128 characters'),
-]
-
-  //hvernig validation á image????
+  // body('airDate').if().exists()
+  //   .isDate()
+  //   .withMessage('airDate must be a date'),
+  body('inproduction').if().exists()
+    .isBoolean()
+    .withMessage('inproduction must be a boolean'),
+  // body('image').if().exists()
+  //   .is
+  //   .withMessage('image is required'),
+  body('description').if().exists()
+    .isString()
+    .withMessage('description must be a string'),
+  body('language').if().exists()
+      .isLength({ min: 2 })
+    .withMessage('language must be a string of length 2'),
+  body('language').if().exists()
+      .isLength({ max: 2 })
+    .withMessage('language must be a string of length 2'),
+  body('network').if().exists()
+    .isString()
+    .withMessage('network must be a string'),
+  body('website').if().exists()
+    .isString()
+    .withMessage('url must be a string'),
+];*/

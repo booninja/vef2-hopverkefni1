@@ -24,8 +24,9 @@ import { seriesValidation,
          genreValidation,
          serieValidation,
          seasonValidation,
-         rateValidation,
-         stateValidation } from './validating.js'
+         //rateValidation,
+         //stateValidation
+         } from './validating.js'
 import { requireAuthentication, requireAdminAuthentication } from '../src/users.js';
 
 export const router = express.Router();
@@ -192,7 +193,7 @@ router.delete('/:id/season/:season', requireAdminAuthentication, catchErrors(del
 router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
 router.delete('/tv/:id/season/:season/episode/:episode', requireAdminAuthentication, catchErrors(deleteEpisode));
 
-router.post('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(rateSerie));
+/*router.post('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(rateSerie));
 router.patch('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(updateRateSerie));
 router.delete('/tv/:id/rate', requireAuthentication, catchErrors(deleteRateSerie));
 
