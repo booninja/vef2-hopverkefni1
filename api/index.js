@@ -2,7 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import xss from 'xss';
 import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
-import { listSeries, editSerieById, getSeriesCount} from '../src/tvQueries.js';
+import { listSeries, editSerieById, getSeriesCount, getSerieById} from '../src/tvQueries.js';
 import {readSerie,
         rateSerie,
         updateRateSerie,
@@ -130,7 +130,7 @@ router.get('/', indexRoute);
 router.get('/tv', catchErrors(getSeries));// series
 
 router.post('/tv',
-//requireAdminAuthentication,
+requireAdminAuthentication,
 serieValidation, (req, res) => {
   const data = req.body;
   const validation = validationResult(req);
@@ -168,10 +168,7 @@ router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) =
 router.get('/tv/:id', catchErrors(readSerie));// serie
 router.delete('/tv/:id', requireAdminAuthentication, catchErrors(deleteSerie));
 
-router.patch('/tv/:id',
-//requireAdminAuthentication,
- patchSeriesValidation,
- (req, res) => {
+router.patch('/tv/:id', requireAdminAuthentication, patchSeriesValidation, async (req, res) => {
   const { id } = req.params;
   const data = req.body;
   console.log(data);
@@ -183,7 +180,8 @@ router.patch('/tv/:id',
   }
   else{
     editSerieById(id, data);
-    res.json('þetta gekk');
+    const info = await getSerieById(id)
+    res.json(info);
   }
 });
 
@@ -194,6 +192,7 @@ router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  (re
   const data = req.body;
 
   const validation = validationResult(req);
+
 
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
