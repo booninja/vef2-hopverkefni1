@@ -24,9 +24,9 @@ import { seriesValidation,
          genreValidation,
          serieValidation,
          seasonValidation,
-        // patchSeriesValidation
-         //rateValidation,
-         //stateValidation
+        patchSeriesValidation,
+         rateValidation,
+         stateValidation
          } from './validating.js'
 import { requireAuthentication, requireAdminAuthentication } from '../src/users.js';
 
@@ -129,7 +129,9 @@ router.get('/', indexRoute);
 
 router.get('/tv', catchErrors(getSeries));// series
 
-router.post('/tv', requireAdminAuthentication, seriesValidation, (req, res) => {
+router.post('/tv',
+//requireAdminAuthentication,
+serieValidation, (req, res) => {
   const data = req.body;
   const validation = validationResult(req);
 
@@ -168,10 +170,11 @@ router.delete('/tv/:id', requireAdminAuthentication, catchErrors(deleteSerie));
 
 router.patch('/tv/:id',
 //requireAdminAuthentication,
-//patchSeriesValidation,
+ patchSeriesValidation,
  (req, res) => {
   const { id } = req.params;
   const data = req.body;
+  console.log(data);
 
   const validation = validationResult(req);
 
@@ -210,7 +213,7 @@ router.delete('/:id/season/:season', requireAdminAuthentication, catchErrors(del
 router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
 router.delete('/tv/:id/season/:season/episode/:episode', requireAdminAuthentication, catchErrors(deleteEpisode));
 
-/*router.post('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(rateSerie));
+router.post('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(rateSerie));
 router.patch('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(updateRateSerie));
 router.delete('/tv/:id/rate', requireAuthentication, catchErrors(deleteRateSerie));
 
@@ -218,4 +221,3 @@ router.post('/tv/:id/state', stateValidation, requireAuthentication, catchErrors
 router.patch('/tv/:id/state', stateValidation, requireAuthentication, catchErrors(updateStateSerie));
 router.delete('/tv/:id/state', requireAuthentication, catchErrors(deleteStateSerie));
 
-*/

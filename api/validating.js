@@ -1,10 +1,11 @@
-import { body} from 'express-validator';
+import { body, param} from 'express-validator';
 
 
 
 export const seriesValidation = [
     body('name')
       .isLength({ min: 1 })
+      .isInt()
       .withMessage('name is required'),
     body('name')
       .isLength({ max: 128 })
@@ -81,35 +82,45 @@ export const stateValidation = [
     .withMessage('Verður að tilgreina stöðu: Langar að horfa, Er að horfa, Heft horft eða enga stöðu'),
 ];
 
-// //patch
-// export const patchSeriesValidation = [
-//   if(body('name').exists()).isLength({ min: 1 })
-//     .withMessage('name is required'),
-//   body('name').if().exists()
-//     .isLength({ max: 128 })
-//     .withMessage('max 128 characters'),
-//    body('airDate').if().exists()
-//      .isDate()
-//     .withMessage('airDate must be a date'),
-//   body('inproduction').if().exists()
-//     .isBoolean()
-//     .withMessage('inproduction must be a boolean'),
-//   // body('image').if().exists()
-//   //   .is
-//   //   .withMessage('image is required'),
-//   body('description').if().exists()
-//     .isString()
-//     .withMessage('description must be a string'),
-//   body('language').if().exists()
-//       .isLength({ min: 2 })
-//     .withMessage('language must be a string of length 2'),
-//   body('language').if().exists()
-//       .isLength({ max: 2 })
-//     .withMessage('language must be a string of length 2'),
-//   body('network').if().exists()
-//     .isString()
-//     .withMessage('network must be a string'),
-//   body('website').if().exists()
-//     .isString()
-//     .withMessage('url must be a string'),
-// ];
+export const patchSeriesValidation = [
+  body('name')
+  .if(body('name').exists())
+  .isLength({ min: 1 })
+  .withMessage('name is required'),
+body('name')
+  .if(body('name').exists())
+  .isLength({ max: 128 })
+  .withMessage('max 128 characters'),
+ body('airDate')
+   .if(body('airDate').exists())
+   .isDate()
+   .withMessage('airDate must be a date'),
+body('inProduction')
+ .if(body('inProduction').exists())
+  .isBoolean()
+  .withMessage('inproduction must be a boolean'),
+body('image')
+   .if(body('image').exists())
+   .matches(new RegExp('^[A-Za-z0-9-_]+\.(jpg|jpeg|png|gif)$'))
+   .withMessage('image is required'),
+body('description')
+.if(body('description').exists())
+  .isString()
+  .withMessage('description must be a string'),
+body('language')
+.if(body('language').exists())
+    .isLength({ min: 2 })
+  .withMessage('language must be a string of length 2'),
+body('language')
+.if(body('language').exists())
+    .isLength({ max: 2 })
+  .withMessage('language must be a string of length 2'),
+body('network')
+.if(body('network').exists())
+  .isString()
+  .withMessage('network must be a string'),
+body('homepage')
+.if(body('homepage').exists())
+  .isString()
+  .withMessage('url must be a string'),
+];
