@@ -118,9 +118,9 @@ router.patch('/:id(\\d+)', requireAdminAuthentication, async (req, res) => {
     const admin = user.admin ? 'f' : 't';
     try {
         await updateUser(user, null, null, admin);
-        return res.status(201).json({message: `Stjornarréttindi ${user.username} uppfærð í ${!user.admin}`});
+        return res.status(201).json({message: `Stjornarréttindi ${user.name} uppfærð í ${!user.admin}`});
     } catch {
-        return res.status(500).json({message: `Ekki tókst að upppfæra ${user.username} með stjórnarréttindi`});
+        return res.status(500).json({message: `Ekki tókst að upppfæra ${user.name} með stjórnarréttindi`});
     }
 });
 
@@ -169,7 +169,7 @@ router.post('/login', loginValidation, async (req, res) => {
             return res.json({ 
                 "user": {
                     id: user.id,
-                    username: user.name,
+                    name: user.name,
                     email: user.email,
                     admin: user.admin
                 },
@@ -200,9 +200,9 @@ router.patch('/me', requireAuthentication, profileValidation, async (req, res) =
 
     try {
         await updateUser(req.user, email, password, req.user.admin);
-        return res.status(201).json({message: `${req.user.username} uppfærður`});
+        return res.status(201).json({message: `${req.user.name} uppfærður`});
     } catch (e) {
-        return res.status(500).json({message: `Ekki tókst að upppfæra ${req.user.username}: ${e}`});
+        return res.status(500).json({message: `Ekki tókst að upppfæra ${req.user.name}: ${e}`});
     }
 
 });
