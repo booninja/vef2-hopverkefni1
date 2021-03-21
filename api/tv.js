@@ -24,10 +24,6 @@ import {
   //updateEpisodeRating,
 } from '../src/tvQueries.js';
 
-import { requireAuthentication } from '../src/users.js';
-
-
-
 export const router = express.Router();
 
 export async function getTv(req, res) {
@@ -187,6 +183,13 @@ export async function readGenres(req, res) {
 export async function rateSerie(req, res) {
   const { id } = req.params;
   const data = req.body;
+
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.status(404).json({ errors: validation.errors });
+  }
+
   await setSerieRating(id, req.user.id, data);
   console.log('Data rating changed');
   res.json(
@@ -201,6 +204,13 @@ export async function rateSerie(req, res) {
 export async function updateRateSerie(req, res) {
   const { id } = req.params;
   const data = req.body;
+
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.status(404).json({ errors: validation.errors });
+  }
+
   await updateSerieRating(id, req.user.id, data);
   console.log('Data rating changed');
   res.json(
@@ -232,9 +242,14 @@ export async function deleteRateSerie(req, res) {
 
 export async function stateSerie(req, res) {
   const { id } = req.params;
-
   const data = req.body;
-  console.log(id, req.user.id, data.status);
+  
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.status(404).json({ errors: validation.errors });
+  }
+
   await setSerieStatus(id, req.user.id, data);
   console.log('Data status changed');
   res.json(
@@ -249,7 +264,13 @@ export async function stateSerie(req, res) {
 export async function updateStateSerie(req, res) {
   const { id } = req.params;
   const data = req.body;
-  console.log(id, req.user.id, data.status);
+  
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.status(404).json({ errors: validation.errors });
+  }
+
   await updateSerieStatus(id, req.user.id, data);
   console.log('Data status changed');
   res.json(

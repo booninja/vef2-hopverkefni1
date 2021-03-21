@@ -67,5 +67,19 @@ export    const seasonValidation = [
       //  .withMessage('image is required'),
   ];
 
+export const rateValidation = [
+  body('rating')
+    .isInt({ min: 0})
+    .withMessage('Rating can be from 0-5'),
+  body('rating')
+    .isInt({ max: 5})
+    .withMessage('Rating can be from 0-5')
+]
+
+export const stateValidation = [
+  body('status')
+    .isLength({ max: 128})
+    .withMessage('max 128 characters'),
+]
 
   //hvernig validation á image????
