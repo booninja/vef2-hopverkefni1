@@ -2,7 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import xss from 'xss';
 import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
-import { listSeries, editSerieById, getSeriesCount, findByName} from '../src/tvQueries.js';
+import { listSeries, editSerieById, getSeriesCount, findByName, getSerieById} from '../src/tvQueries.js';
 import {readSerie,
         rateSerie,
         updateRateSerie,
@@ -24,7 +24,7 @@ import { seriesValidation,
          genreValidation,
          serieValidation,
          seasonValidation,
-         //patchSeriesValidation
+         patchSeriesValidation,
          rateValidation,
          stateValidation
          } from './validating.js'
@@ -162,7 +162,7 @@ router.post('/tv', requireAdminAuthentication, seriesValidation, async (req, res
 
 router.get('/tv', catchErrors(getSeries));
 
-router.post('/tv', seriesValidation, catchErrors(createSerie));
+router.post('/tv', requireAdminAuthentication, seriesValidation, catchErrors(createSerie));
 
 router.get('/genres', catchErrors(readGenres));
 
@@ -185,21 +185,21 @@ router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) =
 router.get('/tv/:id', catchErrors(readSerie));// serie
 router.delete('/tv/:id', requireAdminAuthentication, catchErrors(deleteSerie));
 
-router.patch('/tv/:id',
-//requireAdminAuthentication,
-//patchSeriesValidation,
- async (req, res) => {
+router.patch('/tv/:id', requireAdminAuthentication, patchSeriesValidation, async (req, res) => {
   const { id } = req.params;
   const data = req.body;
+  console.log(data);
 
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
   }
-
-  await editSerieById(id, data);
-  res.json('þetta gekk');
+  else{
+    editSerieById(id, data);
+    const info = await getSerieById(id)
+    res.json(info);
+  }
 });
 
 router.get('/tv/:id/season',  catchErrors(readSeasons));
@@ -208,6 +208,7 @@ router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  asy
   const data = req.body;
 
   const validation = validationResult(req);
+
 
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
