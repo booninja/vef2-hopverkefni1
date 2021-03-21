@@ -26,13 +26,13 @@ export const loginValidation = [
 
 // post /users/register
 export const registerValidation = [
-    body('username')
+    body('name')
         .isLength({ min: 1 })
         .withMessage('Notendanafn má ekki vera tómt'),
-    body('username')
+    body('name')
         .isLength({max : 255})
         .withMessage('Notendanafn má ekki vera lengra en 255 stafir'),
-    body('username')
+    body('name')
         .trim()
         .escape(),
     body('email')
