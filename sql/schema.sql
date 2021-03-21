@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS series(
   description text not null,
   language varchar(255) not NULL,
   network varchar(255) not null,
-  website varchar(255)
+  homepage varchar(255)
 );
 
 CREATE TABLE IF NOT EXISTS categories(

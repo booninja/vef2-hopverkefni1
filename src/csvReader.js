@@ -16,9 +16,51 @@ export async function readSeries() {
     });
 }
 
+<<<<<<< Updated upstream
 async function insertSeries(data) {
   const q = `INSERT INTO series 
               (name,airDate,inProduction,tagline,poster,description,language,network,website)
+=======
+export async function readSeriesToCategories() {
+  fs.createReadStream('./data/series.csv')
+    .pipe(csv())
+    .on('data', async (row) => {
+      // console.log(row);
+      await insertSeriesToCategories(row);
+    })
+    .on('end', () => {
+      console.info('CSV file successfully processed');
+    });
+}
+
+export async function readSeasons() {
+  fs.createReadStream('./data/seasons.csv')
+    .pipe(csv())
+    .on('data', async (row) => {
+      // console.log(row);
+      await insertSeasons(row);
+      // await insertImages(row);
+    })
+    .on('end', () => {
+      console.info('CSV file successfully processed');
+    });
+}
+
+export async function readEpisodes() {
+  fs.createReadStream('./data/episodes.csv')
+    .pipe(csv())
+    .on('data', async (row) => {
+      await insertEpisodes(row);
+    })
+    .on('end', () => {
+      console.info('CSV file successfully processed');
+    });
+}
+
+export async function insertSeries(data) {
+  const q = `INSERT INTO series
+              (name,airDate,inProduction,tagline,poster,description,language,network,homepage)
+>>>>>>> Stashed changes
               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`;
 
   if (data.airDate === '') data.airDate = null;
@@ -34,7 +76,11 @@ async function insertSeries(data) {
         data.description,
         data.language,
         data.network,
+<<<<<<< Updated upstream
         data.website
+=======
+        data.homepage,
+>>>>>>> Stashed changes
       ]);
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);
@@ -87,6 +133,7 @@ export async function readEpisodes() {
     });
 }
 
+<<<<<<< Updated upstream
 // VIRKAR EKKI WTF
 // export async function readEpisodes() {
 //   let stream = fs.createReadStream("./episodes.csv");
@@ -96,6 +143,11 @@ export async function readEpisodes() {
 //     }).on("end", function() {
 //       csvData.shift();
 //     });
+=======
+  const q2 = `SELECT id FROM seasons
+              WHERE number = $1
+              AND serieID = $2`;
+>>>>>>> Stashed changes
 
 //   console.log(csvData);
 //   stream.pipe(csvStream);
