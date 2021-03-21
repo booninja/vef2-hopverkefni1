@@ -85,7 +85,7 @@ export async function getSeriesCount() {
   } catch (e) {
     console.info('Villa við að sækja fjölda', e);
   }
-  const number = result.rows[0]
+  const number = result.rows[0];
   return number;
 }
 export async function getSeasonsCountBySerie(id) {
@@ -128,7 +128,6 @@ export async function getGenreBySerieId(id) {
   return result.rows;
 }
 
-
 export async function editSerieById(id, data) {
   const q = `UPDATE series SET
               name = $1,
@@ -146,21 +145,21 @@ export async function editSerieById(id, data) {
   const beforeUpdate = await getSerieById(id);
 
   const now = {
-     name: data.name || beforeUpdate.name,
-      airdate:  data.airdate || beforeUpdate.airdate,
-      inproduction: data.inproduction ||  beforeUpdate.inproduction,
-      tagline:  data.tagline ||  beforeUpdate.tagline,
-      poster:  data.poster || beforeUpdate.poster,
-      description:  data.description || beforeUpdate.description,
-      language:  data.language || beforeUpdate.language,
-      network:  data.network || beforeUpdate.network,
-      homepage:  data.homepage|| beforeUpdate.homepage,
-      id:  id,
-  }
+    name: data.name || beforeUpdate.name,
+    airdate: data.airdate || beforeUpdate.airdate,
+    inproduction: data.inproduction || beforeUpdate.inproduction,
+    tagline: data.tagline || beforeUpdate.tagline,
+    poster: data.poster || beforeUpdate.poster,
+    description: data.description || beforeUpdate.description,
+    language: data.language || beforeUpdate.language,
+    network: data.network || beforeUpdate.network,
+    homepage: data.homepage || beforeUpdate.homepage,
+    id,
+  };
 
   try {
     await query(q,
-      [ now.name,
+      [now.name,
         now.airdate,
         now.inproduction,
         now.tagline,
@@ -169,14 +168,12 @@ export async function editSerieById(id, data) {
         now.language,
         now.network,
         now.homepage,
-      id,
+        id,
       ]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
 }
-
-
 
 export async function deleteSerieById(id) {
   const q = `DELETE FROM series
@@ -340,7 +337,7 @@ export async function editEpisodeById(id, data) {
 
   try {
     await query(q,
-      [ data.name,
+      [data.name,
         data.number,
         data.airDate,
         data.description,
@@ -359,7 +356,7 @@ export async function setSerieRating(serieID, userID, data) {
 
   try {
     await query(q,
-      [ serieID,
+      [serieID,
         userID,
         data.rating,
       ]);
@@ -374,7 +371,7 @@ export async function updateSerieRating(serieID, userID, data) {
 
   try {
     await query(q,
-      [ data.rating,
+      [data.rating,
         serieID,
         userID,
       ]);
@@ -400,7 +397,7 @@ export async function setSerieStatus(serieID, userID, data) {
 
   try {
     await query(q,
-      [ serieID,
+      [serieID,
         userID,
         data.status,
       ]);
@@ -415,7 +412,7 @@ export async function updateSerieStatus(serieID, userID, data) {
 
   try {
     await query(q,
-      [ data.status,
+      [data.status,
         serieID,
         userID,
       ]);

@@ -38,7 +38,7 @@
   "scripts": {
     "test": "concurrently npm:lint-scss npm:eslint",
     "browser-sync": "browser-sync start --server --files index.ejs styles.css",
-    "eslint": "eslint *.js **/*.js --fix",
+    "eslint": "eslint src/*.js api/*.js --fix",
     "nodemon": "nodemon ./src/app.js",
     "dev": "concurrently npm:nodemon",
     "setup": "node ./src/setup.js",

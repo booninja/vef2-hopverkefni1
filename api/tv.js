@@ -17,15 +17,15 @@ import {
   deleteSeasonById,
   getGenres,
   getGenreCount,
-  setSerieRating, 
+  setSerieRating,
   updateSerieRating,
   deleteSerieRating,
-  setSerieStatus, 
+  setSerieStatus,
   updateSerieStatus,
   deleteSerieStatus,
-  //updateEpisodeRating,
+  // updateEpisodeRating,
 } from '../src/tvQueries.js';
-import { requireAuthentication, requireAdminAuthentication} from '../src/users.js';
+import { requireAuthentication, requireAdminAuthentication } from '../src/users.js';
 
 export const router = express.Router();
 
@@ -65,39 +65,14 @@ export async function deleteSerie(req, res) {
 export async function readSeasons(req, res) {
   const { id } = req.params;
 
-  const series = await getSeasonsByID(id);
+  const seasons = await getSeasonsByID(id);
   const seasonsCount = await getSeasonsCountBySerie(id);
-  console.log(series);
-  console.log(seasonsCount);
-  if (!series) {
-    return res.status(404).json({ error: 'Series not found' });
+
+  if (!seasons) {
+    return res.status(404).json({ error: 'Seasons not found' });
   }
 
-  const _links = {
-    self: {
-      href: `http://localhost:3000/tv/:id/season/offset=${offset}&limit=10`,
-    },
-  };
-
-  if (offset + 10 < seasonsCount) {
-    _links.next = {
-      href: `http://localhost:3000/tv/:id/season/?offset=${offset + 10}&limit=10`,
-    }
-  }
-  if (offset - 10 >= 0) {
-    _links.prev = {
-      href: `http://localhost:3000/tv/:id/season/?offset=${offset - 10}&limit=10`,
-    };
-  }
-
-  res.json(
-    {
-      limit,
-      offset,
-      items: { series },
-      _links,
-    },
-  );
+  res.json({seasons});
 }
 
 export async function readSeason(req, res) {
@@ -154,14 +129,14 @@ export async function readGenres(req, res) {
   if (offset + 10 < genreCount) {
     _links.next = {
       href: `http://localhost:3000/genres?offset=${offset + 10}&limit=10`,
-    }
+    };
   }
   if (offset - 10 >= 0) {
     _links.prev = {
       href: `http://localhost:3000/genres?offset=${offset - 10}&limit=10`,
     };
   }
-  
+
   res.json(
     {
       limit,
@@ -172,16 +147,9 @@ export async function readGenres(req, res) {
   );
 }
 
-
-
-
-
-//router.get('/', catchErrors(getTv));// series
+// router.get('/', catchErrors(getTv));// series
 
 // ekki er kannað hvort það er rétt form með validation
-
-
-
 
 // router.post('/tv/:id/rate', catchErrors(rateSeries));
 // router.patch('/tv/:id/rate', catchErrors(rateSeries));
@@ -250,7 +218,7 @@ export async function deleteRateSerie(req, res) {
 export async function stateSerie(req, res) {
   const { id } = req.params;
   const data = req.body;
-  
+
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
@@ -271,7 +239,7 @@ export async function stateSerie(req, res) {
 export async function updateStateSerie(req, res) {
   const { id } = req.params;
   const data = req.body;
-  
+
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
