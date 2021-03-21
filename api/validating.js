@@ -78,8 +78,8 @@ export const rateValidation = [
 
 export const stateValidation = [
   body('status')
-    .isLength({ max: 128})
-    .withMessage('max 128 characters'),
+    .matches('Langar að horfa|Er að horfa|Hef horft|')
+    .withMessage('Verður að tilgreina stöðu: Langar að horfa, Er að horfa, Heft horft eða enga stöðu'),
 ]
 
   //hvernig validation á image????
