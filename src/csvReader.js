@@ -5,6 +5,7 @@ import fs from 'fs';
 import csv from 'csv-parser';
 import { v2 as cloudinary } from 'cloudinary';
 import { query } from './utils.js';
+import { getSeriesCount } from './tvQueries.js'
 
 cloudinary.config({
   cloud_name: 'vefforritun-hop1-rovv',
@@ -16,7 +17,7 @@ export async function readSeries() {
   fs.createReadStream('./data/series.csv')
     .pipe(csv())
     .on('data', async (row) => {
-      // console.log(row);
+      console.log(row);
       await insertSeries(row);
       await insertCategories(row);
       setTimeout(async function() {
@@ -32,7 +33,7 @@ export async function readSeasons() {
   fs.createReadStream('./data/seasons.csv')
     .pipe(csv())
     .on('data', async (row) => {
-      // console.log(row);
+       //console.log(row);
       await insertSeasons(row);
       // await insertImages(row);
     })
@@ -54,15 +55,42 @@ export async function readEpisodes() {
 
 export async function insertSeries(data) {
   const q = `INSERT INTO series
-              (name,airDate,inProduction,tagline,poster,description,language,network,homepage)
-              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`;
-
+              (id, name,airDate,inProduction,tagline,poster,description,language,network,homepage)
+              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10)`;
+ console.log('<<<<<<', data.name);
   if (data.airDate === '') data.airDate = null;
   if (data.poster === null) data.poster = 'hallo';
 
   try {
     await query(q,
-      [
+      [ data.id,
+        data.name,
+        data.airDate,
+        data.inProduction,
+        data.tagline,
+        cloudinary.url(data.image),
+        data.description,
+        data.language,
+        data.network,
+        data.homepage
+      ]);
+  } catch (e) {
+    console.error('Villa við að bæta gögnum við inn í series', e);
+  }
+}
+
+export async function NOTinsertSeries(data) {
+  const q = `INSERT INTO series
+              (id, name,airDate,inProduction,tagline,poster,description,language,network,homepage)
+              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10)`;
+ console.log('<<<<<<', data.name);
+  if (data.airDate === '') data.airDate = null;
+  if (data.poster === null) data.poster = 'hallo';
+ const count = await getSeriesCount();
+console.log(count);
+  try {
+    await query(q,
+      [ parseInt(count.count)+1,
         data.name,
         data.airDate,
         data.inProduction,
@@ -99,6 +127,25 @@ async function insertSeasons(data) {
 }
 
 export async function insertSeasonsById(data, id) {
+  const q = `INSERT INTO seasons (name,number,airDate,description,poster,serieID)
+              VALUES ($1,$2,$3,$4,$5,$6)`;
+
+  if (data.airDate === '') data.airDate = null;
+  try {
+    await query(q,
+      [
+        data.name,
+        parseInt(data.number),
+        data.airDate,
+        data.description,
+        cloudinary.url(data.poster),
+        parseInt(id),
+      ]);
+  } catch (e) {
+    console.error('Villa við að bæta gögnum við inn í seasons', e);
+  }
+}
+export async function prufainsertSeasonsById(data, id) {
   const q = `INSERT INTO seasons (name,number,airDate,description,poster,serieID)
               VALUES ($1,$2,$3,$4,$5,$6)`;
 

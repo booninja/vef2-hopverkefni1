@@ -17,7 +17,7 @@ import {readSerie,
         readEpisode,
         deleteEpisode,
         readGenres} from './tv.js'
-import {insertSeries,
+import {NOTinsertSeries,
         insertSeasonsById,
         singleInsertCategories } from '../src/csvReader.js';
 import { seriesValidation,
@@ -126,7 +126,7 @@ router.post('/tv', requireAdminAuthentication, seriesValidation, (req, res) => {
   }
   else{
     console.log('komst í gegnum validation');
-    insertSeries(data);
+    NOTinsertSeries(data);
     res.json('þetta gekk');
   }
 });

@@ -11,6 +11,19 @@ export async function getAllSeries() {
   }
   return result;
 }
+
+export async function getSeriesCount() {
+  const q = 'SELECT COUNT(*) AS count FROM series';
+  let result = '';
+  try {
+    result = await query(q);
+  } catch (e) {
+    console.info('Villa við að sækja fjölda', e);
+  }
+  const number = result.rows[0]
+  return number;
+}
+
 export async function listSeries(offset = 0, limit = 10, search = '') {
   const values = [offset, limit];
 
