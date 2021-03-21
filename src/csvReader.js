@@ -54,8 +54,8 @@ export async function readEpisodes() {
 
 export async function insertSeries(data) {
   const q = `INSERT INTO series
-              (id, name,airDate,inProduction,tagline,poster,description,language,network,website)
-              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`;
+              (name,airDate,inProduction,tagline,poster,description,language,network,homepage)
+              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`;
 
   if (data.airDate === '') data.airDate = null;
   if (data.poster === null) data.poster = '';
@@ -63,7 +63,6 @@ export async function insertSeries(data) {
   try {
     await query(q,
       [
-        parseInt(data.id),
         data.name,
         data.airDate,
         data.inProduction,
@@ -72,7 +71,7 @@ export async function insertSeries(data) {
         data.description,
         data.language,
         data.network,
-        data.website,
+        data.homepage
       ]);
   } catch (e) {
     console.error('Villa við að bæta gögnum við inn í series', e);
@@ -123,8 +122,8 @@ async function insertEpisodes(data) {
   const q = `INSERT INTO episodes (name,number,airDate,description, seasonNumber, season,  serieID)
   VALUES ($1,$2,$3,$4,$5, $6, $7)`;
 
-  const q2 = `SELECT id FROM seasons 
-              WHERE number = $1 
+  const q2 = `SELECT id FROM seasons
+              WHERE number = $1
               AND serieID = $2`;
 
   if (data.airDate === '') data.airDate = null;

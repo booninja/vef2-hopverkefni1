@@ -10,10 +10,10 @@ export const seriesValidation = [
     body('name')
       .isLength({ max: 128 })
       .withMessage('max 128 characters'),
-    // body('airDate')
-    //   .isDate()
-    //   .withMessage('airDate must be a date'),
-    body('inproduction')
+     body('airDate')
+       .isDate()
+       .withMessage('airDate must be a date'),
+    body('inProduction')
       .isBoolean()
       .withMessage('inproduction must be a boolean'),
     // body('image')
@@ -31,11 +31,10 @@ export const seriesValidation = [
     body('network')
       .isString()
       .withMessage('network must be a string'),
-    body('website')
+    body('homepage')
       .isString()
       .withMessage('url must be a string'),
   ];
-
 export  const genreValidation = [
     body('name')
       .isLength({ min: 1 })
@@ -44,7 +43,7 @@ export  const genreValidation = [
       .isLength({ max: 128 })
       .withMessage('max 128 characters'),
     ];
-export   const serieValidation = [
+export const serieValidation = [
       body('number')
         .isInt({min: 1})
         .withMessage('must be an integer larger than 0'),
@@ -52,7 +51,7 @@ export   const serieValidation = [
       //  .is
       //  .withMessage('image is required'),
     ];
-export    const seasonValidation = [
+export const seasonValidation = [
       body('name')
         .isLength({ min: 1 })
         .withMessage('name is required'),

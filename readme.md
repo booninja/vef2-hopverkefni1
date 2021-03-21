@@ -1,6 +1,6 @@
 # Vefforritun 2, 2021, hópverkefni 1
 
-Útfæra skal vefþjónustur fyrir sjónvarpsþáttavef:
+Útfæra skal vefþjónustur fyrir sjónvarpsþáttavef: lalala
 
 * Gefin eru/verða gögn fyrir sjónvarpsþætti, season og staka þætti sem flytja þarf inn í gagnagrunn
 * Hægt er að skoða öll gögn um sjónvarpsþætti án innskráningar
