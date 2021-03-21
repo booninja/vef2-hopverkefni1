@@ -56,17 +56,16 @@ async function setUpUser() {
   const q3 = `INSERT INTO SerieToUser (serieID,userID,grade) 
               VALUES (3,2,4)`;
   const q4 = `INSERT INTO SerieToUser (serieID,userID,grade) 
-              VALUES (4,2,2)`
-  
+              VALUES (4,2,2)`;
+
   try {
-    await query(q)
-    await query(q2)
-    await query(q3)
-    await query(q4)
+    await query(q);
+    await query(q2);
+    await query(q3);
+    await query(q4);
   } catch (e) {
     console.error('Villa við að bæta við gögnum', e);
-  }           
-
+  }
 }
 
 async function main() {
@@ -87,19 +86,24 @@ async function main() {
   // bæta færslum við töflu
   try {
 <<<<<<< HEAD
+    await createAdmin({ name: 'admin', email: 'osh16@hi.is', password: '123' });
+    await createUser({ name: 'notandi', email: 'ios24@hi.su', password: '123' });
+=======
+<<<<<<< HEAD
     await createAdmin({ name: 'oskar', email: 'osh16@hi.is', password: 'oskar' });
     await createUser({ name: 'stalin', email: 'ios24@hi.su', password: 'gulag' });
 =======
     await createAdmin({name:"admin", email:"osh16@hi.is", password: "123"});
     await createUser({name:"notandi", email:"ios24@hi.su", password: "123"});
 >>>>>>> 613c357249586a6dba9609994f52e9d36b27a23f
+>>>>>>> e965351aa7d0ead15dfb5b0ba53cfefdb1632099
     await readSeries();
     console.info('Þáttaröðum bætt við gagnagrunn');
     await readSeasons();
     console.info('Þáttaseríum bætt við gagnagrunn');
     await readEpisodes();
     console.info('Þáttum bætt við gagnagrunn');
-    setTimeout(async function() { await setUpUser(); }, 1000);
+    setTimeout(async () => { await setUpUser(); }, 1000);
     console.info('Tengutafla búin til');
   } catch (e) {
     console.error('Villa við að bæta gögnum við', e);

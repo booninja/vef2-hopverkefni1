@@ -33,9 +33,15 @@
     "sass": "^1.32.5"
   },
   "scripts": {
+<<<<<<< HEAD
     "test": "concurrently npm:eslint",
     "browser-sync": "browser-sync start --server --files index.ejs",
     "eslint": "eslint *.js **/*.js --fix",
+=======
+    "test": "concurrently npm:lint-scss npm:eslint",
+    "browser-sync": "browser-sync start --server --files index.ejs styles.css",
+    "eslint": "eslint src/*.js api/*.js --fix",
+>>>>>>> db47949c449303967c74c24c5d83553e080ffcd3
     "nodemon": "nodemon ./src/app.js",
     "dev": "concurrently npm:nodemon",
     "setup": "node ./src/setup.js",

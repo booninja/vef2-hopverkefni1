@@ -61,39 +61,14 @@ export async function deleteSerie(req, res) {
 export async function readSeasons(req, res) {
   const { id } = req.params;
 
-  const series = await getSeasonsByID(id);
+  const seasons = await getSeasonsByID(id);
   const seasonsCount = await getSeasonsCountBySerie(id);
-  console.log(series);
-  console.log(seasonsCount);
-  if (!series) {
-    return res.status(404).json({ error: 'Series not found' });
+
+  if (!seasons) {
+    return res.status(404).json({ error: 'Seasons not found' });
   }
 
-  const _links = {
-    self: {
-      href: `http://localhost:3000/tv/:id/season/offset=${offset}&limit=10`,
-    },
-  };
-
-  if (offset + 10 < seasonsCount) {
-    _links.next = {
-      href: `http://localhost:3000/tv/:id/season/?offset=${offset + 10}&limit=10`,
-    };
-  }
-  if (offset - 10 >= 0) {
-    _links.prev = {
-      href: `http://localhost:3000/tv/:id/season/?offset=${offset - 10}&limit=10`,
-    };
-  }
-
-  res.json(
-    {
-      limit,
-      offset,
-      items: { series },
-      _links,
-    },
-  );
+  res.json({seasons});
 }
 
 export async function readSeason(req, res) {

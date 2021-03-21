@@ -24,9 +24,9 @@ import { seriesValidation,
          genreValidation,
          serieValidation,
          seasonValidation,
-        // patchSeriesValidation
-         //rateValidation,
-         //stateValidation
+         //patchSeriesValidation
+         rateValidation,
+         stateValidation
          } from './validating.js'
 import { requireAuthentication, requireAdminAuthentication } from '../src/users.js';
 
@@ -109,6 +109,7 @@ async function getSeries(req, res,) {
       href: `http://localhost:3000/tv?offset=${offset + 10}&limit=10`,
     }
   }
+
   if (offset - 10 >= 0) {
     _links.prev = {
       href: `http://localhost:3000/tv?offset=${offset - 10}&limit=10`,
@@ -140,6 +141,10 @@ async function createSerie(req, res) {
     homepage: req.body.homepage,
   };
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> db47949c449303967c74c24c5d83553e080ffcd3
 router.post('/tv', requireAdminAuthentication, seriesValidation, async (req, res) => {
   const data = req.body;
   const validation = validationResult(req);
@@ -158,9 +163,16 @@ router.post('/tv', requireAdminAuthentication, seriesValidation, async (req, res
     return res.status(500).json({ message: e });
   }
 });
+<<<<<<< HEAD
 
 router.get('/tv', catchErrors(getSeries)); // series
 // router.post('/tv', seriesValidation, catchErrors(createSerie));
+=======
+
+router.get('/tv', catchErrors(getSeries));
+
+router.post('/tv', seriesValidation, catchErrors(createSerie));
+>>>>>>> db47949c449303967c74c24c5d83553e080ffcd3
 
 router.get('/genres', catchErrors(readGenres));
 
@@ -222,12 +234,10 @@ router.delete('/tv/:id/season/:season', catchErrors(deleteSeason));
 router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
 router.delete('/tv/:id/season/:season/episode/:episode', requireAdminAuthentication, catchErrors(deleteEpisode));
 
-/*router.post('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(rateSerie));
+router.post('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(rateSerie));
 router.patch('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(updateRateSerie));
 router.delete('/tv/:id/rate', requireAuthentication, catchErrors(deleteRateSerie));
 
 router.post('/tv/:id/state', stateValidation, requireAuthentication, catchErrors(stateSerie));
 router.patch('/tv/:id/state', stateValidation, requireAuthentication, catchErrors(updateStateSerie));
 router.delete('/tv/:id/state', requireAuthentication, catchErrors(deleteStateSerie));
-
-*/

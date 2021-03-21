@@ -50,7 +50,7 @@ export async function createAdmin(user) {
     const result = await query(q, [user.name, user.email, hashedPassword]);
     return result.rows[0];
   } catch (e) {
-    console.log(`Gat ekki buid til notanda: ${e}`);
+    console.log(`Gat ekki buid til notanda: ${e}`); // eslint disable-line
   }
   return null;
 }
@@ -73,7 +73,7 @@ export async function updateUser(user, email, password, admin) {
     console.log(`result: ${result}`);
     return result.rows[0];
   } catch (e) {
-    console.log(`Gat ekki uppfært notanda: ${e}`);
+    console.log(`Gat ekki uppfært notanda: ${e}`); // eslint disable-line
   }
   return null;
 }
@@ -84,7 +84,7 @@ export async function createUser(user) {
   try {
     await query(q, [user.name, user.email, hashedPassword]);
   } catch (e) {
-    console.log(`Gat ekki buid til notanda: ${e}`);
+    console.log(`Gat ekki buid til notanda: ${e}`); // eslint disable-line
   }
   return null;
 }
@@ -95,7 +95,7 @@ export async function getAllUsers() {
     const result = await query(q);
     return result.rows;
   } catch (e) {
-    console.log(`Gat ekki sott notendur: ${e}`);
+    console.log(`Gat ekki sott notendur: ${e}`); // eslint disable-line
   }
   return null;
 }
@@ -108,7 +108,7 @@ export async function findByEmail(email) {
       return result.rows[0];
     }
   } catch (e) {
-    console.error('Gat ekki fundið notanda eftir email');
+    console.error('Gat ekki fundið notanda eftir email'); // eslint disable-line
   }
   return null;
 }
@@ -121,7 +121,7 @@ export async function findById(id) {
       return result.rows[0];
     }
   } catch (e) {
-    console.error('Gat ekki fundið notanda eftir id');
+    console.error('Gat ekki fundið notanda eftir id'); // eslint disable-line
   }
   return null;
 }
@@ -131,12 +131,15 @@ export async function findByUsername(username) {
   try {
     const result = await query(q, [username]);
     if (result.rowCount === 1) {
-      console.log(result.rows[0]);
       return result.rows[0];
     }
   } catch (e) {
-    console.error('Gat ekki fundið notanda eftir notendnafni');
+    console.error('Gat ekki fundið notanda eftir notendnafni'); // eslint disable-line
     return null;
   }
   return false;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> db47949c449303967c74c24c5d83553e080ffcd3

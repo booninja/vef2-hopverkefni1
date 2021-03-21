@@ -1,4 +1,4 @@
-import { body} from 'express-validator';
+import { body } from 'express-validator';
 
 export const seriesValidation = [
   body('name')
@@ -56,6 +56,7 @@ export const genreValidation = [
 ];
 
 export const serieValidation = [
+<<<<<<< HEAD
     body('name')
       .isLength({ min: 1 })
       .withMessage('name is required'),
@@ -88,28 +89,37 @@ export const serieValidation = [
       .withMessage('url must be a string'),
   ];
 
+=======
+  body('number')
+    .isInt({ min: 1 })
+    .withMessage('must be an integer larger than 0'),
+  // body('image')
+  //  .is
+  //  .withMessage('image is required'),
+];
+>>>>>>> db47949c449303967c74c24c5d83553e080ffcd3
 export const seasonValidation = [
-      body('name')
-        .isLength({ min: 1 })
-        .withMessage('name is required'),
-      body('name')
-        .isLength({ max: 128 })
-        .withMessage('max 128 characters'),
-      body('number')
-        .isInt({min: 1})
-        .withMessage('must be an integer larger than 0'),
-      // body('image')
-      //  .is
-      //  .withMessage('image is required'),
-  ];
+  body('name')
+    .isLength({ min: 1 })
+    .withMessage('name is required'),
+  body('name')
+    .isLength({ max: 128 })
+    .withMessage('max 128 characters'),
+  body('number')
+    .isInt({ min: 1 })
+    .withMessage('must be an integer larger than 0'),
+  // body('image')
+  //  .is
+  //  .withMessage('image is required'),
+];
 
 export const rateValidation = [
   body('rating')
     .isInt({ min: 0 })
     .withMessage('Rating can be from 0-5'),
   body('rating')
-    .isInt({ max: 5})
-    .withMessage('Rating can be from 0-5')
+    .isInt({ max: 5 })
+    .withMessage('Rating can be from 0-5'),
 ];
 
 export const stateValidation = [
