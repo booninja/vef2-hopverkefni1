@@ -1,13 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable radix */
 import fs from 'fs';
-import dotenv from 'dotenv';
 // import fastcsv from 'fast-csv';
 import csv from 'csv-parser';
 import { v2 as cloudinary } from 'cloudinary';
 import { query } from './utils.js';
-
-dotenv.config();
 
 cloudinary.config({
   cloud_name: 'vefforritun-hop1-rovv',
@@ -15,7 +12,10 @@ cloudinary.config({
   api_secret: 'LAHnLbWZvxPl_6U3YOLeNCJiQ6w',
 });
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> 4e37b348210ef970d4c7813d85311e6c7c6af16c
 export async function readSeries() {
   fs.createReadStream('./data/series.csv')
     .pipe(csv())
@@ -23,9 +23,12 @@ export async function readSeries() {
       // console.log(row);
       await insertSeries(row);
       await insertCategories(row);
+<<<<<<< HEAD
+=======
       setTimeout(async function() {
         await insertSeriesToCategories(row);
       }, 1000);
+>>>>>>> 4e37b348210ef970d4c7813d85311e6c7c6af16c
     })
     .on('end', () => {
       console.info('CSV file successfully processed');
@@ -188,6 +191,19 @@ async function insertSeriesToCategories(data) {
   });
 }
 
+<<<<<<< HEAD
+export async function readSeriesToCategories() {
+  fs.createReadStream('./data/series.csv')
+    .pipe(csv())
+    .on('data', async (row) => {
+      // console.log(row);
+      await insertSeriesToCategories(row);
+    })
+    .on('end', () => {
+      console.info('CSV file successfully processed');
+    });
+}
+=======
 // export async function readSeries() {
 //   fs.createReadStream('./data/series.csv')
 //     .pipe(csv())
@@ -236,3 +252,4 @@ async function insertSeriesToCategories(data) {
 //       console.info('CSV file successfully processed');
 //     });
 // }
+>>>>>>> 4e37b348210ef970d4c7813d85311e6c7c6af16c

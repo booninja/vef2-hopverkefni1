@@ -2,6 +2,25 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import xss from 'xss';
 import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
+<<<<<<< HEAD
+import { listSeries, editSerieById } from '../src/tvQueries.js';
+import {
+  readSerie,
+  deleteSerie,
+  readSeasons,
+  readSeason,
+  deleteSeason,
+  readEpisode,
+  deleteEpisode,
+  readGenres,
+} from './tv.js';
+
+import {
+  insertSeries,
+  insertSeasonsById,
+  singleInsertCategories,
+} from '../src/csvReader.js';
+=======
 import { listSeries, editSerieById, setSerieRating} from '../src/tvQueries.js';
 import {readSerie,
         rateSerie,
@@ -27,6 +46,7 @@ import { seriesValidation,
          rateValidation,
          stateValidation } from './validating.js'
 import { requireAuthentication } from '../src/users.js';
+>>>>>>> 4e37b348210ef970d4c7813d85311e6c7c6af16c
 
 export const router = express.Router();
 async function indexRoute(req, res) {
@@ -110,6 +130,35 @@ async function getSeries(req, res,) {
   );
 }
 
+<<<<<<< HEAD
+async function validationCheck(req, res, next) {
+  const {
+    limit, offset, items, _links,
+  } = req.body;
+
+  const validation = validationResult(req);
+
+  if (!validation.isEmpty()) {
+    return res.json({ errors: validation.errors});
+  }
+  return next();
+}
+
+// async function changeSeries(req, res) {
+//   const {
+//     limit, offset, items, _links,
+//   } = req.body;
+//   let success = true;
+
+//   const series = await getSerieById(id);
+//   console.info(series);
+//   if (!series) {
+//     return res.status(404).json({ error: 'Series not found' });
+//   }
+//   return res.json( series );
+// }
+=======
+>>>>>>> 4e37b348210ef970d4c7813d85311e6c7c6af16c
 
 router.get('/', indexRoute);
 
@@ -117,6 +166,12 @@ router.get('/tv', catchErrors(getSeries));// series
 
 router.post('/tv', seriesValidation, (req, res) => {
   const data = req.body;
+<<<<<<< HEAD
+  insertSeries(data);
+  console.info('Data added');
+  res.redirect('/');
+  // getTv(req, res); // kannski skila þessu eftir post?
+=======
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
@@ -128,6 +183,7 @@ router.post('/tv', seriesValidation, (req, res) => {
     insertSeries(data);
     res.json('þetta gekk');
   }
+>>>>>>> 4e37b348210ef970d4c7813d85311e6c7c6af16c
 });
 
 router.get('/genres', catchErrors(readGenres));
@@ -135,6 +191,11 @@ router.get('/genres', catchErrors(readGenres));
 //virkar bara fyrir eitt genre í einu þarf mörg ?
 router.post('/genres', genreValidation, (req, res) => {
   const data = req.body;
+<<<<<<< HEAD
+  singleInsertCategories(data);
+  console.info('Data changed');
+  res.json('Data changed');
+=======
 
   const validation = validationResult(req);
 
@@ -147,6 +208,7 @@ router.post('/genres', genreValidation, (req, res) => {
     singleInsertCategories(data);
     res.json('þetta gekk');
   }
+>>>>>>> 4e37b348210ef970d4c7813d85311e6c7c6af16c
 });
 
 router.get('/tv/:id', catchErrors(readSerie));// serie
@@ -167,6 +229,15 @@ router.patch('/tv/:id', serieValidation, (req, res) => {
   }
 });
 
+<<<<<<< HEAD
+router.get('/tv/:id/season', catchErrors(readSeasons));
+router.post('/tv/:id/season', (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  insertSeasonsById(data, id);
+  console.info('Data changed');
+  res.json('data changed');
+=======
 
 router.get('/tv/:id/season',  catchErrors(readSeasons));
 router.post('/tv/:id/season', seasonValidation,  (req, res) => {
@@ -182,6 +253,7 @@ router.post('/tv/:id/season', seasonValidation,  (req, res) => {
       insertSeasonsById(data, id);
     res.json('þetta gekk');
   }
+>>>>>>> 4e37b348210ef970d4c7813d85311e6c7c6af16c
 });
 
 
@@ -193,6 +265,8 @@ router.delete('/:id/season/:season', catchErrors(deleteSeason));
 router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
 router.delete('/tv/:id/season/:season/episode/:episode', catchErrors(deleteEpisode));
 
+<<<<<<< HEAD
+=======
 router.post('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(rateSerie));
 router.patch('/tv/:id/rate', rateValidation, requireAuthentication, catchErrors(updateRateSerie));
 router.delete('/tv/:id/rate', requireAuthentication, catchErrors(deleteRateSerie));
@@ -217,6 +291,7 @@ router.delete('/tv/:id/state', requireAuthentication, catchErrors(deleteStateSer
 
 
 
+>>>>>>> 4e37b348210ef970d4c7813d85311e6c7c6af16c
 // hér fyrir neðan eru allar skipanirnar fyrir allar síðurnar, held að best er að
 // taka eina í einu og vinna þannig niður
 
