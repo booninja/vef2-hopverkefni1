@@ -7,14 +7,13 @@ Gefnir eru notendurnir 'admin' sem hefur admin réttindi og 'notandi' sem hefur 
 Þegar verkefni er keyrt í röð:
 
 * Gagnagrunnur búinn til
-* Skipunin 'node' keyrð á skipanalínu
-* Skipunin require('crypto').randomBytes(64).toString('hex') keyrð í node til að fá ACCESS_TOKEN_SECRET streng.
-* Loka 'node' með ctrl+c
-* ACCESS_TOKEN_SECRET og DATABASE_URL er sett í .env
-* npm install keyrt sem sækir öll dependency
-* npm run setup, setur upp gagnagrunn og notendur
-* npm start, keyrir upp express vefþjón á porti 3000
-* npm test, keyrir eslint
+* Skipunin `node` keyrð á skipanalínu
+* Skipunin `require('crypto').randomBytes(64).toString('hex')` keyrð í `node` til að fá `ACCESS_TOKEN_SECRET` streng.
+* Loka `node` með ctrl+c
+* `ACCESS_TOKEN_SECRET` og `DATABASE_URL` er sett í `.env`
+* `npm install` keyrt sem sækir öll dependency
+* `npm run setup`, setur upp gagnagrunn og notendur
+* `npm start`, keyrir upp express vefþjón á porti 3000
 
 ## Verkefnið
 

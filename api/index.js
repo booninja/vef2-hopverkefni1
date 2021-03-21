@@ -2,7 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import xss from 'xss';
 import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
-import { listSeries, editSerieById, getSeriesCount, getSerieById} from '../src/tvQueries.js';
+import { listSeries, editSerieById, getSeriesCount, findByName, getSerieById} from '../src/tvQueries.js';
 import {readSerie,
         rateSerie,
         updateRateSerie,
@@ -24,7 +24,7 @@ import { seriesValidation,
          genreValidation,
          serieValidation,
          seasonValidation,
-        patchSeriesValidation,
+         patchSeriesValidation,
          rateValidation,
          stateValidation
          } from './validating.js'
@@ -109,6 +109,7 @@ async function getSeries(req, res,) {
       href: `http://localhost:3000/tv?offset=${offset + 10}&limit=10`,
     }
   }
+
   if (offset - 10 >= 0) {
     _links.prev = {
       href: `http://localhost:3000/tv?offset=${offset - 10}&limit=10`,
@@ -127,24 +128,41 @@ async function getSeries(req, res,) {
 
 router.get('/', indexRoute);
 
-router.get('/tv', catchErrors(getSeries));// series
-
-router.post('/tv',
-requireAdminAuthentication,
-serieValidation, (req, res) => {
+async function createSerie(req, res) {
+  const newSerie = {
+    name: req.body.name,
+    airDate: req.body.airDate,
+    inProduction: req.body.inProduction,
+    tagline: req.body.tagline,
+    image: req.body.image,
+    description: req.body.description,
+    language: req.body.language,
+    network: req.body.network,
+    homepage: req.body.homepage,
+  };
+}
+router.post('/tv', requireAdminAuthentication, seriesValidation, async (req, res) => {
   const data = req.body;
   const validation = validationResult(req);
 
   if (!validation.isEmpty()) {
-    console.log(' /tv post klikkaði');
     return res.status(404).json({ errors: validation.errors });
   }
-  else{
-    console.log('komst í gegnum validation');
-    NOTinsertSeries(data);
-    res.json('þetta gekk');
+  console.log()
+  if (await findByName(data.name)) {
+    return res.status(400).json({ message: 'Sjónvarpsþáttur nú þegar til' });
+  }
+  try {
+    await insertSeries(data);
+    return res.status(201).json({ message: `Sjónvarpsþáttur ${newSerie.name} búinn til` });
+  } catch (e) {
+    return res.status(500).json({ message: e });
   }
 });
+
+router.get('/tv', catchErrors(getSeries));
+
+router.post('/tv', requireAdminAuthentication, seriesValidation, catchErrors(createSerie));
 
 router.get('/genres', catchErrors(readGenres));
 
@@ -152,17 +170,16 @@ router.get('/genres', catchErrors(readGenres));
 router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) => {
   const data = req.body;
 
-  const validation = validationResult(req);
+  const validation = validationResult(data);
 
   if (!validation.isEmpty()) {
     console.log(' /genre post klikkaði');
     return res.status(404).json({ errors: validation.errors });
   }
-  else{
-    console.log('komst í gegnum validation');
-    singleInsertCategories(data);
-    res.json('þetta gekk');
-  }
+
+  console.log('komst í gegnum validation');
+  singleInsertCategories(data);
+  res.json('þetta gekk');
 });
 
 router.get('/tv/:id', catchErrors(readSerie));// serie
@@ -185,9 +202,8 @@ router.patch('/tv/:id', requireAdminAuthentication, patchSeriesValidation, async
   }
 });
 
-
 router.get('/tv/:id/season',  catchErrors(readSeasons));
-router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  (req, res) => {
+router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  async (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
@@ -197,15 +213,12 @@ router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  (re
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
   }
-  else{
-      insertSeasonsById(data, id);
-    res.json('þetta gekk');
-  }
+  await insertSeasonsById(data, id);
+  return res.json('þetta gekk');
 });
 
-
 router.get('/tv/:id/season/:season', catchErrors(readSeason)); // vantar overview
-router.delete('/:id/season/:season', requireAdminAuthentication, catchErrors(deleteSeason));
+router.delete('/tv/:id/season/:season', catchErrors(deleteSeason));
 
 // router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
 
@@ -219,4 +232,3 @@ router.delete('/tv/:id/rate', requireAuthentication, catchErrors(deleteRateSerie
 router.post('/tv/:id/state', stateValidation, requireAuthentication, catchErrors(stateSerie));
 router.patch('/tv/:id/state', stateValidation, requireAuthentication, catchErrors(updateStateSerie));
 router.delete('/tv/:id/state', requireAuthentication, catchErrors(deleteStateSerie));
-
