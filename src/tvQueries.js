@@ -12,18 +12,6 @@ export async function getAllSeries() {
   return result;
 }
 
-export async function getSeriesCount() {
-  const q = 'SELECT COUNT(*) AS count FROM series';
-  let result = '';
-  try {
-    result = await query(q);
-  } catch (e) {
-    console.info('Villa við að sækja fjölda', e);
-  }
-  const number = result.rows[0]
-  return number;
-}
-
 export async function listSeries(offset = 0, limit = 10, search = '') {
   const values = [offset, limit];
 
@@ -87,9 +75,19 @@ export async function getSerieById(id, offset = 0, limit = 10, search = '') {
     return null;
   }
   // console.info(result.rows);
-  return result.rows;
+  return result.rows[0];
 }
-
+export async function getSeriesCount() {
+  const q = 'SELECT COUNT(*) AS count FROM series';
+  let result = '';
+  try {
+    result = await query(q);
+  } catch (e) {
+    console.info('Villa við að sækja fjölda', e);
+  }
+  const number = result.rows[0]
+  return number;
+}
 export async function getSeasonsCountBySerie(id) {
   const q = 'SELECT COUNT(id) FROM seasons where serieID = $1';
   let result;
@@ -141,44 +139,45 @@ export async function editSerieById(id, data) {
               description = $6,
               language = $7,
               network = $8,
-              website = $9
-              WHERE id = $10`;
+              homepage = $9
+              WHERE id = $10
+              RETURNING *`;
 
   const beforeUpdate = await getSerieById(id);
-  console.log(data);
-  console.log('<<<', beforeUpdate);
-  console.log("hvað er þetta", beforeUpdate.rows[0].name);
 
-  const now = [
-    data.name || beforeUpdate.name,
-        data.airDate || beforeUpdate.airDate,
-        data.inProduction ||  beforeUpdate.inProduction,
-        data.tagline ||  beforeUpdate.tagline,
-        data.poster || beforeUpdate.poster,
-        data.description || beforeUpdate.description,
-        data.language || beforeUpdate.language,
-        data.network || beforeUpdate.network,
-        data.website || beforeUpdate.website,
-        id,
-  ]
-  console.log('hvernig', now);
+  const now = {
+     name: data.name || beforeUpdate.name,
+      airdate:  data.airdate || beforeUpdate.airdate,
+      inproduction: data.inproduction ||  beforeUpdate.inproduction,
+      tagline:  data.tagline ||  beforeUpdate.tagline,
+      poster:  data.poster || beforeUpdate.poster,
+      description:  data.description || beforeUpdate.description,
+      language:  data.language || beforeUpdate.language,
+      network:  data.network || beforeUpdate.network,
+      homepage:  data.homepage|| beforeUpdate.homepage,
+      id:  id,
+  }
+
   try {
     await query(q,
-      [data.name || beforeUpdate.rows[0].name,
-        data.airDate || beforeUpdate.rows[0].airDate,
-        data.inProduction ||  beforeUpdate.rows[0].inProduction,
-        data.tagline ||  beforeUpdate.rows[0].tagline,
-        data.poster || beforeUpdate.rows[0].poster,
-        data.description || beforeUpdate.rows[0].description,
-        data.language || beforeUpdate.rows[0].language,
-        data.network || beforeUpdate.rows[0].network,
-        data.website || beforeUpdate.rows[0].website,
-        id,
+      [ now.name,
+        now.airdate,
+        now.inproduction,
+        now.tagline,
+        now.poster,
+        now.description,
+        now.language,
+        now.network,
+        now.homepage,
+      id,
       ]);
   } catch (e) {
     console.error('Villa við að sækja gögn', e);
   }
 }
+
+
+
 export async function deleteSerieById(id) {
   const q = `DELETE FROM series
              WHERE id = $1`;

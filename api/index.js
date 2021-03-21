@@ -97,7 +97,7 @@ async function getSeries(req, res,) {
 
   const registrations = await listSeries(offset, limit);
   const seriesCount = await getSeriesCount();
-  
+
   const _links = {
     self: {
       href: `http://localhost:3000/tv/offset=${offset}&limit=10`,
@@ -218,71 +218,4 @@ router.post('/tv/:id/state', stateValidation, requireAuthentication, catchErrors
 router.patch('/tv/:id/state', stateValidation, requireAuthentication, catchErrors(updateStateSerie));
 router.delete('/tv/:id/state', requireAuthentication, catchErrors(deleteStateSerie));
 
-// router.patch('/tv/:id/rate', catchErrors(rateSeries));
-// router.delete('/tv/:id/rate', catchErrors(rateSeries));
-
-// router.post('/tv/:id/state', catchErrors(stateSeries));
-// router.patch('/tv/:id/state', catchErrors(stateSeries));
-// router.delete('/tv/:id/state', catchErrors(stateSeries));
-
-
-
-
-
-
-
-
-
-
-// hér fyrir neðan eru allar skipanirnar fyrir allar síðurnar, held að best er að
-// taka eina í einu og vinna þannig niður
-
-
-
-// hér fyrir neðan er það með kalli á autherazation fyrir user og admin,
-// veit ekki hvort það var alltaf rétt að velja admin frekar en user ??
-
-/*
-  router.get('/tv', catchErrors(readSeries));//series
-  router.post('/tv', requireAdmin, catchErrors(insertSeries)); //insertSeries
-
-  router.get('/tv/:id', catchErrors(readSeries));//series
-  router.patch('/tv/:id', requireAdmin, catchErrors(updateSerie));
-  router.delete('/tv/:id', requireAdmin, catchErrors(updateSerie));
-
-  router.post('/tv/:id/rate', catchErrors(rateSeries));
-  router.patch('/tv/:id/rate', requireAdmin, catchErrors(rateSeries));
-  router.delete('/tv/:id/rate', requireAuth, catchErrors(rateSeries));
-
-  router.post('/tv/:id/state', catchErrors(stateSeries));
-  router.patch('/tv/:id/state', requireAdmin, catchErrors(stateSeries));
-  router.delete('/tv/:id/state', requireAuth, catchErrors(stateSeries));
-
-  router.get('/tv/:id/season', catchErrors(readSeasons));
-  router.post('/tv/:id/season', requireAdmin, catchErrors(readSeasons));
-
-  router.get('/tv/:id/season', catchErrors(readSeason));
-  router.delete('/tv/:id/season', requireAdmin, catchErrors(readSeason));
-
-  router.post('/tv/{id}/season/{season}/episode', requireAdmin, catchErrors(readEpisodes));
-
-  router.get('/tv/{id}/season/{season}/episode/{episode}', catchErrors(readEpisode));
-  router.delete('/tv/{id}/season/{season}/episode/{episode}', requireAdmin, catchErrors(readEpisode));
-
-  router.get('/genres', catchErrors(readGenre));
-  router.post('/genres', requireAdmin, catchErrors(readGenre));
-
-  router.get('/users', requireAdmin, catchErrors(listUsers));
-  router.get('/users/:id', requireAdmin, catchErrors(listUser));
-  router.patch('/users/:id', requireAdmin, catchErrors(updateUser));
-  router.post('/users/register', requireAdmin, catchErrors(registerUser));
-  router.get('/users/login', requireAuth, catchErrors(loginUser));
-  router.get('/users/me', requireAuth, catchErrors(currentUser));
-  router.patch('/users/me', requireAuth, catchErrors(updateCurrentUser));
 */
-
-
-
-
-//minn user
-//{"email": "fallegtblom@net.is","username": "blom", "password": "1234567890"}
