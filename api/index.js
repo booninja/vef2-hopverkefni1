@@ -1,7 +1,6 @@
 import express from 'express';
-import { body, validationResult } from 'express-validator';
-import xss from 'xss';
-import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
+import { validationResult } from 'express-validator';
+import { catchErrors, setPagenumber } from '../src/utils.js';
 import { listSeries, editSerieById, getSeriesCount, findByName, getSerieById} from '../src/tvQueries.js';
 import {readSerie,
         rateSerie,
@@ -17,12 +16,10 @@ import {readSerie,
         readEpisode,
         deleteEpisode,
         readGenres} from './tv.js'
-import {NOTinsertSeries,
-        insertSeasonsById,
-        singleInsertCategories, postInsertEpisodes } from '../src/csvReader.js';
+import {insertSeasonsById,
+        singleInsertCategories } from '../src/csvReader.js';
 import { seriesValidation,
          genreValidation,
-         serieValidation,
          seasonValidation,
          patchSeriesValidation,
          rateValidation,
@@ -149,7 +146,6 @@ router.post('/tv', requireAdminAuthentication, seriesValidation, async (req, res
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
   }
-  console.log()
   if (await findByName(data.name)) {
     return res.status(400).json({ message: 'Sjónvarpsþáttur nú þegar til' });
   }
@@ -173,11 +169,9 @@ router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) =
   const validation = validationResult(data);
 
   if (!validation.isEmpty()) {
-    console.log(' /genre post klikkaði');
     return res.status(404).json({ errors: validation.errors });
   }
 
-  console.log('komst í gegnum validation');
   singleInsertCategories(data);
   res.json('þetta gekk');
 });
@@ -188,7 +182,6 @@ router.delete('/tv/:id', requireAdminAuthentication, catchErrors(deleteSerie));
 router.patch('/tv/:id', requireAdminAuthentication, patchSeriesValidation, async (req, res) => {
   const { id } = req.params;
   const data = req.body;
-  console.log(data);
 
   const validation = validationResult(req);
 
