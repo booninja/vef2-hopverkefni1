@@ -3,6 +3,14 @@
 ## Keyrsla verkefnis
 
 Gefnir eru notendurnir 'admin' sem hefur admin réttindi og 'notandi' sem hefur skráðar stöðurnar: 'Langar að horfa' á WandaVision (id:1), 'Hef horft' á Riverdale (id:2) og gaf The Good Doctor (id:3) 4 í einkunn og gaf Legacies (id:4) 2 í einkunn. Báðir notendurnir hafa lykilorðið '123'.
+`{ 
+    "email": "admin@hi.is",
+    "password": "123
+  }"`
+  `{ 
+    "email": "notandi@hi.is",
+    "password": "123
+  }"`
 
 Þegar verkefni er keyrt í röð:
 
@@ -11,6 +19,7 @@ Gefnir eru notendurnir 'admin' sem hefur admin réttindi og 'notandi' sem hefur 
 * Skipunin `require('crypto').randomBytes(64).toString('hex')` keyrð í `node` til að fá `ACCESS_TOKEN_SECRET` streng.
 * Loka `node` með ctrl+c
 * `ACCESS_TOKEN_SECRET` og `DATABASE_URL` er sett í `.env`
+
 * `npm install` keyrt sem sækir öll dependency
 * `npm run setup`, setur upp gagnagrunn og notendur
 * `npm start`, keyrir upp express vefþjón á porti 3000
