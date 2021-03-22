@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable radix */
 import fs from 'fs';
@@ -13,6 +14,45 @@ cloudinary.config({
   api_secret: 'LAHnLbWZvxPl_6U3YOLeNCJiQ6w',
 });
 
+export async function readSeries() {
+  fs.createReadStream('./data/series.csv')
+    .pipe(csv())
+    .on('data', async (row) => {
+      await insertSeries(row);
+      await insertCategories(row);
+      setTimeout(async () => {
+        await insertSeriesToCategories(row);
+      }, 1000);
+    })
+    .on('end', () => {
+      console.info('CSV file successfully processed');
+    });
+}
+
+export async function readSeasons() {
+  fs.createReadStream('./data/seasons.csv')
+    .pipe(csv())
+    .on('data', async (row) => {
+      // console.log(row);
+      await insertSeasons(row);
+      // await insertImages(row);
+    })
+    .on('end', () => {
+      console.info('CSV file successfully processed');
+    });
+}
+
+export async function readEpisodes() {
+  fs.createReadStream('./data/episodes.csv')
+    .pipe(csv())
+    .on('data', async (row) => {
+      await insertEpisodes(row);
+    })
+    .on('end', () => {
+      console.info('CSV file successfully processed');
+    });
+}
+
 export async function insertSeries(data) {
   const q = `INSERT INTO series
               (id, name,airDate,inProduction,tagline,poster,description,language,network,homepage)
@@ -25,7 +65,7 @@ export async function insertSeries(data) {
         data.airDate === '' ? null : data.airDate,
         data.inProduction,
         data.tagline,
-        !cloudinary.url(data.image) ? '' : data.poster,
+        !cloudinary.url(data.poster) ? '' : data.poster,
         data.description,
         data.language,
         data.network,
@@ -159,43 +199,4 @@ async function insertSeriesToCategories(data) {
       console.error('Villa við að bæta gögnum við', e);
     }
   });
-}
-
-export async function readSeries() {
-  fs.createReadStream('./data/series.csv')
-    .pipe(csv())
-    .on('data', async (row) => {
-      await insertSeries(row);
-      await insertCategories(row);
-      setTimeout(async () => {
-        await insertSeriesToCategories(row);
-      }, 1000);
-    })
-    .on('end', () => {
-      console.info('CSV file successfully processed');
-    });
-}
-
-export async function readSeasons() {
-  fs.createReadStream('./data/seasons.csv')
-    .pipe(csv())
-    .on('data', async (row) => {
-      // console.log(row);
-      await insertSeasons(row);
-      // await insertImages(row);
-    })
-    .on('end', () => {
-      console.info('CSV file successfully processed');
-    });
-}
-
-export async function readEpisodes() {
-  fs.createReadStream('./data/episodes.csv')
-    .pipe(csv())
-    .on('data', async (row) => {
-      await insertEpisodes(row);
-    })
-    .on('end', () => {
-      console.info('CSV file successfully processed');
-    });
 }
