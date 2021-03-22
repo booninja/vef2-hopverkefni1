@@ -19,7 +19,7 @@ import {readSerie,
         readGenres} from './tv.js'
 import {NOTinsertSeries,
         insertSeasonsById,
-        singleInsertCategories } from '../src/csvReader.js';
+        singleInsertCategories, postInsertEpisodes } from '../src/csvReader.js';
 import { seriesValidation,
          genreValidation,
          serieValidation,
@@ -166,7 +166,6 @@ router.post('/tv', requireAdminAuthentication, seriesValidation, catchErrors(cre
 
 router.get('/genres', catchErrors(readGenres));
 
-//virkar bara fyrir eitt genre í einu þarf mörg ?
 router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) => {
   const data = req.body;
 
@@ -182,7 +181,7 @@ router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) =
   res.json('þetta gekk');
 });
 
-router.get('/tv/:id', catchErrors(readSerie));// serie
+router.get('/tv/:id', catchErrors(readSerie));
 router.delete('/tv/:id', requireAdminAuthentication, catchErrors(deleteSerie));
 
 router.patch('/tv/:id', requireAdminAuthentication, patchSeriesValidation, async (req, res) => {
@@ -217,10 +216,21 @@ router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  asy
   return res.json('þetta gekk');
 });
 
-router.get('/tv/:id/season/:season', catchErrors(readSeason)); // vantar overview
+router.get('/tv/:id/season/:season', catchErrors(readSeason));
 router.delete('/tv/:id/season/:season', catchErrors(deleteSeason));
 
-// router.post('/tv/{id}/season/{season}/episode', catchErrors(readEpisodes));
+router.post('/tv/:id/season/:season/episode', requireAdminAuthentication, seasonValidation,  async (req, res) => {
+const { id, season } = req.params;
+const data = req.body;
+
+const validation = validationResult(req);
+
+if (!validation.isEmpty()) {
+  return res.status(404).json({ errors: validation.errors });
+}
+  await postInsertEpisodes(data, id, season);
+  return res.json('þetta gekk');
+});
 
 router.get('/tv/:id/season/:season/episode/:episode', catchErrors(readEpisode));
 router.delete('/tv/:id/season/:season/episode/:episode', requireAdminAuthentication, catchErrors(deleteEpisode));

@@ -5,7 +5,7 @@ import fs from 'fs';
 import csv from 'csv-parser';
 import { v2 as cloudinary } from 'cloudinary';
 import { query } from './utils.js';
-import { getSeriesCount } from './tvQueries.js';
+import { getSeasonById, getSeriesCount , getSerieById} from './tvQueries.js';
 
 cloudinary.config({
   cloud_name: 'vefforritun-hop1-rovv',
@@ -181,7 +181,7 @@ async function insertEpisodes(data) {
       [
         data.name,
         parseInt(data.number),
-        data.airDate,
+        data.airdate,
         data.overview,
         data.season,
         data.serie,
@@ -191,7 +191,32 @@ async function insertEpisodes(data) {
     console.error('Villa við að bæta gögnum við inn í Episodes ', e);
   }
 }
+export async function postInsertEpisodes(data, id, seasonNumber) {
+  const q = `INSERT INTO episodes (name,number,airDate,description, seasonNumber, season,  serieID)
+  VALUES ($1,$2,$3,$4,$5, $6, $7)`;
 
+  const q2 = `SELECT id FROM seasons
+              WHERE number = $1
+              AND serieID = $2`;
+
+  const serieName = await getSerieById(id);
+
+  try {
+    await query(q2, [data.season, data.serieId]);
+
+    await query(q,
+      [ data.name,
+        parseInt(data.number),
+        data.airDate,
+        data.description,
+        seasonNumber,
+        serieName.name,
+        id,
+      ]);
+  } catch (e) {
+    console.error('Villa við að bæta gögnum við inn í Episodes ', e);
+  }
+}
 export async function insertCategories(data) {
   const categories = data.genres.split(',');
   const q = `INSERT INTO categories (name) VALUES ($1)
