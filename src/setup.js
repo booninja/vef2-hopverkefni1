@@ -85,8 +85,8 @@ async function main() {
   }
   // bæta færslum við töflu
   try {
-    await createAdmin({ name: 'admin', email: 'osh16@hi.is', password: '123' });
-    await createUser({ name: 'notandi', email: 'ios24@hi.su', password: '123' });
+    await createAdmin({ name: 'admin', email: 'admin@hi.is', password: '123' });
+    await createUser({ name: 'notandi', email: 'notandi@hi.is', password: '123' });
     await readSeries();
     console.info('Þáttaröðum bætt við gagnagrunn');
     await readSeasons();
