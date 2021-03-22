@@ -160,3 +160,42 @@ body('homepage')
   .isString()
   .withMessage('url must be a string'),
 ];
+
+
+export const episodeValidation = [
+  body('name')
+    .isLength({ min: 1 })
+    .withMessage('episodes name cannot be empty'),
+  body('name')
+    .isLength({ max: 255 })
+    .withMessage('episode name cannot exceed 255 characters'),
+  body('number')
+    .isInt({ min: 1 })
+    .withMessage('number must be larger than 0'),
+  body('date')
+    .isDate()
+    .withMessage('date must be valid'),
+  body('description')
+    .isString()
+    .withMessage('description must be a string'),
+  body('season')
+    .isLength({ min: 1 })
+    .withMessage('season name cannot be empty'),
+  body('season')
+    .isLength({ max: 255 })
+    .withMessage('season name cannot exceed 255 characters'),
+  body('seasonNumber')
+    .isInt({ min: 0 })
+    .withMessage('season number cannot be negative')
+];
+
+//CREATE TABLE IF NOT EXISTS episodes(
+//  id serial PRIMARY KEY,
+//  name varchar(255) not null,
+//  number integer CHECK (number > 0),
+//  airDate date,
+//  description text,
+//  season varchar(255) not null,
+//  seasonNumber integer ,
+//  serieID integer REFERENCES series (id) ON DELETE CASCADE
+//);
