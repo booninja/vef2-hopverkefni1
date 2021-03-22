@@ -140,7 +140,7 @@ export const episodeValidation = [
   body('number')
     .isInt({ min: 1 })
     .withMessage('number must be larger than 0'),
-  body('date')
+  body('airDate')
     .isDate()
     .withMessage('date must be valid'),
   body('description')
