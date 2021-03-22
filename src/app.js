@@ -9,8 +9,6 @@ dotenv.config();
 
 const {
   PORT: port = 3000,
-  ACCESS_TOKEN_SECRET: sessionSecret,
-  CLOUDINARY_URL: cloudinary,
 } = process.env;
 
 const app = express();

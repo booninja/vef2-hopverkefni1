@@ -1,12 +1,10 @@
 import express from 'express';
-import { body, validationResult } from 'express-validator';
-import xss from 'xss';
+import { validationResult } from 'express-validator';
 
-import { catchErrors, setPagenumber, PAGE_SIZE } from '../src/utils.js';
+import { setPagenumber } from '../src/utils.js';
 import {
   getSerieById,
   getGenreBySerieId,
-  listSeries,
   getSeasonById,
   getSeasonsByID,
   getSeasonsCountBySerie,
@@ -25,7 +23,6 @@ import {
   deleteSerieStatus,
   // updateEpisodeRating,
 } from '../src/tvQueries.js';
-import { requireAuthentication, requireAdminAuthentication } from '../src/users.js';
 
 export const router = express.Router();
 
@@ -68,7 +65,7 @@ export async function readSeasons(req, res) {
     return res.status(404).json({ error: 'Seasons not found' });
   }
 
-  res.json({ seasons });
+  return res.json({ seasons });
 }
 
 export async function readSeason(req, res) {
@@ -107,7 +104,7 @@ export async function deleteEpisode(req, res) {
     await deleteEpisodeById(id, season, episode);
     return res.json('Season deleted');
   } catch (e) {
-
+    return res.status(500).json({ error: 'Could not delete season' });
   }
 }
 
@@ -158,8 +155,8 @@ export async function rateSerie(req, res) {
   }
 
   await setSerieRating(id, req.user.id, data);
-  console.log('Data rating changed');
-  res.json(
+  console.info('Data rating changed');
+  return res.json(
     {
       user: req.user.username,
       rating: data.rating,
@@ -179,8 +176,8 @@ export async function updateRateSerie(req, res) {
   }
 
   await updateSerieRating(id, req.user.id, data);
-  console.log('Data rating changed');
-  res.json(
+  console.info('Data rating changed');
+  return res.json(
     {
       user: req.user.username,
       rating: data.rating,
@@ -193,8 +190,8 @@ export async function deleteRateSerie(req, res) {
   const { id } = req.params;
   const data = req.body;
   await deleteSerieRating(id, req.user.id);
-  console.log('Data rating deleted');
-  res.json(
+  console.info('Data rating deleted');
+  return res.json(
     {
       user: req.user.username,
       rating: data.rating,
@@ -214,8 +211,8 @@ export async function stateSerie(req, res) {
   }
 
   await setSerieStatus(id, req.user.id, data);
-  console.log('Data status changed');
-  res.json(
+  console.info('Data status changed');
+  return res.json(
     {
       user: req.user.username,
       status: data.status,
@@ -235,8 +232,8 @@ export async function updateStateSerie(req, res) {
   }
 
   await updateSerieStatus(id, req.user.id, data);
-  console.log('Data status changed');
-  res.json(
+  console.info('Data status changed');
+  return res.json(
     {
       user: req.user.username,
       status: data.status,
@@ -250,8 +247,8 @@ export async function deleteStateSerie(req, res) {
   const data = req.body;
 
   await deleteSerieStatus(id, req.user.id);
-  console.log('Data status deleted');
-  res.json(
+  console.info('Data status deleted');
+  return res.json(
     {
       user: req.user.username,
       status: data.status,

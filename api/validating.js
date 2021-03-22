@@ -120,45 +120,45 @@ export const stateValidation = [
 
 export const patchSeriesValidation = [
   body('name')
-  .if(body('name').exists())
-  .isLength({ min: 1 })
-  .withMessage('name is required'),
-body('name')
-  .if(body('name').exists())
-  .isLength({ max: 128 })
-  .withMessage('max 128 characters'),
- body('airDate')
-   .if(body('airDate').exists())
-   .isDate()
-   .withMessage('airDate must be a date'),
-body('inProduction')
- .if(body('inProduction').exists())
-  .isBoolean()
-  .withMessage('inproduction must be a boolean'),
-body('image')
-   .if(body('image').exists())
-   .matches(new RegExp('^[A-Za-z0-9-_]+\.(jpg|jpeg|png|gif)$'))
-   .withMessage('image is required'),
-body('description')
-.if(body('description').exists())
-  .isString()
-  .withMessage('description must be a string'),
-body('language')
-.if(body('language').exists())
+    .if(body('name').exists())
+    .isLength({ min: 1 })
+    .withMessage('name is required'),
+  body('name')
+    .if(body('name').exists())
+    .isLength({ max: 128 })
+    .withMessage('max 128 characters'),
+  body('airDate')
+    .if(body('airDate').exists())
+    .isDate()
+    .withMessage('airDate must be a date'),
+  body('inProduction')
+    .if(body('inProduction').exists())
+    .isBoolean()
+    .withMessage('inproduction must be a boolean'),
+  body('image')
+    .if(body('image').exists())
+    .matches(new RegExp('^[A-Za-z0-9-_]+\.(jpg|jpeg|png|gif)$'))
+    .withMessage('image is required'),
+  body('description')
+    .if(body('description').exists())
+    .isString()
+    .withMessage('description must be a string'),
+  body('language')
+    .if(body('language').exists())
     .isLength({ min: 2 })
-  .withMessage('language must be a string of length 2'),
-body('language')
-.if(body('language').exists())
+    .withMessage('language must be a string of length 2'),
+  body('language')
+    .if(body('language').exists())
     .isLength({ max: 2 })
-  .withMessage('language must be a string of length 2'),
-body('network')
-.if(body('network').exists())
-  .isString()
-  .withMessage('network must be a string'),
-body('homepage')
-.if(body('homepage').exists())
-  .isString()
-  .withMessage('url must be a string'),
+    .withMessage('language must be a string of length 2'),
+  body('network')
+    .if(body('network').exists())
+    .isString()
+    .withMessage('network must be a string'),
+  body('homepage')
+    .if(body('homepage').exists())
+    .isString()
+    .withMessage('url must be a string'),
 ];
 
 export const episodeValidation = [
@@ -185,5 +185,5 @@ export const episodeValidation = [
     .withMessage('season name cannot exceed 255 characters'),
   body('seasonNumber')
     .isInt({ min: 0 })
-    .withMessage('season number cannot be negative')
+    .withMessage('season number cannot be negative'),
 ];
