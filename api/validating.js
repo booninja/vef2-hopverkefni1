@@ -19,19 +19,18 @@ export const seriesValidation = [
     .isBoolean()
     .withMessage('inproduction must be a boolean'),
   body('image')
-    .if(body('image').exists())
     .isBase64()
     .withMessage('image is required'),
+  body('image')
+    .matches(new RegExp('^[A-Za-z0-9-_]+\.(jpg|jpeg|png|gif)$'))
+    .withMessage('image is required'),
   body('description')
-    .if(body('description').exists())
     .isString()
     .withMessage('description must be a string'),
   body('language')
-    .if(body('language').exists())
     .isLength({ min: 2 })
     .withMessage('language must be a string of length 2'),
   body('language')
-    .if(body('language').exists())
     .isLength({ max: 2 })
     .withMessage('language must be a string of length 2'),
   body('network')
@@ -56,7 +55,6 @@ export const genreValidation = [
 ];
 
 export const serieValidation = [
-<<<<<<< HEAD
     body('name')
       .isLength({ min: 1 })
       .withMessage('name is required'),
@@ -89,15 +87,6 @@ export const serieValidation = [
       .withMessage('url must be a string'),
   ];
 
-=======
-  body('number')
-    .isInt({ min: 1 })
-    .withMessage('must be an integer larger than 0'),
-  // body('image')
-  //  .is
-  //  .withMessage('image is required'),
-];
->>>>>>> db47949c449303967c74c24c5d83553e080ffcd3
 export const seasonValidation = [
   body('name')
     .isLength({ min: 1 })

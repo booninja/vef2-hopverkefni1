@@ -18,6 +18,7 @@ import {readSerie,
         deleteEpisode,
         readGenres} from './tv.js'
 import {NOTinsertSeries,
+        insertSeries,
         insertSeasonsById,
         singleInsertCategories } from '../src/csvReader.js';
 import { seriesValidation,
@@ -87,8 +88,6 @@ async function indexRoute(req, res) {
   );
 }
 
-const seriesCount = await getSeriesCount();
-
 async function getSeries(req, res,) {
   let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
@@ -129,51 +128,40 @@ async function getSeries(req, res,) {
 router.get('/', indexRoute);
 
 async function createSerie(req, res) {
+  const id = await getSeriesCount();
   const newSerie = {
+    // eslint-disable-next-line radix
+    id: parseInt(id) + 1,
     name: req.body.name,
     airDate: req.body.airDate,
     inProduction: req.body.inProduction,
     tagline: req.body.tagline,
-    image: req.body.image,
+    poster: req.body.image,
     description: req.body.description,
     language: req.body.language,
     network: req.body.network,
     homepage: req.body.homepage,
   };
-}
-<<<<<<< HEAD
-=======
 
->>>>>>> db47949c449303967c74c24c5d83553e080ffcd3
-router.post('/tv', requireAdminAuthentication, seriesValidation, async (req, res) => {
-  const data = req.body;
   const validation = validationResult(req);
-
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
   }
-  console.log()
-  if (await findByName(data.name)) {
+
+  if (await findByName(newSerie.name)) {
     return res.status(400).json({ message: 'Sjónvarpsþáttur nú þegar til' });
   }
+
   try {
-    await insertSeries(data);
+    await insertSeries(newSerie);
     return res.status(201).json({ message: `Sjónvarpsþáttur ${newSerie.name} búinn til` });
   } catch (e) {
     return res.status(500).json({ message: e });
   }
-});
-<<<<<<< HEAD
-
-router.get('/tv', catchErrors(getSeries)); // series
-// router.post('/tv', seriesValidation, catchErrors(createSerie));
-=======
-
-router.get('/tv', catchErrors(getSeries));
+}
 
 router.post('/tv', seriesValidation, catchErrors(createSerie));
->>>>>>> db47949c449303967c74c24c5d83553e080ffcd3
-
+router.get('/tv', catchErrors(getSeries));
 router.get('/genres', catchErrors(readGenres));
 
 //virkar bara fyrir eitt genre í einu þarf mörg ?

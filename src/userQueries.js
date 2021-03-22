@@ -138,8 +138,4 @@ export async function findByUsername(username) {
     return null;
   }
   return false;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> db47949c449303967c74c24c5d83553e080ffcd3

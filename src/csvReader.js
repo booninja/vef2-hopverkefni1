@@ -57,17 +57,14 @@ export async function insertSeries(data) {
               (id, name,airDate,inProduction,tagline,poster,description,language,network,homepage)
               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10)`;
 
-  if (data.airDate === '') data.airDate = null;
-  if (data.poster === null) data.poster = '';
-
   try {
     await query(q,
       [data.id,
         data.name,
-        data.airDate,
+        data.airDate === '' ? null : data.airDate,
         data.inProduction,
         data.tagline,
-        cloudinary.url(data.image),
+        !cloudinary.url(data.image) ? '' : data.poster,
         data.description,
         data.language,
         data.network,
