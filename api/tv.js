@@ -1,13 +1,11 @@
 import express from 'express';
 import { validationResult } from 'express-validator';
 
-import { setPagenumber } from '../src/utils.js';
 import {
   getSerieById,
   getGenreBySerieId,
   getSeasonById,
   getSeasonsByID,
-  getSeasonsCountBySerie,
   getEpisodeById,
   getEpisodesById,
   deleteSerieById,
@@ -21,18 +19,13 @@ import {
   setSerieStatus,
   updateSerieStatus,
   deleteSerieStatus,
-  // updateEpisodeRating,
 } from '../src/tvQueries.js';
 
 export const router = express.Router();
 
 export async function readSerie(req, res) {
   const { id } = req.params;
-  let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
-
-  page = setPagenumber(page);
-
   const series = await getSerieById(id);
   const genre = await getGenreBySerieId(id);
   const seasons = await getSeasonsByID(id);
@@ -59,7 +52,6 @@ export async function readSeasons(req, res) {
   const { id } = req.params;
 
   const seasons = await getSeasonsByID(id);
-  const seasonsCount = await getSeasonsCountBySerie(id);
 
   if (!seasons) {
     return res.status(404).json({ error: 'Seasons not found' });
@@ -109,27 +101,23 @@ export async function deleteEpisode(req, res) {
 }
 
 export async function readGenres(req, res) {
-  let { page = 1 } = req.query;
   const { offset = 0, limit = 10 } = req.query;
-
-  page = setPagenumber(page);
-
   const registrations = await getGenres(offset, limit);
   const genreCount = await getGenreCount();
 
-  const _links = {
+  const links = {
     self: {
       href: `http://localhost:3000/genres/offset=${offset}&limit=10`,
     },
   };
 
   if (offset + 10 < genreCount) {
-    _links.next = {
+    links.next = {
       href: `http://localhost:3000/genres?offset=${offset + 10}&limit=10`,
     };
   }
   if (offset - 10 >= 0) {
-    _links.prev = {
+    links.prev = {
       href: `http://localhost:3000/genres?offset=${offset - 10}&limit=10`,
     };
   }
@@ -139,7 +127,7 @@ export async function readGenres(req, res) {
       limit,
       offset,
       items: { registrations },
-      _links,
+      links,
     },
   );
 }

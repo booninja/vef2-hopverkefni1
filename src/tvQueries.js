@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-unused-vars
-import { query, addPageMetadata } from './utils.js';
+import { query } from './utils.js';
 
 export async function getAllSeries() {
   const q = 'SELECT * FROM series';

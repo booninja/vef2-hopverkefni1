@@ -26,7 +26,7 @@ function notFoundHandler(req, res, next) { // eslint-disable-line
   res.status(404).json({ error: 'Not found' });
 }
 
-function errorHandler(error, req, res, next) {
+function errorHandler(error, req, res, next) { // eslint-disable-line
   res.status(500).json({ error });
 }
 

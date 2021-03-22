@@ -1,31 +1,38 @@
 import express from 'express';
 import { validationResult } from 'express-validator';
 import { catchErrors, setPagenumber } from '../src/utils.js';
-import { listSeries, editSerieById, getSeriesCount, findByName, getSerieById} from '../src/tvQueries.js';
-import {readSerie,
-        rateSerie,
-        updateRateSerie,
-        deleteRateSerie,
-        stateSerie,
-        updateStateSerie,
-        deleteStateSerie,
-        deleteSerie,
-        readSeasons,
-        readSeason,
-        deleteSeason,
-        readEpisode,
-        deleteEpisode,
-        readGenres} from './tv.js'
-import {insertSeasonsById,
-        singleInsertCategories } from '../src/csvReader.js';
-import { seriesValidation,
-         genreValidation,
-         seasonValidation,
-         patchSeriesValidation,
-         rateValidation,
-         stateValidation,
-         episodeValidation
-         } from './validating.js'
+import {
+  listSeries, editSerieById, getSeriesCount, findByName, getSerieById,
+} from '../src/tvQueries.js';
+import {
+  readSerie,
+  rateSerie,
+  updateRateSerie,
+  deleteRateSerie,
+  stateSerie,
+  updateStateSerie,
+  deleteStateSerie,
+  deleteSerie,
+  readSeasons,
+  readSeason,
+  deleteSeason,
+  readEpisode,
+  deleteEpisode,
+  readGenres,
+} from './tv.js';
+import {
+  insertSeasonsById,
+  singleInsertCategories,
+} from '../src/csvReader.js';
+import {
+  seriesValidation,
+  genreValidation,
+  seasonValidation,
+  patchSeriesValidation,
+  rateValidation,
+  stateValidation,
+  episodeValidation,
+} from './validating.js';
 import { requireAuthentication, requireAdminAuthentication } from '../src/users.js';
 
 export const router = express.Router();
@@ -85,31 +92,25 @@ async function indexRoute(req, res) {
   );
 }
 
-const seriesCount = await getSeriesCount();
-
-async function getSeries(req, res,) {
-  let { page = 1 } = req.query;
+async function getSeries(req, res) {
   const { offset = 0, limit = 10 } = req.query;
-
-  page = setPagenumber(page);
-
   const registrations = await listSeries(offset, limit);
   const seriesCount = await getSeriesCount();
 
-  const _links = {
+  const links = {
     self: {
       href: `http://localhost:3000/tv/offset=${offset}&limit=10`,
     },
   };
 
   if (offset + 10 < seriesCount) {
-    _links.next = {
+    links.next = {
       href: `http://localhost:3000/tv?offset=${offset + 10}&limit=10`,
-    }
+    };
   }
 
   if (offset - 10 >= 0) {
-    _links.prev = {
+    links.prev = {
       href: `http://localhost:3000/tv?offset=${offset - 10}&limit=10`,
     };
   }
@@ -119,14 +120,14 @@ async function getSeries(req, res,) {
       limit,
       offset,
       items: { registrations },
-      _links,
+      links,
     },
   );
 }
 
 router.get('/', indexRoute);
 
-async function createSerie(req, res) {
+async function createSerie(req, res) { 
   const newSerie = {
     name: req.body.name,
     airDate: req.body.airDate,
@@ -188,20 +189,18 @@ router.patch('/tv/:id', requireAdminAuthentication, patchSeriesValidation, async
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
   }
-  else{
-    editSerieById(id, data);
-    const info = await getSerieById(id)
-    res.json(info);
-  }
+
+  editSerieById(id, data);
+  const info = await getSerieById(id);
+  res.json(info);
 });
 
-router.get('/tv/:id/season',  catchErrors(readSeasons));
-router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  async (req, res) => {
+router.get('/tv/:id/season', catchErrors(readSeasons));
+router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation, async (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
   const validation = validationResult(req);
-
 
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
@@ -213,15 +212,15 @@ router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  asy
 router.get('/tv/:id/season/:season', catchErrors(readSeason));
 router.delete('/tv/:id/season/:season', catchErrors(deleteSeason));
 
-router.post('/tv/:id/season/:season/episode', requireAdminAuthentication, episodeValidation,  async (req, res) => {
-const { id, season } = req.params;
-const data = req.body;
+router.post('/tv/:id/season/:season/episode', requireAdminAuthentication, episodeValidation, async (req, res) => {
+  const { id, season } = req.params;
+  const data = req.body;
 
-const validation = validationResult(req);
+  const validation = validationResult(req);
 
-if (!validation.isEmpty()) {
-  return res.status(404).json({ errors: validation.errors });
-}
+  if (!validation.isEmpty()) {
+    return res.status(404).json({ errors: validation.errors });
+  }
   await postInsertEpisodes(data, id, season);
   return res.json('þetta gekk');
 });

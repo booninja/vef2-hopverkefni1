@@ -69,7 +69,7 @@ export const serieValidation = [
     .isBoolean()
     .withMessage('inproduction must be a boolean'),
   body('image')
-    .matches(new RegExp('^[A-Za-z0-9-_]+\.(jpg|jpeg|png|gif)$'))
+    .matches(new RegExp('^[A-Za-z0-9-_]+\.(jpg|jpeg|png|gif)$')) // eslint-disable-line
     .withMessage('image is required'),
   body('description')
     .isString()
@@ -137,7 +137,7 @@ export const patchSeriesValidation = [
     .withMessage('inproduction must be a boolean'),
   body('image')
     .if(body('image').exists())
-    .matches(new RegExp('^[A-Za-z0-9-_]+\.(jpg|jpeg|png|gif)$'))
+    .matches(new RegExp('^[A-Za-z0-9-_]+\.(jpg|jpeg|png|gif)$')) // eslint-disable-line
     .withMessage('image is required'),
   body('description')
     .if(body('description').exists())
