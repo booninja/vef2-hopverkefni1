@@ -16,7 +16,7 @@ dotenv.config();
 
 const {
   ACCESS_TOKEN_SECRET: jwtSecret,
-  ACCESS_TOKEN_LIFETIME: tokenLifetime = 60 * 60 //klukkustund
+  ACCESS_TOKEN_LIFETIME: tokenLifetime = 60 * 60, // klukkustund
 } = process.env;
 
 if (!jwtSecret) {

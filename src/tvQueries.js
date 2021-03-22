@@ -84,7 +84,7 @@ export async function getSeriesCount() {
   } catch (e) {
     console.info('Villa við að sækja fjölda', e);
   }
-  const number = result.rows[0];
+  const number = result.rows[0].count;
   return number;
 }
 export async function getSeasonsCountBySerie(id) {

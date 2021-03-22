@@ -1,6 +1,6 @@
 import express from 'express';
 import { validationResult } from 'express-validator';
-import { catchErrors, setPagenumber } from '../src/utils.js';
+import { catchErrors } from '../src/utils.js';
 import {
   listSeries, editSerieById, getSeriesCount, findByName, getSerieById,
 } from '../src/tvQueries.js';
@@ -21,8 +21,10 @@ import {
   readGenres,
 } from './tv.js';
 import {
+  insertSeries,
   insertSeasonsById,
   singleInsertCategories,
+  postInsertEpisodes,
 } from '../src/csvReader.js';
 import {
   seriesValidation,
@@ -127,43 +129,41 @@ async function getSeries(req, res) {
 
 router.get('/', indexRoute);
 
-async function createSerie(req, res) { 
+async function createSerie(req, res) {
+  const id = await getSeriesCount();
   const newSerie = {
+    // eslint-disable-next-line radix
+    id: parseInt(id) + 1,
     name: req.body.name,
     airDate: req.body.airDate,
     inProduction: req.body.inProduction,
     tagline: req.body.tagline,
-    image: req.body.image,
+    poster: req.body.image,
     description: req.body.description,
     language: req.body.language,
     network: req.body.network,
     homepage: req.body.homepage,
   };
-}
-router.post('/tv', requireAdminAuthentication, seriesValidation, async (req, res) => {
-  const data = req.body;
   const validation = validationResult(req);
-
   if (!validation.isEmpty()) {
     return res.status(404).json({ errors: validation.errors });
   }
-  if (await findByName(data.name)) {
+
+  if (await findByName(newSerie.name)) {
     return res.status(400).json({ message: 'Sjónvarpsþáttur nú þegar til' });
   }
+
   try {
-    await insertSeries(data);
+    await insertSeries(newSerie);
     return res.status(201).json({ message: `Sjónvarpsþáttur ${newSerie.name} búinn til` });
   } catch (e) {
     return res.status(500).json({ message: e });
   }
-});
+}
 
+router.post('/tv', seriesValidation, catchErrors(createSerie));
 router.get('/tv', catchErrors(getSeries));
-
-router.post('/tv', requireAdminAuthentication, seriesValidation, catchErrors(createSerie));
-
 router.get('/genres', catchErrors(readGenres));
-
 router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) => {
   const data = req.body;
 
@@ -174,12 +174,11 @@ router.post('/genres', requireAdminAuthentication, genreValidation, (req, res) =
   }
 
   singleInsertCategories(data);
-  res.json('þetta gekk');
+  return res.json('þetta gekk');
 });
 
 router.get('/tv/:id', catchErrors(readSerie));
 router.delete('/tv/:id', requireAdminAuthentication, catchErrors(deleteSerie));
-
 router.patch('/tv/:id', requireAdminAuthentication, patchSeriesValidation, async (req, res) => {
   const { id } = req.params;
   const data = req.body;
@@ -192,7 +191,7 @@ router.patch('/tv/:id', requireAdminAuthentication, patchSeriesValidation, async
 
   editSerieById(id, data);
   const info = await getSerieById(id);
-  res.json(info);
+  return res.json(info);
 });
 
 router.get('/tv/:id/season', catchErrors(readSeasons));

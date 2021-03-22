@@ -5,7 +5,7 @@ import fs from 'fs';
 import csv from 'csv-parser';
 import { v2 as cloudinary } from 'cloudinary';
 import { query } from './utils.js';
-import { getSeasonById, getSeriesCount, getSerieById } from './tvQueries.js';
+import { getSerieById } from './tvQueries.js';
 
 cloudinary.config({
   cloud_name: 'vefforritun-hop1-rovv',
@@ -18,42 +18,14 @@ export async function insertSeries(data) {
               (id, name,airDate,inProduction,tagline,poster,description,language,network,homepage)
               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10)`;
 
-  if (data.airDate === '') data.airDate = null;
-  if (data.poster === null) data.poster = '';
-
   try {
     await query(q,
       [data.id,
         data.name,
-        data.airDate,
+        data.airDate === '' ? null : data.airDate,
         data.inProduction,
         data.tagline,
-        cloudinary.url(data.image),
-        data.description,
-        data.language,
-        data.network,
-        data.homepage,
-      ]);
-  } catch (e) {
-    console.error('Villa við að bæta gögnum við inn í series', e);
-  }
-}
-
-export async function NOTinsertSeries(data) {
-  const q = `INSERT INTO series
-              (id, name,airDate,inProduction,tagline,poster,description,language,network,homepage)
-              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10)`;
-  if (data.airDate === '') data.airDate = null;
-  if (data.poster === null) data.poster = 'hallo';
-  const count = await getSeriesCount();
-  try {
-    await query(q,
-      [parseInt(count.count) + 1,
-        data.name,
-        data.airDate,
-        data.inProduction,
-        data.tagline,
-        cloudinary.url(data.image),
+        !cloudinary.url(data.image) ? '' : data.poster,
         data.description,
         data.language,
         data.network,
@@ -68,13 +40,12 @@ async function insertSeasons(data) {
   const q = `INSERT INTO seasons (name,number,airDate,description,poster,serieID)
               VALUES ($1,$2,$3,$4,$5,$6)`;
 
-  if (data.airDate === '') data.airDate = null;
   try {
     await query(q,
       [
         data.name,
         parseInt(data.number),
-        data.airDate,
+        data.airDate === '' ? null : data.airDate,
         data.overview,
         cloudinary.url(data.poster),
         parseInt(data.serieId),
@@ -88,32 +59,12 @@ export async function insertSeasonsById(data, id) {
   const q = `INSERT INTO seasons (name,number,airDate,description,poster,serieID)
               VALUES ($1,$2,$3,$4,$5,$6)`;
 
-  if (data.airDate === '') data.airDate = null;
   try {
     await query(q,
       [
         data.name,
         parseInt(data.number),
-        data.airDate,
-        data.description,
-        cloudinary.url(data.poster),
-        parseInt(id),
-      ]);
-  } catch (e) {
-    console.error('Villa við að bæta gögnum við inn í seasons', e);
-  }
-}
-export async function prufainsertSeasonsById(data, id) {
-  const q = `INSERT INTO seasons (name,number,airDate,description,poster,serieID)
-              VALUES ($1,$2,$3,$4,$5,$6)`;
-
-  if (data.airDate === '') data.airDate = null;
-  try {
-    await query(q,
-      [
-        data.name,
-        parseInt(data.number),
-        data.airDate,
+        data.airDate === '' ? null : data.airDate,
         data.description,
         cloudinary.url(data.poster),
         parseInt(id),
@@ -130,9 +81,6 @@ async function insertEpisodes(data) {
   const q2 = `SELECT id FROM seasons
               WHERE number = $1
               AND serieID = $2`;
-
-  if (data.airDate === '') data.airDate = null;
-
   try {
     await query(q2, [data.season, data.serieId]);
 
@@ -140,7 +88,7 @@ async function insertEpisodes(data) {
       [
         data.name,
         parseInt(data.number),
-        data.airdate,
+        data.airDate === '' ? null : data.airDate,
         data.overview,
         data.season,
         data.serie,
@@ -251,52 +199,3 @@ export async function readEpisodes() {
       console.info('CSV file successfully processed');
     });
 }
-
-// export async function readSeries() {
-//   fs.createReadStream('./data/series.csv')
-//     .pipe(csv())
-//     .on('data', async (row) => {
-//       // console.log(row);
-//       await insertSeries(row);
-//       await insertCategories(row);
-//     })
-//     .on('end', () => {
-//       console.info('CSV file successfully processed');
-//     });
-// }
-
-// export async function readSeasons() {
-//   fs.createReadStream('./data/seasons.csv')
-//     .pipe(csv())
-//     .on('data', async (row) => {
-//       // console.log(row);
-//       await insertSeasons(row);
-//       // await insertImages(row);
-//     })
-//     .on('end', () => {
-//       console.info('CSV file successfully processed');
-//     });
-// }
-
-// export async function readEpisodes() {
-//   fs.createReadStream('./data/episodes.csv')
-//     .pipe(csv())
-//     .on('data', async (row) => {
-//       await insertEpisodes(row);
-//     })
-//     .on('end', () => {
-//       console.info('CSV file successfully processed');
-//     });
-// }
-
-// export async function readSeriesToCategories() {
-//   fs.createReadStream('./data/series.csv')
-//     .pipe(csv())
-//     .on('data', async (row) => {
-//       // console.log(row);
-//       await insertSeriesToCategories(row);
-//     })
-//     .on('end', () => {
-//       console.info('CSV file successfully processed');
-//     });
-// }

@@ -122,7 +122,7 @@ export async function readGenres(req, res) {
     };
   }
 
-  res.json(
+  return res.json(
     {
       limit,
       offset,
