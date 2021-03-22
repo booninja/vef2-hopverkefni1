@@ -26,7 +26,8 @@ import { seriesValidation,
          seasonValidation,
          patchSeriesValidation,
          rateValidation,
-         stateValidation
+         stateValidation,
+         episodeValidation
          } from './validating.js'
 import { requireAuthentication, requireAdminAuthentication } from '../src/users.js';
 
@@ -219,7 +220,7 @@ router.post('/tv/:id/season', requireAdminAuthentication, seasonValidation,  asy
 router.get('/tv/:id/season/:season', catchErrors(readSeason));
 router.delete('/tv/:id/season/:season', catchErrors(deleteSeason));
 
-router.post('/tv/:id/season/:season/episode', requireAdminAuthentication, seasonValidation,  async (req, res) => {
+router.post('/tv/:id/season/:season/episode', requireAdminAuthentication, episodeValidation,  async (req, res) => {
 const { id, season } = req.params;
 const data = req.body;
 
