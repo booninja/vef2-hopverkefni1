@@ -161,7 +161,6 @@ body('homepage')
   .withMessage('url must be a string'),
 ];
 
-
 export const episodeValidation = [
   body('name')
     .isLength({ min: 1 })
@@ -188,14 +187,3 @@ export const episodeValidation = [
     .isInt({ min: 0 })
     .withMessage('season number cannot be negative')
 ];
-
-//CREATE TABLE IF NOT EXISTS episodes(
-//  id serial PRIMARY KEY,
-//  name varchar(255) not null,
-//  number integer CHECK (number > 0),
-//  airDate date,
-//  description text,
-//  season varchar(255) not null,
-//  seasonNumber integer ,
-//  serieID integer REFERENCES series (id) ON DELETE CASCADE
-//);
